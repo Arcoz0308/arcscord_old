@@ -1,4 +1,7 @@
 {
+    "include": [
+        "src/**/*"
+    ],
     "compilerOptions": {
         "target": "ES6",
         "module": "commonjs",
@@ -8,8 +11,5 @@
         "suppressImplicitAnyIndexErrors": true,
         "declaration": true,
         "outDir": "./lib",
-    },
-    "include": [
-        "src/**/*"
-    ]
+    }
 }
