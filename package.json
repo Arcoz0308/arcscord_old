@@ -1,0 +1,24 @@
+{
+  "name": "arco-discord-lib",
+  "version": "1.0.0-beta",
+  "description": "",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "test": "ts-node Test.ts",
+    "build": "tsc"
+  },
+  "author": "arcoz",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "ws": "^7.4.5"
+  },
+  "devDependencies": {
+    "discord-api-types": "^0.18.1",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.4",
+    "@types/node": "^15.0.1",
+    "@types/ws": "^7.4.2"
+  }
+}
