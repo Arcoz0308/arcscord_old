@@ -1,9 +1,9 @@
 import {Client} from "../Client";
 import {EventEmitter} from "events";
 import {API_VERSION} from "../Constants";
-import {GatewayIdentifyData, GatewayOPCodes, GatewayReceivePayload} from "discord-api-types";
+import {GatewayIdentifyData, GatewayOPCodes, GatewayReceivePayload, GatewayDispatchPayload, GatewayDispatchEvents} from "discord-api-types";
 import WebSocket = require("ws");
-
+import {} from ""
 
 export type GatewayStatus =
     'disconnected'|
@@ -16,8 +16,15 @@ export class Gateway extends EventEmitter{
     public gatewayURL?: string;
     private readonly intents: number;
     public client: Client;
+
+
     public heartbeatInterval?: number;
     public lastSequence: number = 0;
+    public latency: number = Infinity;
+    public lastHeartbeatSend: number = Infinity;
+    public lastHeartbeatReceive: number = Infinity;
+    public lastHeartbeatAck: boolean = true;
+
     constructor(client: Client) {
         super();
         this._token = client.token;
@@ -38,8 +45,16 @@ export class Gateway extends EventEmitter{
         }
         this.sendWS(GatewayOPCodes.Identify, data);
         setInterval(() => {
-            this.sendWS(GatewayOPCodes.Heartbeat, this.lastSequence);
+            this.heartbeat();
         }, this.heartbeatInterval);
+    }
+    public heartbeat() {
+        if (!this.lastHeartbeatAck) {
+            //TODO reconnecting
+        }
+        this.lastHeartbeatAck = false;
+        this.lastHeartbeatSend = Date.now();
+        this.sendWS(GatewayOPCodes.Heartbeat, this.lastSequence);
     }
     public connect(gatewayURL: string) {
         if (this.ws && this.ws.readyState != WebSocket.CLOSED) {
@@ -67,16 +82,31 @@ export class Gateway extends EventEmitter{
     public onWsMessage(message: string) {
         const msg: GatewayReceivePayload = JSON.parse(message) as GatewayReceivePayload;
         if (msg.s) this.lastSequence = msg.s;
-        if(msg.op === GatewayOPCodes.Hello) {
-            this.heartbeatInterval = msg.d.heartbeat_interval;
-            this.identify();
+        switch (msg.op) {
+            case GatewayOPCodes.Hello:
+                this.heartbeatInterval = msg.d.heartbeat_interval;
+                this.identify();
+                break;
+            case GatewayOPCodes.Dispatch:
+                this.handleEvent(msg);
+                break;
+            case GatewayOPCodes.HeartbeatAck:
+                this.lastHeartbeatAck = true;
+                this.lastHeartbeatReceive = Date.now();
+                this.latency = this.lastHeartbeatSend - this.lastHeartbeatReceive;7
+                break;
+        }
+    }
+    public handleEvent(msg: GatewayDispatchPayload) {
+        if(false) return;
+        switch (msg.t) {
+            case GatewayDispatchEvents.Ready:
+
         }
     }
     private onWsError(err: Error) {
-        console.log(err)
     }
     private onWsClose(code: number, reason: string) {
-        console.log(reason)
     }
     public sendWS(code: GatewayOPCodes, data: any) {
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;

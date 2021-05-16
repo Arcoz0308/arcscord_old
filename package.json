@@ -1,11 +1,12 @@
 {
   "name": "arcscord",
-  "version": "1.0.0",
+  "version": "0.1.0-beta",
   "description": "a discord library in typescript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib/"
+
   ],
   "scripts": {
     "test": "ts-node Test.ts",
@@ -20,9 +21,9 @@
   "devDependencies": {
     "@types/node": "^15.0.1",
     "@types/ws": "^7.4.2",
+    "discord-api-types": "^0.18.1",
     "ts-node": "^9.1.1",
-    "typescript": "^4.2.4",
-    "discord-api-types": "^0.18.1"
+    "typescript": "^4.2.4"
   },
   "keywords": [
     "discord",
