@@ -74,4 +74,5 @@ export class Client extends EventEmitter {
         if (!presence) return;
         this.gateway.updatePresence(presence);
     }
+
 }
