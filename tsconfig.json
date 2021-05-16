@@ -11,7 +11,7 @@
         "declaration": true,
         "outDir": "./lib",
         "typeRoots": [
-            "typing",
+            "src/typing",
             "node_modules/@types"
         ]
     }

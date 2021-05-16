@@ -1,9 +1,16 @@
 import {Client} from "../Client";
 import {EventEmitter} from "events";
 import {API_VERSION} from "../Constants";
-import {GatewayIdentifyData, GatewayOPCodes, GatewayReceivePayload, GatewayDispatchPayload, GatewayDispatchEvents} from "discord-api-types";
+import {
+    ActivityType,
+    GatewayDispatchEvents,
+    GatewayDispatchPayload,
+    GatewayIdentifyData,
+    GatewayOPCodes,
+    GatewayReceivePayload
+} from "discord-api-types";
+import {AGatewayPresenceUpdateData, AActivityTypeWithoutStreaming} from "../typing/discord-api-types";
 import WebSocket = require("ws");
-import {} from ""
 
 export type GatewayStatus =
     'disconnected'|
@@ -41,7 +48,6 @@ export class Gateway extends EventEmitter{
             },
             compress: false,
             intents: this.intents,
-            presence: this.client.presence
         }
         this.sendWS(GatewayOPCodes.Identify, data);
         setInterval(() => {
@@ -98,7 +104,7 @@ export class Gateway extends EventEmitter{
         }
     }
     public handleEvent(msg: GatewayDispatchPayload) {
-        if(false) return;
+
         switch (msg.t) {
             case GatewayDispatchEvents.Ready:
 
@@ -111,5 +117,28 @@ export class Gateway extends EventEmitter{
     public sendWS(code: GatewayOPCodes, data: any) {
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
         this.ws.send(JSON.stringify({op: code, d: data}));
+    }
+    public updatePresence(presence: AGatewayPresenceUpdateData) {
+        const data: { since: number|null, activities: any[]; afk: boolean; status: string } = {
+            since: presence.since ? presence.since : null,
+            status: presence.status,
+            afk: !!presence.afk,
+            activities: []
+        }
+        presence.activities.forEach(a => {
+            if (a.type === "Streaming") {
+                data.activities.push({
+                    name: a.name,
+                    type: ActivityType.Streaming,
+                    url: a.url
+                })
+            } else {
+                data.activities.push({
+                    name: a.name,
+                    type: AActivityTypeWithoutStreaming[a.type]
+                })
+            }
+        });
+        this.sendWS(GatewayOPCodes.PresenceUpdate, data);
     }
 }

@@ -1,5 +1,7 @@
 import {EventEmitter} from "events";
-import {GatewayIntentBits, GatewayDispatchEvents,} from "discord-api-types";
+
+import {GatewayIntentBits, GatewayDispatchEvents} from "discord-api-types";
+import {AGatewayPresenceUpdateData} from "./typing/discord-api-types"
 import {Gateway} from "./gateway/Gateway";
 import {RequestHandler} from "./requests/RequestHandler";
 import {GATEWAY_CONNECT} from "./requests/EndPoints";
@@ -16,7 +18,7 @@ export interface Activity {
 
 }
 export interface BaseClientOptions {
-    presence?: Presence;
+    presence?: AGatewayPresenceUpdateData
     disablesEvents?: (keyof typeof GatewayDispatchEvents)[];
 }
 export type intents = keyof typeof GatewayIntentBits
@@ -30,13 +32,13 @@ export type ClientOptions = DisableIntentClientOptions | EnableIntentClientOptio
 export class Client extends EventEmitter {
     public token: string;
     public intents: number;
-    public presence?: Presence;
+    public presence?: AGatewayPresenceUpdateData;
     public gateway: Gateway;
     public requestHandler: RequestHandler;
     public disableEvents?: (keyof typeof GatewayDispatchEvents)[];
     constructor(token: string, options: ClientOptions) {
         super();
-        this.token = 'Bot ' + token;
+        this.token = token.startsWith("Bot ") ? token : "Bot " + token;
         if ("enableIntents" in options) {
             let intents = 0;
             for (const intent of options.enableIntents) {
@@ -56,7 +58,7 @@ export class Client extends EventEmitter {
         this.gateway = new Gateway(this);
         this.requestHandler = new RequestHandler(this);
     }
-    public connect() {
+    public connect(): Client {
         this.requestHandler.request('GET', GATEWAY_CONNECT).then(r => {
             if (r instanceof RequestError) {
                 if (r.status === '403') throw new Error('TOKEN ARE INVALID !');
@@ -65,6 +67,12 @@ export class Client extends EventEmitter {
             let url: string = r.url;
             this.gateway.connect(url);
         })
+        return this;
+    }
+    public setPresence(presence?: AGatewayPresenceUpdateData) {
+        if (!presence) presence = this.presence;
+        if (!presence) return;
+        this.gateway.updatePresence(presence);
     }
 
 }

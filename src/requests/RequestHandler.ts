@@ -1,7 +1,7 @@
 import {Client} from "../Client";
 import axios, {AxiosInstance, Method} from "axios";
 import {BASE_URL} from "./EndPoints";
-import {RequestError} from "../errors/Errors";
+import {RequestError} from "../utils/Errors";
 
 export class RequestHandler {
     private _client: Client;
@@ -25,28 +25,20 @@ export class RequestHandler {
             switch (e.code) {
                 case "400":
                     return new RequestError('BAD REQUEST (code: 400)', method, url, data, e.code);
-                    break;
                 case "401":
                     return new RequestError('UNAUTHORIZED (code: 401)', method, url, data, e.code);
-                    break;
                 case "403":
                     return new RequestError('FORBIDDEN (code: 403)', method, url, data, e.code);
-                    break;
                 case "404":
                     return new RequestError('NOT FOUND (code: 4o4)', method, url, data, e.code);
-                    break;
                 case "405":
                     return new RequestError('METHOD NOT ALLOWED (code: 405)', method, url, data, e.code);
-                    break;
                 case "429":
                     return new RequestError('TOO MANY REQUESTS (code: 429)', method, url, data, e.code);
-                    break;
                 case "502":
                     return new RequestError('GATEWAY UNAVAILABLE (code: 502)', method, url, data, e.code);
-                    break;
                 default:
-                    return new RequestError(`UNKNOW ERROR CODE (code: ${e.code})`, method, url, data, e.code);
-                    break;
+                    return new RequestError(`UNKNOWN ERROR CODE (code: ${e.code})`, method, url, data, e.code);
             }
         });
         if (response instanceof RequestError) return response;
