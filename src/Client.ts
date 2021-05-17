@@ -1,63 +1,93 @@
-import {EventEmitter} from "events";
-
-import {GatewayIntentBits, GatewayDispatchEvents} from "discord-api-types";
-import {AGatewayPresenceUpdateData} from "./typing/discord-api-types"
-import {Gateway} from "./gateway/Gateway";
+import {GatewayDispatchEvents} from "discord-api-types";
+import {Presence} from "./typing/discord-api-types"
+import {Gateway, rawWSEvent} from "./gateway/Gateway";
 import {RequestHandler} from "./requests/RequestHandler";
 import {GATEWAY_CONNECT} from "./requests/EndPoints";
 import {RequestError} from "./utils/Errors";
 import {Intents} from './Constants'
-export type PresenceType = 'Online';
-export interface Presence  {
-    status: PresenceType;
-    since?: number|null;
-    activities: Activity[];
-    afk?: boolean;
-}
-export interface Activity {
+import {EventEmitter} from "events";
 
-}
-export interface BaseClientOptions {
-    presence?: AGatewayPresenceUpdateData
+
+export interface ClientOptions {
+    /**
+     * a object of presence
+     */
+    presence?: Presence
+    /**
+     * list of events that the client don't must emit
+     */
     disablesEvents?: (keyof typeof GatewayDispatchEvents)[];
+    /**
+     * list of intents to disable [list-of-intents](https://discord.com/developers/docs/topics/gateway#list-of-intents)
+     */
+    disableIntents?: (keyof typeof Intents)[];
 }
-export type intents = keyof typeof GatewayIntentBits
-export interface DisableIntentClientOptions extends BaseClientOptions{
-    disableIntents: intents[];
+
+export declare interface Client {
+    // on function
+    on(event: 'ready', listener: () => void): this;
+    on(event: 'rawWS', listener: (rawEvent: rawWSEvent) => void): this;
+    on(event: 'connected', listener: () => void): this;
+    on(event: 'error', listener: (error: Error) => void): this;
+
+    // emit function
+    emit(event: 'ready'): boolean;
+    emit(event: 'rawWS', rawEvent: rawWSEvent): boolean;
+    emit(event: 'connected'): boolean;
+    emit(event: 'error', error: Error): boolean;
 }
-export interface EnableIntentClientOptions extends BaseClientOptions{
-    enableIntents: intents[];
-}
-export type ClientOptions = DisableIntentClientOptions | EnableIntentClientOptions;
+/**
+ * @class
+ */
 export class Client extends EventEmitter {
+    /**
+     * the token of the bot
+     */
     public token: string;
+    /**
+     * int number for intents
+     */
     public intents: number;
-    public presence?: AGatewayPresenceUpdateData;
+    /**
+     * bot current presence
+     */
+    public presence?: Presence;
+    /**
+     * bot gateway
+     */
     public gateway: Gateway;
     public requestHandler: RequestHandler;
-    public disableEvents?: (keyof typeof GatewayDispatchEvents)[];
+    /**
+     * list of events that the bot don't emit
+     */
+    public readonly disableEvents?: (keyof typeof GatewayDispatchEvents)[];
+
+    /**
+     * @param token the token of the bot
+     * @param options options of the bot
+     */
     constructor(token: string, options: ClientOptions) {
         super();
         this.token = token.startsWith("Bot ") ? token : "Bot " + token;
-        if ("enableIntents" in options) {
-            let intents = 0;
-            for (const intent of options.enableIntents) {
-                intents |= Intents[intent];
-            }
-            this.intents = intents;
-        } else {
-            let intents = 32765;
+
+        let intents = 32765;
+        if (options.disableIntents) {
             for (const intent of options.disableIntents) {
                 intents -= Intents[intent]
             }
-            this.intents = intents;
         }
+        this.intents = intents;
+
         this.disableEvents = options.disablesEvents;
         this.presence = options.presence;
 
         this.gateway = new Gateway(this);
         this.requestHandler = new RequestHandler(this);
     }
+
+    /**
+     * connect the bot to discord
+     */
     public connect(): Client {
         this.requestHandler.request('GET', GATEWAY_CONNECT).then(r => {
             if (r instanceof RequestError) {
@@ -69,7 +99,23 @@ export class Client extends EventEmitter {
         })
         return this;
     }
-    public setPresence(presence?: AGatewayPresenceUpdateData) {
+
+    /**
+     * update bot presence
+     * @param presence a object of presence
+     *
+     * @example
+     * ```typescript
+     * client.setPresence({
+     *     status: "dnd",
+     *     activities: [{
+     *         type: "Game",
+     *         name: "on arcscord"
+     *     }]
+     * })
+     * ```
+     */
+    public setPresence(presence?: Presence) {
         if (!presence) presence = this.presence;
         if (!presence) return;
         this.gateway.updatePresence(presence);

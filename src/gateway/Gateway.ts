@@ -1,22 +1,24 @@
 import {Client} from "../Client";
-import {EventEmitter} from "events";
 import {API_VERSION} from "../Constants";
 import {
-    ActivityType,
     GatewayDispatchEvents,
     GatewayDispatchPayload,
     GatewayIdentifyData,
-    GatewayOPCodes,
+    GatewayOPCodes, GatewayPresenceUpdateData,
     GatewayReceivePayload
 } from "discord-api-types";
-import {AGatewayPresenceUpdateData, AActivityTypeWithoutStreaming} from "../typing/discord-api-types";
+import {Presence, ActivityType} from "../typing/discord-api-types";
+export interface rawWSEvent {
+    d: any;
+    t: string
+}
 import WebSocket = require("ws");
 
 export type GatewayStatus =
     'disconnected'|
     'connected'|
     'connecting...';
-export class Gateway extends EventEmitter{
+export class Gateway{
     private readonly _token: string;
     public ws?: WebSocket;
     public status: GatewayStatus = 'disconnected';
@@ -33,21 +35,44 @@ export class Gateway extends EventEmitter{
     public lastHeartbeatAck: boolean = true;
 
     constructor(client: Client) {
-        super();
         this._token = client.token;
         this.intents = client.intents;
         this.client = client;
     }
      identify() {
-        const data: GatewayIdentifyData = {
-            token: this._token,
-            properties: {
-                $os: process.platform,
-                $device: 'arcscord',
-                $browser: 'arcscord'
-            },
-            compress: false,
-            intents: this.intents,
+         const data: GatewayIdentifyData = {
+             token: this._token,
+             properties: {
+                 $os: process.platform,
+                 $device: 'arcscord',
+                 $browser: 'arcscord'
+             },
+             compress: false,
+             intents: this.intents,
+         };
+        if (this.client.presence) {
+
+         const presence: { since: number|null, activities: any[]; afk: boolean; status: string } = {
+             since: this.client.presence.since ? this.client.presence.since : null,
+             status: this.client.presence.status,
+             afk: !!this.client.presence.afk,
+             activities: []
+         }
+         presence.activities.forEach(a => {
+             if (a.type === "streaming") {
+                 presence.activities.push({
+                     name: a.name,
+                     type: ActivityType.streaming,
+                     url: a.url
+                 })
+             } else {
+                 presence.activities.push({
+                     name: a.name,
+                     type: ActivityType[a.type]
+                 })
+             }
+         });
+         data.presence = presence as GatewayPresenceUpdateData;
         }
         this.sendWS(GatewayOPCodes.Identify, data);
         setInterval(() => {
@@ -64,7 +89,7 @@ export class Gateway extends EventEmitter{
     }
     public connect(gatewayURL: string) {
         if (this.ws && this.ws.readyState != WebSocket.CLOSED) {
-            this.emit('error', new Error('the bot are already connect !'));
+            this.client.emit('error', new Error('the bot are already connect !'));
             return
         }
         if (gatewayURL.includes('?')) {
@@ -83,7 +108,7 @@ export class Gateway extends EventEmitter{
         this.ws.on('close', (code, raison) => this.onWsClose(code, raison));
     }
     private onWsOpen() {
-        this.emit('connected');
+        this.client.emit('connected');
     }
     public onWsMessage(message: string) {
         const msg: GatewayReceivePayload = JSON.parse(message) as GatewayReceivePayload;
@@ -104,9 +129,15 @@ export class Gateway extends EventEmitter{
         }
     }
     public handleEvent(msg: GatewayDispatchPayload) {
-
+        this.client.emit('rawWS', {
+            t: msg.t,
+            d: msg.d
+        });
         switch (msg.t) {
             case GatewayDispatchEvents.Ready:
+                this.client.emit('ready');
+                return;
+            case GatewayDispatchEvents.ChannelCreate:
 
         }
     }
@@ -118,7 +149,7 @@ export class Gateway extends EventEmitter{
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
         this.ws.send(JSON.stringify({op: code, d: data}));
     }
-    public updatePresence(presence: AGatewayPresenceUpdateData) {
+    public updatePresence(presence: Presence) {
         const data: { since: number|null, activities: any[]; afk: boolean; status: string } = {
             since: presence.since ? presence.since : null,
             status: presence.status,
@@ -126,16 +157,16 @@ export class Gateway extends EventEmitter{
             activities: []
         }
         presence.activities.forEach(a => {
-            if (a.type === "Streaming") {
+            if (a.type === "streaming") {
                 data.activities.push({
                     name: a.name,
-                    type: ActivityType.Streaming,
+                    type: ActivityType.streaming,
                     url: a.url
                 })
             } else {
                 data.activities.push({
                     name: a.name,
-                    type: AActivityTypeWithoutStreaming[a.type]
+                    type: ActivityType[a.type]
                 })
             }
         });

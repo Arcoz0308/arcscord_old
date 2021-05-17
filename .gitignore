@@ -2,3 +2,5 @@ node_modules
 Test.ts
 lib
 .idea
+doc
+docs
