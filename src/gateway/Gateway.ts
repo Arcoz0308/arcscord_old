@@ -4,14 +4,18 @@ import {
     GatewayDispatchEvents,
     GatewayDispatchPayload,
     GatewayIdentifyData,
-    GatewayOPCodes, GatewayPresenceUpdateData,
+    GatewayOPCodes,
+    GatewayPresenceUpdateData,
     GatewayReceivePayload
 } from "discord-api-types";
-import {Presence, ActivityType} from "../typing/discord-api-types";
+import {ActivityTypes, Presence} from "../typing/Types";
+import {ClientUser} from "../structures/ClientUser";
+
 export interface rawWSEvent {
     d: any;
     t: string
 }
+
 import WebSocket = require("ws");
 
 export type GatewayStatus =
@@ -35,7 +39,7 @@ export class Gateway{
     public lastHeartbeatAck: boolean = true;
 
     constructor(client: Client) {
-        this._token = client.token;
+        this._token = client.bot ? (client.token.startsWith('Bot ') ? client.token : 'Bot ' + client.token) : client.token;
         this.intents = client.intents;
         this.client = client;
     }
@@ -51,28 +55,8 @@ export class Gateway{
              intents: this.intents,
          };
         if (this.client.presence) {
-
-         const presence: { since: number|null, activities: any[]; afk: boolean; status: string } = {
-             since: this.client.presence.since ? this.client.presence.since : null,
-             status: this.client.presence.status,
-             afk: !!this.client.presence.afk,
-             activities: []
-         }
-         presence.activities.forEach(a => {
-             if (a.type === "streaming") {
-                 presence.activities.push({
-                     name: a.name,
-                     type: ActivityType.streaming,
-                     url: a.url
-                 })
-             } else {
-                 presence.activities.push({
-                     name: a.name,
-                     type: ActivityType[a.type]
-                 })
-             }
-         });
-         data.presence = presence as GatewayPresenceUpdateData;
+            const presence = this.resolvePresence(this.client.presence);
+            data.presence = presence as GatewayPresenceUpdateData;
         }
         this.sendWS(GatewayOPCodes.Identify, data);
         setInterval(() => {
@@ -101,7 +85,7 @@ export class Gateway{
 
     public initWS() {
         this.status = 'connecting...';
-        this.ws = new WebSocket(`${this.gatewayURL}?v${API_VERSION}&encoding=json`);
+        this.ws = new WebSocket(`${this.gatewayURL}?v=${API_VERSION}&encoding=json`);
         this.ws.on('open', () => this.onWsOpen);
         this.ws.on('message', msg => this.onWsMessage(msg as string));
         this.ws.on('error', error => this.onWsError(error));
@@ -124,7 +108,7 @@ export class Gateway{
             case GatewayOPCodes.HeartbeatAck:
                 this.lastHeartbeatAck = true;
                 this.lastHeartbeatReceive = Date.now();
-                this.latency = this.lastHeartbeatSend - this.lastHeartbeatReceive;7
+                this.latency =  this.lastHeartbeatReceive - this.lastHeartbeatSend;
                 break;
         }
     }
@@ -135,41 +119,53 @@ export class Gateway{
         });
         switch (msg.t) {
             case GatewayDispatchEvents.Ready:
+                this.heartbeat();
+                this.client.user = new ClientUser(this.client, msg.d.user);
                 this.client.emit('ready');
+                this.client.onReady();
                 return;
-            case GatewayDispatchEvents.ChannelCreate:
+            case GatewayDispatchEvents.MessageCreate:
 
         }
     }
+
     private onWsError(err: Error) {
     }
+
     private onWsClose(code: number, reason: string) {
     }
+
     public sendWS(code: GatewayOPCodes, data: any) {
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
         this.ws.send(JSON.stringify({op: code, d: data}));
     }
+
     public updatePresence(presence: Presence) {
-        const data: { since: number|null, activities: any[]; afk: boolean; status: string } = {
-            since: presence.since ? presence.since : null,
-            status: presence.status,
+        const data = this.resolvePresence(presence);
+
+        this.sendWS(GatewayOPCodes.PresenceUpdate, data);
+    }
+
+    resolvePresence(presence: Presence): any {
+        const data: { activities: any[]; afk: boolean; status: string } = {
+            status: presence.status || "online",
             afk: !!presence.afk,
             activities: []
         }
-        presence.activities.forEach(a => {
-            if (a.type === "streaming") {
+        if (presence.activity) {
+            if (presence.activity.type === "streaming") {
                 data.activities.push({
-                    name: a.name,
-                    type: ActivityType.streaming,
-                    url: a.url
+                    name: presence.activity.name,
+                    type: ActivityTypes.streaming,
+                    url: presence.activity.url
                 })
             } else {
                 data.activities.push({
-                    name: a.name,
-                    type: ActivityType[a.type]
+                    name: presence.activity.name,
+                    type: presence.activity.type ? ActivityTypes[presence.activity.type] : 0
                 })
             }
-        });
-        this.sendWS(GatewayOPCodes.PresenceUpdate, data);
+        }
+        return data;
     }
 }

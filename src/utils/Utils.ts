@@ -1,0 +1,2 @@
+export type Snowflake = `${bigint}`;
+

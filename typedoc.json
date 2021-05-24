@@ -1,6 +1,14 @@
 {
-  "entryPoints": ["src/index.ts"],
+  "entryPoints": [
+    "src/index.ts"
+  ],
   "excludePrivate": true,
   "excludeProtected": true,
-  "excludeInternal": true
+  "excludeInternal": true,
+  "plugin": [
+    "typedoc-plugin-as-member-of"
+  ],
+  "categorizeByGroup": true,
+  "defaultCategory": "Other",
+  "tsconfig": "tsconfig.json"
 }

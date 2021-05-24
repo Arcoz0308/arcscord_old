@@ -3,6 +3,7 @@ import axios, {AxiosInstance, Method} from "axios";
 import {BASE_URL} from "./EndPoints";
 import {RequestError} from "../utils/Errors";
 
+//TODO rate limit
 export class RequestHandler {
     private _client: Client;
     private readonly _instance: AxiosInstance;
@@ -12,7 +13,7 @@ export class RequestHandler {
             baseURL: BASE_URL,
             timeout: 1000,
             headers: {
-                "Authorization": client.token,
+                "Authorization": client.bot ? (client.token.startsWith('Bot ') ? client.token : 'Bot ' + client.token) : client.token,
             }
         });
     }
