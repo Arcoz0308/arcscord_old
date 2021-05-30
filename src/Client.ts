@@ -1,8 +1,8 @@
-import {APIGuildMember, GatewayDispatchEvents} from "discord-api-types";
+import {APIGuildMember, APIMessage, GatewayDispatchEvents} from "discord-api-types";
 import {Presence} from "./typing/Types"
 import {Gateway, rawWSEvent} from "./gateway/Gateway";
 import {RequestHandler} from "./requests/RequestHandler";
-import {GATEWAY_CONNECT, GUILD, GUILD_MEMBERS} from "./requests/EndPoints";
+import {GATEWAY_CONNECT, GUILD, GUILD_MEMBERS, MESSAGES} from "./requests/EndPoints";
 import {RequestError} from "./utils/Errors";
 import {Intents} from './Constants'
 import {EventEmitter} from "events";
@@ -11,6 +11,7 @@ import {User} from "./structures/User";
 import {Snowflake} from "./utils/Utils";
 import {Guild} from "./structures/Guild"
 import {Member} from "./structures/Member";
+import {Message, MessageOptions, MessageOptionsWithContent} from "./structures/Message";
 
 
 export interface ClientOptions {
@@ -196,6 +197,24 @@ export class Client extends EventEmitter {
             }
         }
         return members;
+    }
+    public createMessage(channelId: Snowflake, content: string, msg?: MessageOptions): Promise<Message>;
+    public createMessage(channelId: Snowflake, msg: MessageOptionsWithContent): Promise<Message>;
+    public async createMessage(channelId: Snowflake, cOrM: string|MessageOptionsWithContent, msg?: MessageOptions): Promise<Message> {
+        let r: APIMessage;
+        if (typeof cOrM === 'string') {
+            if (msg) {
+                msg['content'] = cOrM;
+                r = await this.requestHandler.request('POST', MESSAGES(channelId), msg);
+            } else {
+                r = await this.requestHandler.request('POST', MESSAGES(channelId), {content: cOrM});
+            }
+        } else {
+            r = await this.requestHandler.request('POST', MESSAGES(channelId), cOrM);
+        }
+        if (r.guild_id && this.guilds.has(r.guild_id)) await this.fetchGuild(r.guild_id);
+        //TODO channel, user and members
+        return new Message(this, r);
     }
 
 }

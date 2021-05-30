@@ -17,3 +17,9 @@ export class Message extends Base {
     }
 
 }
+export interface MessageOptions {
+
+}
+export interface MessageOptionsWithContent extends MessageOptions {
+    content?: string;
+}

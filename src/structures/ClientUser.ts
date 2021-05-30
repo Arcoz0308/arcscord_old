@@ -69,4 +69,8 @@ export class ClientUser extends User {
     public setUsername(username: string) {
         this.edit({username});
     }
+    public setAvatar(avatar: string) {
+        //TODO check data format
+        this.edit({avatar});
+    }
 }
