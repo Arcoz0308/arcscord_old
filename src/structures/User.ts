@@ -73,8 +73,6 @@ export class User extends Base {
         this.system = !!data.system;
         this.createAt = getDate(data.id);
         this.publicFlags = data.public_flags ? data.public_flags : 0;
-
-        this.client.users.set(this.id, this);
     }
 
     /**

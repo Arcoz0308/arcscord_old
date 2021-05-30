@@ -23,23 +23,24 @@ export class RequestHandler {
             method: method,
             data: data
         }).catch(e => {
-            switch (e.code) {
+            console.log(e)
+            switch (e.response.data.code) {
                 case "400":
-                    return new RequestError('BAD REQUEST (code: 400)', method, url, data, e.code);
+                    return new RequestError('BAD REQUEST (code: 400)', method, url, data, e.response.data.code, e.response.data.message);
                 case "401":
-                    return new RequestError('UNAUTHORIZED (code: 401)', method, url, data, e.code);
+                    return new RequestError('UNAUTHORIZED (code: 401)', method, url, data, e.response.data.code, e.response.data.message);
                 case "403":
-                    return new RequestError('FORBIDDEN (code: 403)', method, url, data, e.code);
+                    return new RequestError('FORBIDDEN (code: 403)', method, url, data, e.response.data.code, e.response.data.message);
                 case "404":
-                    return new RequestError('NOT FOUND (code: 4o4)', method, url, data, e.code);
+                    return new RequestError('NOT FOUND (code: 4o4)', method, url, data, e.response.data.code, e.response.data.message);
                 case "405":
-                    return new RequestError('METHOD NOT ALLOWED (code: 405)', method, url, data, e.code);
+                    return new RequestError('METHOD NOT ALLOWED (code: 405)', method, url, data, e.response.data.code, e.response.data.message);
                 case "429":
-                    return new RequestError('TOO MANY REQUESTS (code: 429)', method, url, data, e.code);
+                    return new RequestError('TOO MANY REQUESTS (code: 429)', method, url, data, e.response.data.code, e.response.data.message);
                 case "502":
-                    return new RequestError('GATEWAY UNAVAILABLE (code: 502)', method, url, data, e.code);
+                    return new RequestError('GATEWAY UNAVAILABLE (code: 502)', method, url, data, e.response.data.code, e.response.data.message);
                 default:
-                    return new RequestError(`UNKNOWN ERROR CODE (code: ${e.code})`, method, url, data, e.code);
+                    return new RequestError(`UNKNOWN ERROR CODE (code: ${e.response.data.code})`, method, url, data, e.response.data.code, e.response.data.message);
             }
         });
         if (response instanceof RequestError) return response;

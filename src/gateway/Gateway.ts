@@ -1,6 +1,8 @@
 import {Client} from "../Client";
 import {API_VERSION} from "../Constants";
+import * as a from "./actions";
 import {
+    APIUnavailableGuild,
     GatewayDispatchEvents,
     GatewayDispatchPayload,
     GatewayIdentifyData,
@@ -9,15 +11,18 @@ import {
     GatewayReceivePayload
 } from "discord-api-types";
 import {ActivityTypes, Presence} from "../typing/Types";
-import {ClientUser} from "../structures/ClientUser";
+import WebSocket = require("ws");
+import {Guild} from "../structures/Guild";
+import {GUILD} from "../requests/EndPoints";
 
 export interface rawWSEvent {
     d: any;
     t: string
 }
 
-import WebSocket = require("ws");
-
+interface Actions {
+    READY?: a.READY;
+}
 export type GatewayStatus =
     'disconnected'|
     'connected'|
@@ -29,7 +34,7 @@ export class Gateway{
     public gatewayURL?: string;
     private readonly intents: number;
     public client: Client;
-
+    public actions: Actions = {};
 
     public heartbeatInterval?: number;
     public lastSequence: number = 0;
@@ -42,6 +47,10 @@ export class Gateway{
         this._token = client.bot ? (client.token.startsWith('Bot ') ? client.token : 'Bot ' + client.token) : client.token;
         this.intents = client.intents;
         this.client = client;
+        this.loadActions();
+    }
+    loadActions() {
+        this.actions.READY = new a.READY(this.client);
     }
      identify() {
          const data: GatewayIdentifyData = {
@@ -103,7 +112,7 @@ export class Gateway{
                 this.identify();
                 break;
             case GatewayOPCodes.Dispatch:
-                this.handleEvent(msg);
+                this.handleEvent(msg).then();
                 break;
             case GatewayOPCodes.HeartbeatAck:
                 this.lastHeartbeatAck = true;
@@ -112,7 +121,7 @@ export class Gateway{
                 break;
         }
     }
-    public handleEvent(msg: GatewayDispatchPayload) {
+    public async handleEvent(msg: GatewayDispatchPayload) {
         this.client.emit('rawWS', {
             t: msg.t,
             d: msg.d
@@ -120,10 +129,8 @@ export class Gateway{
         switch (msg.t) {
             case GatewayDispatchEvents.Ready:
                 this.heartbeat();
-                this.client.user = new ClientUser(this.client, msg.d.user);
-                this.client.emit('ready');
-                this.client.onReady();
-                return;
+                this.actions.READY!.handle(msg.d).then();
+                break;
             case GatewayDispatchEvents.MessageCreate:
 
         }
@@ -167,5 +174,10 @@ export class Gateway{
             }
         }
         return data;
+    }
+    public async createGuild(guild: APIUnavailableGuild) {
+        const response = await this.client.requestHandler.request('GET', GUILD(guild.id));
+        const g = new Guild(this.client, response);
+        this.client.guilds.set(guild.id, g);
     }
 }

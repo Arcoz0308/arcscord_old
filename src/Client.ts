@@ -1,8 +1,8 @@
-import {GatewayDispatchEvents} from "discord-api-types";
+import {APIGuildMember, GatewayDispatchEvents} from "discord-api-types";
 import {Presence} from "./typing/Types"
 import {Gateway, rawWSEvent} from "./gateway/Gateway";
 import {RequestHandler} from "./requests/RequestHandler";
-import {GATEWAY_CONNECT} from "./requests/EndPoints";
+import {GATEWAY_CONNECT, GUILD, GUILD_MEMBERS} from "./requests/EndPoints";
 import {RequestError} from "./utils/Errors";
 import {Intents} from './Constants'
 import {EventEmitter} from "events";
@@ -10,6 +10,7 @@ import {ClientUser} from "./structures/ClientUser";
 import {User} from "./structures/User";
 import {Snowflake} from "./utils/Utils";
 import {Guild} from "./structures/Guild"
+import {Member} from "./structures/Member";
 
 
 export interface ClientOptions {
@@ -61,6 +62,8 @@ export declare interface Client {
      */
     on(event: 'error', listener: typeof error): this;
 
+    on(event: 'warn', listener: typeof warn): this;
+
     // emit function
     /**
      * when bot are online
@@ -81,6 +84,8 @@ export declare interface Client {
      * when the websocket connection have a error
      */
     emit(event: 'error', error: Error): boolean;
+
+    emit(event: 'warn', error: Error): boolean;
 }
 
 export class Client extends EventEmitter {
@@ -116,6 +121,8 @@ export class Client extends EventEmitter {
 
     public users = new Map<Snowflake, User>();
     public guilds = new Map<Snowflake, Guild>();
+
+    public unavailableGuilds: Snowflake[] = [];
 
     /**
      * @param token the token of the bot
@@ -157,16 +164,40 @@ export class Client extends EventEmitter {
         return this;
     }
 
-    onReady(): void {
-
-    }
-
     /**
      * get bot ping (⚠ before the first heartbeat the ping are infinity)
      */
-    get ping(): number {
+    public get ping(): number {
         return this.gateway.latency;
     }
+
+    public async fetchGuild(id: Snowflake, checkCache: boolean = true, setToCache: boolean = true): Promise<Guild> {
+        if (checkCache && this.guilds.has(id)) return this.guilds.get(id)!;
+        const g = await this.requestHandler.request('GET', GUILD(id)).catch(e => {
+            return e;
+        });
+        const guild = new Guild(this, g);
+        if (setToCache) this.guilds.set(id, guild);
+        return guild;
+    }
+    public async fetchMembers(guildId: Snowflake, limit: number = 100, setToCache: boolean = true, after: number = 0): Promise<Member[]|Error> {
+        if (!this.guilds.get(guildId)) await this.fetchGuild(guildId);
+        if (!this.guilds.get(guildId)) return new Error('UNKNOWN ERROR on fetching members from ' + guildId)
+        const r = await this.requestHandler.request('GET', GUILD_MEMBERS(guildId, limit, after)).catch(e => {
+            return e;
+        }) as APIGuildMember[];
+        const members: Member[] = [];
+        for(const m of r) {
+            const member = new Member(this, this.guilds.get(guildId)!, m);
+            members.push(member);
+            if (setToCache) {
+                this.users.set(member.user.id, member.user);
+                this.guilds.get(guildId)!.members.set(member.user.id, member);
+            }
+        }
+        return members;
+    }
+
 }
 
 // events declaration for docs
@@ -199,3 +230,5 @@ export declare function connected(): void;
  * @event
  */
 export declare function error(error: Error): void;
+
+export declare function warn(error: Error): void;

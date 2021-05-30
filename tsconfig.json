@@ -15,6 +15,7 @@
         "typeRoots": [
             "src/typing",
             "node_modules/@types"
-        ]
+        ],
+        "experimentalDecorators": true
     }
 }
