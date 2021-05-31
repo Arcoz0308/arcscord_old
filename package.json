@@ -12,7 +12,7 @@
     "build": "tsc",
     "docs": "typedoc --tsconfig typedoc.json"
   },
-  "author": "arcoz",
+  "author": "arcoz0308",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^15.0.1",
