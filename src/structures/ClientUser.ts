@@ -1,6 +1,6 @@
-import {User} from "./User";
-import {Activity, Presence, PresenceStatus} from "../typing/Types";
-import {USER_ME} from "../requests/EndPoints";
+import { User } from './User';
+import { Activity, Presence, PresenceStatus } from '../typing/Types';
+import { USER_ME } from '../requests/EndPoints';
 
 /**
  * @category Structures
@@ -59,18 +59,22 @@ export class ClientUser extends User {
         this.client.gateway.updatePresence(this.client.presence);
     }
 
-    public edit(data: { username?: string, avatar?: string }) {
-        this.client.requestHandler.request('PATCH', USER_ME, data).then(r => {
-            this.username = r.username;
-            this.avatar = r.avatar;
-        }).catch(console.error);
+    public edit(data: { username?: string; avatar?: string }) {
+        this.client.requestHandler
+            .request('PATCH', USER_ME, data)
+            .then((r) => {
+                this.username = r.username;
+                this.avatar = r.avatar;
+            })
+            .catch(console.error);
     }
 
     public setUsername(username: string) {
-        this.edit({username});
+        this.edit({ username });
     }
+
     public setAvatar(avatar: string) {
         //TODO check data format
-        this.edit({avatar});
+        this.edit({ avatar });
     }
 }

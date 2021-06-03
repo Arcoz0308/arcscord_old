@@ -1,4 +1,4 @@
-import {Client} from "../../Client";
+import { Client } from '../../Client';
 
 export class Action {
     public client: Client;

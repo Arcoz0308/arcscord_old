@@ -26,10 +26,11 @@ export enum ActivityTypes {
     /**
      * Competing in {name}
      */
-    competing = 5
+    competing = 5,
 }
 
 export type ActivityType = keyof typeof ActivityTypes;
+
 /**
  * a presence object
  * @interface
@@ -53,7 +54,13 @@ export interface Presence {
     afk?: boolean;
 }
 
-export type PresenceStatus = "online" | "dnd" | "idle" | "invisible" | "offline";
+export type PresenceStatus =
+    | 'online'
+    | 'dnd'
+    | 'idle'
+    | 'invisible'
+    | 'offline';
+
 /**
  *
  */
@@ -75,7 +82,7 @@ export interface Activity {
     url?: string;
 }
 
-export type imageFormats = "jpg" | "png" | "webp" | "gif";
+export type imageFormats = 'jpg' | 'png' | 'webp' | 'gif';
 export type imageSize = 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096;
 
 export interface ImageUrlOptions {

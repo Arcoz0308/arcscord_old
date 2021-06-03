@@ -1,7 +1,7 @@
-import {Base} from "./Base";
-import {Snowflake} from "../utils/Utils";
-import {Client} from "../Client";
-import {APIMessage} from "discord-api-types";
+import { Base } from './Base';
+import { Snowflake } from '../utils/Utils';
+import { Client } from '../Client';
+import { APIMessage } from 'discord-api-types';
 
 /**
  * @category Structures
@@ -15,11 +15,11 @@ export class Message extends Base {
         this.id = data.id;
         this.channelId = data.channel_id;
     }
-
 }
+
 export interface MessageOptions {
-
 }
+
 export interface MessageOptionsWithContent extends MessageOptions {
     content?: string;
 }

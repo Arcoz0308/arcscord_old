@@ -1,6 +1,6 @@
-import {Action} from './Action';
-import {GatewayReadyDispatchData} from 'discord-api-types';
-import {ClientUser} from '../../structures/ClientUser';
+import { Action } from './Action';
+import { GatewayReadyDispatchData } from 'discord-api-types';
+import { ClientUser } from '../../structures/ClientUser';
 
 export class READY extends Action {
     async handle(d: GatewayReadyDispatchData) {

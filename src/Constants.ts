@@ -2,7 +2,7 @@
  * list of intents
  * @see https://discord.com/developers/docs/topics/gateway#list-of-intents
  */
-export enum Intents  {
+export enum Intents {
     /**
      * include events :
      * - GUILD_CREATE
@@ -112,6 +112,7 @@ export enum Intents  {
      * include event :
      * - TYPING_START
      */
-    DIRECT_MESSAGE_TYPING = 1 << 14
+    DIRECT_MESSAGE_TYPING = 1 << 14,
 }
+
 export const API_VERSION: number = 9;

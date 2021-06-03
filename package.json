@@ -25,6 +25,7 @@
   "devDependencies": {
     "i": "^0.3.6",
     "npm": "^7.13.0",
+    "prettier": "2.3.0",
     "ts-node": "^9.1.1",
     "typedoc": "^0.20.36",
     "typedoc-plugin-as-member-of": "^1.0.2",
@@ -44,5 +45,11 @@
   "bugs": {
     "url": "https://github.com/arclegrandroi/arcscord/issues"
   },
-  "homepage": "https://github.com/arclegrandroi/arcscord#readme"
+  "homepage": "https://github.com/arclegrandroi/arcscord#readme",
+  "prettier": {
+    "trailingComma": "es6",
+    "tabWidth": 4,
+    "semi": false,
+    "jsxSingleQuote": true
+  }
 }

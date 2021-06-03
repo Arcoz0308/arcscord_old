@@ -1,21 +1,21 @@
 {
-    "include": [
-        "src/**/*",
-        "Test.ts"
+  "include": [
+    "src/**/*",
+    "Test.ts"
+  ],
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "strict": true,
+    "moduleResolution": "node",
+    "suppressImplicitAnyIndexErrors": true,
+    "declaration": true,
+    "resolveJsonModule": true,
+    "outDir": "./lib",
+    "typeRoots": [
+      "src/typing",
+      "node_modules/@types"
     ],
-    "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        "strict": true,
-        "moduleResolution": "node",
-        "suppressImplicitAnyIndexErrors": true,
-        "declaration": true,
-        "resolveJsonModule": true,
-        "outDir": "./lib",
-        "typeRoots": [
-            "src/typing",
-            "node_modules/@types"
-        ],
-        "experimentalDecorators": true
-    }
+    "experimentalDecorators": true
+  }
 }

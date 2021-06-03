@@ -4,7 +4,15 @@ export class RequestError extends Error {
     public data?: any;
     public status?: string;
     public msg?: string;
-    constructor(message: string,method: string, url: string, data?: any, status?: string, msg?: string) {
+
+    constructor(
+        message: string,
+        method: string,
+        url: string,
+        data?: any,
+        status?: string,
+        msg?: string
+    ) {
         message += `
 debug: 
 url : ${url}
@@ -18,5 +26,4 @@ message : ${msg}`;
         this.status = status;
         this.msg = msg;
     }
-
 }

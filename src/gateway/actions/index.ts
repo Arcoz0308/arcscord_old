@@ -1,1 +1,1 @@
-export * from "./READY";
+export * from './READY';

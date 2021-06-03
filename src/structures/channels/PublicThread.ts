@@ -1,5 +1,4 @@
-import {Thread} from "./Thread";
+import { Thread } from './Thread';
 
 export class PublicThread extends Thread {
-
 }

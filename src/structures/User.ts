@@ -1,10 +1,10 @@
-import {Base} from "./Base";
-import {Snowflake} from "../utils/Utils";
-import {Client} from "../Client";
-import {APIUser} from "discord-api-types";
-import {getDate} from "../utils/Snowflake";
-import {ImageUrlOptions} from "../typing/Types";
-import {DEFAULT_USER_AVATAR, USER_AVATAR} from "../requests/EndPoints";
+import { Base } from './Base';
+import { Snowflake } from '../utils/Utils';
+import { Client } from '../Client';
+import { APIUser } from 'discord-api-types';
+import { getDate } from '../utils/Snowflake';
+import { ImageUrlOptions } from '../typing/Types';
+import { DEFAULT_USER_AVATAR, USER_AVATAR } from '../requests/EndPoints';
 
 /**
  * @category Structures
@@ -81,12 +81,13 @@ export class User extends Base {
      * @param size the size of image
      * @param dynamic if the avatar are animated give gif
      */
-    avatarURL({format, size, dynamic}: ImageUrlOptions): string {
-        if (!format) format = "jpg";
+    avatarURL({ format, size, dynamic }: ImageUrlOptions): string {
+        if (!format) format = 'jpg';
         if (!size) size = 4096;
         if (!dynamic) dynamic = false;
-        if (!this.avatar) return DEFAULT_USER_AVATAR(`${parseInt(this.discriminator, 10) % 5}`);
-        if (dynamic && this.avatar && this.avatar.startsWith("a_")) format = "gif";
+        if (!this.avatar)
+            return DEFAULT_USER_AVATAR(`${parseInt(this.discriminator, 10) % 5}`);
+        if (dynamic && this.avatar && this.avatar.startsWith('a_')) format = 'gif';
         return USER_AVATAR(this.id, this.avatar, format, size);
     }
 
