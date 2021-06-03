@@ -1,12 +1,12 @@
-import {Base} from "./Base";
-import {Snowflake} from "../utils/Utils";
-import {Channel} from "./channels/Channel";
-import {Guild} from "./Guild";
-import {User} from "./User";
-import {Member} from "./Member";
-import {Client} from "../Client";
-import {APIInteraction} from "discord-api-types";
-import {isGuildInteraction} from "discord-api-types/utils";
+import {Base} from './Base';
+import {Snowflake} from '../utils/Utils';
+import {Channel} from './channels/Channel';
+import {Guild} from './Guild';
+import {User} from './User';
+import {Member} from './Member';
+import {Client} from '../Client';
+import {APIInteraction} from 'discord-api-types';
+import {isGuildInteraction} from 'discord-api-types/utils';
 
 /**
  * @category Structures
@@ -18,10 +18,12 @@ export class CommandInteraction extends Base {
     public user: User;
     public member: Member|null;
     public token: string;
+    public data: APIInteraction;
     constructor(client: Client, data: APIInteraction) {
         super(client);
+        this.data = data;
         this.id = data.id;
-        this.channel = new Channel(client); //TODO search channel on bot and create structure
+        this.channel = client.channels.get(data.channel_id) || null;
         this.token = data.token;
         if (isGuildInteraction(data)) {
             this.guild = client.guilds.get(data.guild_id)!;

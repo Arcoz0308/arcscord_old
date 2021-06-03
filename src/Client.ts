@@ -1,17 +1,19 @@
-import {APIGuildMember, APIMessage, GatewayDispatchEvents} from "discord-api-types";
-import {Presence} from "./typing/Types"
-import {Gateway, rawWSEvent} from "./gateway/Gateway";
-import {RequestHandler} from "./requests/RequestHandler";
-import {GATEWAY_CONNECT, GUILD, GUILD_MEMBERS, MESSAGES} from "./requests/EndPoints";
-import {RequestError} from "./utils/Errors";
+import {APIGuildMember, APIMessage, GatewayDispatchEvents} from 'discord-api-types';
+import {Presence} from './typing/Types'
+import {Gateway, rawWSEvent} from './gateway/Gateway';
+import {RequestHandler} from './requests/RequestHandler';
+import {APPLICATION_GLOBAL_COMMANDS, GATEWAY_CONNECT, GUILD, GUILD_MEMBERS, MESSAGES} from './requests/EndPoints';
+import {RequestError} from './utils/Errors';
 import {Intents} from './Constants'
-import {EventEmitter} from "events";
-import {ClientUser} from "./structures/ClientUser";
-import {User} from "./structures/User";
-import {Snowflake} from "./utils/Utils";
-import {Guild} from "./structures/Guild"
-import {Member} from "./structures/Member";
-import {Message, MessageOptions, MessageOptionsWithContent} from "./structures/Message";
+import {EventEmitter} from 'events';
+import {ClientUser} from './structures/ClientUser';
+import {User} from './structures/User';
+import {Snowflake} from './utils/Utils';
+import {Guild} from './structures/Guild'
+import {Member} from './structures/Member';
+import {Message, MessageOptions, MessageOptionsWithContent} from './structures/Message';
+import {Channel} from './structures/channels/Channel';
+import {ApplicationCommand} from './structures/ApplicationCommand';
 
 
 export interface ClientOptions {
@@ -39,6 +41,11 @@ export interface ClientOptions {
      * @default true
      */
     isABot?: boolean;
+    /**
+     * if the bot fetch self all slash commands
+     * @default true
+     */
+    slashCommandByDefault?: boolean;
 }
 
 export declare interface Client {
@@ -122,17 +129,24 @@ export class Client extends EventEmitter {
 
     public users = new Map<Snowflake, User>();
     public guilds = new Map<Snowflake, Guild>();
+    public channels = new Map<Snowflake, Channel>();
+    public slashCommands = new Map<Snowflake, ApplicationCommand>();
 
     public unavailableGuilds: Snowflake[] = [];
+
+    /**
+     * @internal
+     */
+    public readonly slashCommand: boolean;
 
     /**
      * @param token the token of the bot
      * @param options options of the bot
      */
-    constructor(token: string, options: ClientOptions) {
+    constructor(token: string, options: ClientOptions = {}) {
         super();
         this.token = token;
-
+        this.slashCommand = typeof options.slashCommandByDefault === 'undefined' ? true : options.slashCommandByDefault;
         let intents = 32765;
         if (options.disableIntents) {
             for (const intent of options.disableIntents) {
@@ -215,6 +229,16 @@ export class Client extends EventEmitter {
         if (r.guild_id && this.guilds.has(r.guild_id)) await this.fetchGuild(r.guild_id);
         //TODO channel, user and members
         return new Message(this, r);
+    }
+
+    public async getApplicationCommands(): Promise<ApplicationCommand[] | undefined> {
+        if (!this.user) return undefined;
+        const cmds = await this.requestHandler.request('GET', APPLICATION_GLOBAL_COMMANDS(this.user.id));
+        const commands: ApplicationCommand[] = [];
+        for (const cmd of cmds) {
+            commands.push(new ApplicationCommand(this, cmd));
+        }
+        return commands;
     }
 
 }

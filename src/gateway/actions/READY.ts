@@ -1,6 +1,6 @@
-import {Action} from "./Action";
-import {GatewayReadyDispatchData} from "discord-api-types";
-import {ClientUser} from "../../structures/ClientUser";
+import {Action} from './Action';
+import {GatewayReadyDispatchData} from 'discord-api-types';
+import {ClientUser} from '../../structures/ClientUser';
 
 export class READY extends Action {
     async handle(d: GatewayReadyDispatchData) {
@@ -10,9 +10,17 @@ export class READY extends Action {
             await this.client.gateway.createGuild(guild);
         }
         if (this.client.fetchAllMembers) {
-             for (const [id] of this.client.guilds) {
+            for (const [id] of this.client.guilds) {
                 await this.client.fetchMembers(id, 1000);
-             }
+            }
+        }
+        if (this.client.slashCommand) {
+            const commands = await this.client.getApplicationCommands();
+            if (commands) {
+                for (const command of commands) {
+                    this.client.slashCommands.set(command.id, command);
+                }
+            }
         }
         this.client.emit('ready');
     }
