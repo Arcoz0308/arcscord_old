@@ -262,7 +262,7 @@ export class Client extends EventEmitter {
         return new Message(this, r);
     }
 
-    public async getApplicationCommands(): Promise<ApplicationCommand[] | undefined> {
+    public async fetchApplicationCommands(): Promise<ApplicationCommand[] | undefined> {
         if (!this.user) return undefined;
         const cmds = await this.requestHandler.request(
             'GET',

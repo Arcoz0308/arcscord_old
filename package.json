@@ -1,6 +1,6 @@
 {
   "name": "arcscord",
-  "version": "0.1.0-beta",
+  "version": "0.2.0-beta",
   "description": "a discord library in typescript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

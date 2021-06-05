@@ -15,7 +15,7 @@ export class READY extends Action {
             }
         }
         if (this.client.slashCommand) {
-            const commands = await this.client.getApplicationCommands();
+            const commands = await this.client.fetchApplicationCommands();
             if (commands) {
                 for (const command of commands) {
                     this.client.slashCommands.set(command.id, command);

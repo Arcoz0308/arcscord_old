@@ -6,7 +6,7 @@ import { Snowflake } from '../../utils/Utils';
 import { Message, MessageOptions, MessageOptionsWithContent } from '../Message';
 
 export class TextChannel extends GuildChannel {
-    public readonly type: ChannelTypes.TEXT_CHANNEL | ChannelTypes.NEWS_CHANNEL =
+    public readonly type: ChannelTypes.TEXT_CHANNEL | ChannelTypes.NEWS_CHANNEL | ChannelTypes.UNKNOWN =
         ChannelTypes.TEXT_CHANNEL;
     public topic: string | null;
     public rateLimitPerUser: number | null;
@@ -37,7 +37,7 @@ export class TextChannel extends GuildChannel {
         cOrM: string | MessageOptionsWithContent,
         msg?: MessageOptions
     ): Promise<Message> {
-        if (msg) return this.client.createMessage(this.id, cOrM as string, msg);
-        return this.client.createMessage(this.id, cOrM as MessageOptionsWithContent);
+        if (typeof cOrM === 'string') return this.client.createMessage(this.id, cOrM, msg);
+        return this.client.createMessage(this.id, cOrM);
     }
 }
