@@ -1,5 +1,6 @@
 import { Snowflake } from './Snowflake';
 
+
 export class PermissionOverwrite {
     public type: 'role' | 'member';
     public id: Snowflake;

@@ -1,7 +1,7 @@
-import { Client } from '../Client';
 import axios, { AxiosInstance, Method } from 'axios';
-import { BASE_URL } from './EndPoints';
+import { Client } from '../Client';
 import { RequestError } from '../utils/Errors';
+import { BASE_URL } from './EndPoints';
 
 //TODO rate limit
 export class RequestHandler {

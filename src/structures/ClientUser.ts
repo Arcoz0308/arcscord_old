@@ -1,6 +1,7 @@
-import { User } from './User';
-import { Activity, Presence, PresenceStatus } from './';
 import { USER_ME } from '../requests/EndPoints';
+import { Activity, Presence, PresenceStatus } from './';
+import { User } from './User';
+
 
 /**
  * @category Structures

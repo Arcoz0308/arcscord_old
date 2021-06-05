@@ -1,9 +1,10 @@
-import { GuildChannel } from './GuildChannel';
-import { ChannelTypes } from './Channel';
-import { Client } from '../../Client';
 import { APIChannel } from 'discord-api-types';
+import { Client } from '../../Client';
 import { Snowflake } from '../../utils/Snowflake';
 import { Message, MessageOptions, MessageOptionsWithContent } from '../Message';
+import { ChannelTypes } from './Channel';
+import { GuildChannel } from './GuildChannel';
+
 
 export class TextChannel extends GuildChannel {
     public readonly type: ChannelTypes.TEXT_CHANNEL | ChannelTypes.NEWS_CHANNEL | ChannelTypes.UNKNOWN =

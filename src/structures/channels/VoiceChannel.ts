@@ -1,7 +1,8 @@
-import { GuildChannel } from './GuildChannel';
-import { ChannelTypes } from './Channel';
-import { Client } from '../../Client';
 import { APIChannel } from 'discord-api-types';
+import { Client } from '../../Client';
+import { ChannelTypes } from './Channel';
+import { GuildChannel } from './GuildChannel';
+
 
 export class VoiceChannel extends GuildChannel {
     public readonly type:

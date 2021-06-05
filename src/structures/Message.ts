@@ -1,7 +1,8 @@
-import { Base } from './Base';
-import { Snowflake } from '../utils/Snowflake';
-import { Client } from '../Client';
 import { APIMessage } from 'discord-api-types';
+import { Client } from '../Client';
+import { Snowflake } from '../utils/Snowflake';
+import { Base } from './Base';
+
 
 /**
  * @category Structures

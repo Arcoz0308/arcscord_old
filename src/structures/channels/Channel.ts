@@ -1,15 +1,16 @@
-import { Base } from '../Base';
-import { APIChannel, ChannelType} from 'discord-api-types';
+import { APIChannel, ChannelType } from 'discord-api-types';
 import { Client } from '../../Client';
-import { TextChannel } from './TextChannel';
-import { PrivateChannel } from './PrivateChannel';
-import { VoiceChannel } from './VoiceChannel';
+import { Snowflake } from '../../utils/Snowflake';
+import { Base } from '../Base';
 import { GroupChannel } from './GroupChannel';
-import { NewsChannel } from './NewsChannel';
-import { StoreChannel } from './StoreChannel';
-import { StageChannel } from './StageChannel';
 import { GuildChannel } from './GuildChannel';
-import { Snowflake } from '../../utils/Snowflake'
+import { NewsChannel } from './NewsChannel';
+import { PrivateChannel } from './PrivateChannel';
+import { StageChannel } from './StageChannel';
+import { StoreChannel } from './StoreChannel';
+import { TextChannel } from './TextChannel';
+import { VoiceChannel } from './VoiceChannel';
+
 
 export class Channel extends Base {
     public id: Snowflake;

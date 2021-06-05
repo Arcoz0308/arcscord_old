@@ -1,5 +1,6 @@
-import { imageFormats, imageSize } from '../utils/Utils';
 import { Snowflake } from '../utils/Snowflake';
+import { imageFormats, imageSize } from '../utils/Utils';
+
 
 export const REST_VERSION = 9;
 export const BASE_URL = `https://discord.com/api/v${REST_VERSION}`;

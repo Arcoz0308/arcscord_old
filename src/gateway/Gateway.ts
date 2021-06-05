@@ -1,6 +1,3 @@
-import { Client } from '../Client';
-import { API_VERSION } from '../Constants';
-import * as a from './actions';
 import {
     APIUnavailableGuild,
     GatewayDispatchEvents,
@@ -10,10 +7,14 @@ import {
     GatewayPresenceUpdateData,
     GatewayReceivePayload
 } from 'discord-api-types';
+import { Client } from '../Client';
+import { API_VERSION } from '../Constants';
+import { GUILD } from '../requests/EndPoints';
 import { ActivityTypes, Presence } from '../structures';
 import { Guild } from '../structures/Guild';
-import { GUILD } from '../requests/EndPoints';
+import * as a from './actions';
 import WebSocket = require('ws');
+
 
 export interface rawWSEvent {
     d: any;

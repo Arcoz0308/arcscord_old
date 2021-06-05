@@ -1,10 +1,10 @@
-import { Base } from "./Base"
-import { Snowflake } from "../utils/Snowflake";
-import { Client } from "../Client"
-import { APIUser } from "discord-api-types"
-import { getDate } from "../utils/Snowflake"
-import { ImageUrlOptions } from "../utils/Utils"
-import { DEFAULT_USER_AVATAR, USER_AVATAR } from "../requests/EndPoints"
+import { APIUser } from 'discord-api-types';
+import { Client } from '../Client';
+import { DEFAULT_USER_AVATAR, USER_AVATAR } from '../requests/EndPoints';
+import { getDate, Snowflake } from '../utils/Snowflake';
+import { ImageUrlOptions } from '../utils/Utils';
+import { Base } from './Base';
+
 
 /**
  * @category Structures
@@ -95,6 +95,7 @@ export class User extends Base {
         return `<@${this.id}>`;
     }
 }
+
 /**
  * list of activity types
  */

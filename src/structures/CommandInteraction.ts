@@ -1,12 +1,13 @@
-import { Base } from './Base';
-import { Snowflake } from '../utils/Snowflake';
-import { Channel } from './channels/Channel';
-import { Guild } from './Guild';
-import { User } from './User';
-import { Member } from './Member';
-import { Client } from '../Client';
 import { APIInteraction } from 'discord-api-types';
 import { isGuildInteraction } from 'discord-api-types/utils';
+import { Client } from '../Client';
+import { Snowflake } from '../utils/Snowflake';
+import { Base } from './Base';
+import { Channel } from './channels/Channel';
+import { Guild } from './Guild';
+import { Member } from './Member';
+import { User } from './User';
+
 
 /**
  * @category Structures

@@ -1,9 +1,10 @@
-import { Channel } from './Channel';
-import { Client } from '../../Client';
 import { APIChannel } from 'discord-api-types';
-import { Guild } from '../Guild';
-import { Snowflake } from '../../utils/Snowflake';
+import { Client } from '../../Client';
 import { PermissionOverwrite } from '../../utils/PermissionOverwrite';
+import { Snowflake } from '../../utils/Snowflake';
+import { Guild } from '../Guild';
+import { Channel } from './Channel';
+
 
 export class GuildChannel extends Channel {
     public name: string;
