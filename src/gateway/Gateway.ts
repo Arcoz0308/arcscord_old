@@ -10,7 +10,7 @@ import {
     GatewayPresenceUpdateData,
     GatewayReceivePayload
 } from 'discord-api-types';
-import { ActivityTypes, Presence } from '../typing/Types';
+import { ActivityTypes, Presence } from '../structures';
 import { Guild } from '../structures/Guild';
 import { GUILD } from '../requests/EndPoints';
 import WebSocket = require('ws');

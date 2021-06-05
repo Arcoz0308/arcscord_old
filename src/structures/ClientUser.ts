@@ -1,5 +1,5 @@
 import { User } from './User';
-import { Activity, Presence, PresenceStatus } from '../typing/Types';
+import { Activity, Presence, PresenceStatus } from './';
 import { USER_ME } from '../requests/EndPoints';
 
 /**

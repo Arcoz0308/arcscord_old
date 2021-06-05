@@ -1,5 +1,5 @@
 import { Base } from './Base';
-import { Snowflake } from '../utils/Utils';
+import { Snowflake } from '../utils/Snowflake';
 import { Client } from '../Client';
 import { APIMessage } from 'discord-api-types';
 

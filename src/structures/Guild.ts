@@ -1,7 +1,7 @@
 import { Base } from './Base';
 import { Client } from '../Client';
 import { APIGuild } from 'discord-api-types';
-import { Snowflake } from '../utils/Utils';
+import { Snowflake } from '../utils/Snowflake';
 import { Member } from './Member';
 
 /**

@@ -2,7 +2,7 @@ import { GuildChannel } from './GuildChannel';
 import { ChannelTypes } from './Channel';
 import { Client } from '../../Client';
 import { APIChannel } from 'discord-api-types';
-import { Snowflake } from '../../utils/Utils';
+import { Snowflake } from '../../utils/Snowflake';
 import { Message, MessageOptions, MessageOptionsWithContent } from '../Message';
 
 export class TextChannel extends GuildChannel {

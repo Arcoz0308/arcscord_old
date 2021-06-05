@@ -1,5 +1,5 @@
 import { Base } from './Base';
-import { Snowflake } from '../utils/Utils';
+import { Snowflake } from '../utils/Snowflake';
 import { Channel } from './channels/Channel';
 import { Guild } from './Guild';
 import { User } from './User';

@@ -1,10 +1,10 @@
-import { Base } from './Base';
-import { Snowflake } from '../utils/Utils';
-import { Client } from '../Client';
-import { APIUser } from 'discord-api-types';
-import { getDate } from '../utils/Snowflake';
-import { ImageUrlOptions } from '../typing/Types';
-import { DEFAULT_USER_AVATAR, USER_AVATAR } from '../requests/EndPoints';
+import { Base } from "./Base"
+import { Snowflake } from "../utils/Snowflake";
+import { Client } from "../Client"
+import { APIUser } from "discord-api-types"
+import { getDate } from "../utils/Snowflake"
+import { ImageUrlOptions } from "../utils/Utils"
+import { DEFAULT_USER_AVATAR, USER_AVATAR } from "../requests/EndPoints"
 
 /**
  * @category Structures
@@ -94,4 +94,87 @@ export class User extends Base {
     toString() {
         return `<@${this.id}>`;
     }
+}
+/**
+ * list of activity types
+ */
+export enum ActivityTypes {
+    /**
+     * Playing {game}
+     */
+    game = 0,
+    /**
+     * Streaming {details}
+     */
+    streaming = 1,
+    /**
+     * Listening to {name}
+     */
+    listening = 2,
+    /**
+     * Watching {details}
+     */
+    watching = 3,
+    /**
+     * {emoji} {details}
+     * WARNING : don't work for bots
+     */
+    custom = 4,
+    /**
+     * Competing in {name}
+     */
+    competing = 5,
+}
+
+export type ActivityType = keyof typeof ActivityTypes;
+
+/**
+ * a presence object
+ * @interface
+ */
+export interface Presence {
+    /**
+     * The user's activities
+     *
+     * See https://discord.com/developers/docs/topics/gateway#activity-object
+     */
+    activity?: Activity;
+    /**
+     * The user's new status
+     *
+     * See https://discord.com/developers/docs/topics/gateway#update-status-status-types
+     */
+    status?: PresenceStatus;
+    /**
+     * Whether or not the client is afk. default false
+     */
+    afk?: boolean;
+}
+
+export type PresenceStatus =
+    | 'online'
+    | 'dnd'
+    | 'idle'
+    | 'invisible'
+    | 'offline';
+
+/**
+ *
+ */
+export interface Activity {
+    /**
+     * The activity's name
+     */
+    name: string;
+    /**
+     * Activity type
+     *
+     * @see https://discord.com/developers/docs/topics/gateway#activity-object-activity-types
+     * @default "game"
+     */
+    type?: ActivityType;
+    /**
+     * Stream url (only with type Streaming)
+     */
+    url?: string;
 }

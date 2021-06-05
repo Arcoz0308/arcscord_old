@@ -1,19 +1,16 @@
-import { APIGuildMember, APIMessage, GatewayDispatchEvents } from 'discord-api-types';
-import { Presence } from './typing/Types';
-import { Gateway, rawWSEvent } from './gateway/Gateway';
-import { RequestHandler } from './requests/RequestHandler';
-import { APPLICATION_GLOBAL_COMMANDS, GATEWAY_CONNECT, GUILD, GUILD_MEMBERS, MESSAGES } from './requests/EndPoints';
-import { RequestError } from './utils/Errors';
-import { Intents } from './Constants';
-import { EventEmitter } from 'events';
-import { ClientUser } from './structures/ClientUser';
-import { User } from './structures/User';
-import { Snowflake } from './utils/Utils';
-import { Guild } from './structures/Guild';
-import { Member } from './structures/Member';
-import { Message, MessageOptions, MessageOptionsWithContent } from './structures/Message';
-import { Channel } from './structures/channels/Channel';
-import { ApplicationCommand } from './structures/ApplicationCommand';
+import { APIGuildMember, APIMessage, GatewayDispatchEvents } from 'discord-api-types'
+import { Presence, ClientUser, User, Guild } from './structures'
+import { Gateway, rawWSEvent } from './gateway/Gateway'
+import { RequestHandler } from './requests/RequestHandler'
+import { APPLICATION_GLOBAL_COMMANDS, GATEWAY_CONNECT, GUILD, GUILD_MEMBERS, MESSAGES } from './requests/EndPoints'
+import { RequestError } from './utils/Errors'
+import { Intents } from './Constants'
+import { EventEmitter } from 'events'
+import { Snowflake } from './utils/Snowflake'
+import { Member } from './structures/Member'
+import { Message, MessageOptions, MessageOptionsWithContent } from './structures/Message'
+import { Channel } from './structures/channels/Channel'
+import { ApplicationCommand } from './structures/ApplicationCommand'
 
 export interface ClientOptions {
     /**

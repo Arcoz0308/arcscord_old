@@ -1,7 +1,6 @@
 {
   "include": [
-    "src/**/*",
-    "Test.ts"
+    "src/**/*"
   ],
   "compilerOptions": {
     "target": "es6",

@@ -1,6 +1,6 @@
 import { Base } from './Base';
 import { User } from './User';
-import { Snowflake } from '../utils/Utils';
+import { Snowflake } from '../utils/Snowflake';
 import { Client } from '../Client';
 import { APIGuildMember } from 'discord-api-types';
 import { Guild } from './Guild';
