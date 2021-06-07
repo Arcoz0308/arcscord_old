@@ -168,7 +168,9 @@ export class Client extends EventEmitter {
     /**
      * get bot ping (⚠ before the first heartbeat the ping are infinity)
      */
-    public get ping(): number { return this.gateway.latency; }
+    public get ping(): number {
+        return this.gateway.latency; 
+    }
 
     /**
      * connect the bot to discord
