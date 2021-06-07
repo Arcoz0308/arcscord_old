@@ -200,21 +200,15 @@ export class Client extends EventEmitter {
         return guild;
     }
 
-    public async fetchMembers(
-        guildId: Snowflake,
-        limit: number = 100,
-        setToCache: boolean = true,
-        after: number = 0
-    ): Promise<Member[] | Error> {
-
+    public async fetchMembers(guildId: Snowflake, limit: number = 100, setToCache: boolean = true, after: number = 0): Promise<Member[] | Error> {
         if (!this.guilds.get(guildId)) await this.fetchGuild(guildId);
         if (!this.guilds.get(guildId))
             return new Error('UNKNOWN ERROR on fetching members from ' + guildId);
         const r = (await this.requestHandler
-            .request('GET', GUILD_MEMBERS(guildId, limit, after))
-            .catch((e) => {
-                return e;
-            })) as APIGuildMember[];
+                             .request('GET', GUILD_MEMBERS(guildId, limit, after))
+                             .catch((e) => {
+                                 return e;
+                             })) as APIGuildMember[];
         const members: Member[] = [];
         for (const m of r) {
             const member = new Member(this, this.guilds.get(guildId)!, m);
