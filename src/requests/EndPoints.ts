@@ -12,6 +12,7 @@ export const APPLICATION_GLOBAL_COMMAND = (
 ) => `/applications/${applicationId}/commands/${cmdId}`;
 export const APPLICATION_GLOBAL_COMMANDS = (applicationId: Snowflake) =>
     `/applications/${applicationId}/commands`;
+export const DM_CHANNEL = `${USER_ME}/channels/`;
 export const GATEWAY_CONNECT = '/gateway/bot';
 export const GUILD = (guildId: Snowflake) => `/guilds/${guildId}`;
 export const GUILD_MEMBERS = (
@@ -23,7 +24,6 @@ export const MESSAGE = (channelId: Snowflake, msgId: Snowflake) =>
     `/channels/${channelId}/messages/${msgId}`;
 export const MESSAGES = (channelId: Snowflake) =>
     `/channels/${channelId}/messages`;
-export const MESSAGES_DM = `${USER_ME}/channels/`;
 export const USER_ME = '/users/@me';
 
 //images
