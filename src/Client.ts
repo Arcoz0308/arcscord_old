@@ -14,15 +14,18 @@ import {
     MESSAGES
 } from './requests/EndPoints';
 import { RequestHandler } from './requests/RequestHandler';
-import { ClientUser, Guild, Presence, User } from './structures';
-import { ApplicationCommand } from './structures/ApplicationCommand';
-import { Channel } from './structures/channels/Channel';
-import { Member } from './structures/Member';
 import {
+    ApplicationCommand,
+    Channel,
+    ClientUser,
+    Guild,
+    Member,
     Message,
     MessageOptions,
-    MessageOptionsWithContent
-} from './structures/Message';
+    MessageOptionsWithContent,
+    Presence,
+    User
+} from './structures';
 import { RequestError } from './utils/Errors';
 import { Snowflake } from './utils/Snowflake';
 

@@ -10,8 +10,7 @@ import {
 import { Client } from '../Client';
 import { API_VERSION } from '../Constants';
 import { GUILD } from '../requests/EndPoints';
-import { ActivityTypes, Presence } from '../structures';
-import { Guild } from '../structures/Guild';
+import { ActivityTypes, Guild, Presence } from '../structures';
 import * as a from './actions';
 import WebSocket = require('ws');
 

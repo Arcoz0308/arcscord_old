@@ -1,5 +1,5 @@
 import { GatewayReadyDispatchData } from 'discord-api-types';
-import { ClientUser } from '../../structures/ClientUser';
+import { ClientUser } from '../../structures';
 import { Action } from './Action';
 
 
