@@ -40,10 +40,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arclegrandroi/arcscord.git"
+    "url": "git+https://github.com/arcoz0308/arcscord.git"
   },
   "bugs": {
-    "url": "https://github.com/arclegrandroi/arcscord/issues"
+    "url": "https://github.com/arcoz0308/arcscord/issues"
   },
-  "homepage": "https://github.com/arclegrandroi/arcscord#readme"
+  "homepage": "https://github.com/arcoz0308/arcscord#readme"
 }
