@@ -248,7 +248,7 @@ export class Client extends EventEmitter {
         } else {
             r = await this.requestHandler.request('POST', MESSAGES(channelId), cOrM);
         }
-        if (r.guild_id && this.guilds.has(r.guild_id))
+        if (r.guild_id && !this.guilds.has(r.guild_id))
             await this.fetchGuild(r.guild_id);
         //TODO channel, user and members
         return new Message(this, r);
