@@ -45,11 +45,5 @@
   "bugs": {
     "url": "https://github.com/arclegrandroi/arcscord/issues"
   },
-  "homepage": "https://github.com/arclegrandroi/arcscord#readme",
-  "prettier": {
-    "trailingComma": "es6",
-    "tabWidth": 4,
-    "semi": false,
-    "jsxSingleQuote": true
-  }
+  "homepage": "https://github.com/arclegrandroi/arcscord#readme"
 }

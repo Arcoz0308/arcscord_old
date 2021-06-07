@@ -211,7 +211,7 @@ export class Client extends EventEmitter {
         return guild;
         
     }
-
+  
     public async fetchMembers(guildId: Snowflake, limit: number = 100, setToCache: boolean = true, after: number = 0): Promise<Member[] | Error>
     {
         
