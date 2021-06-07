@@ -140,21 +140,21 @@ export class Client extends EventEmitter {
      * @param token the token of the bot
      * @param options options of the bot
      */
-    constructor(token: string, options: ClientOptions = {}) {
+    constructor(token: string, options: ClientOptions = {}) 
+    {
+        
         super();
+        
         this.token = token;
-        this.slashCommand =
-            typeof options.slashCommandByDefault === 'undefined'
-                ? true
-                : options.slashCommandByDefault;
+        this.slashCommand = typeof options.slashCommandByDefault === 'undefined'? true : options.slashCommandByDefault;
         let intents = 32765;
-        if (options.disableIntents) {
+        
+        if (options.disableIntents)
             for (const intent of options.disableIntents) {
                 intents -= Intents[intent];
             }
-        }
         this.intents = intents;
-
+        
         this.disableEvents = options.disablesEvents;
         this.presence = options.presence ? options.presence : {};
         this.fetchAllMembers = !!options.fetchAllMembers;
@@ -162,109 +162,144 @@ export class Client extends EventEmitter {
 
         this.gateway = new Gateway(this);
         this.requestHandler = new RequestHandler(this);
+        
     }
 
     /**
      * get bot ping (⚠ before the first heartbeat the ping are infinity)
      */
     public get ping(): number {
-        return this.gateway.latency;
+        return this.gateway.latency; 
     }
 
     /**
      * connect the bot to discord
      */
-    public connect(): Client {
+    public connect(): Client 
+    {
+        
         this.requestHandler.request('GET', GATEWAY_CONNECT).then((r) => {
+            
             if (r instanceof RequestError) {
                 if (r.status === '403') throw new Error('TOKEN ARE INVALID !');
                 throw r;
             }
+            
             let url: string = r.url;
             this.gateway.connect(url);
+            
         });
+        
         return this;
+        
     }
 
-    public async fetchGuild(
-        id: Snowflake,
-        checkCache: boolean = true,
-        setToCache: boolean = true
-    ): Promise<Guild> {
-        if (checkCache && this.guilds.has(id)) return this.guilds.get(id)!;
+    public async fetchGuild(id: Snowflake, checkCache: boolean = true, setToCache: boolean = true): Promise<Guild>
+    {
+        
+        if (checkCache && this.guilds.has(id)) 
+            return this.guilds.get(id)!;
+        
         const g = await this.requestHandler.request('GET', GUILD(id)).catch((e) => {
             return e;
         });
         const guild = new Guild(this, g);
-        if (setToCache) this.guilds.set(id, guild);
+        
+        if (setToCache) 
+            this.guilds.set(id, guild);
+        
         return guild;
+        
     }
-
-    public async fetchMembers(guildId: Snowflake, limit: number = 100, setToCache: boolean = true, after: number = 0): Promise<Member[] | Error> {
-        if (!this.guilds.get(guildId)) await this.fetchGuild(guildId);
+  
+    public async fetchMembers(guildId: Snowflake, limit: number = 100, setToCache: boolean = true, after: number = 0): Promise<Member[] | Error>
+    {
+        
+        if (!this.guilds.get(guildId)) 
+            await this.fetchGuild(guildId);
         if (!this.guilds.get(guildId))
             return new Error('UNKNOWN ERROR on fetching members from ' + guildId);
-        const r = (await this.requestHandler
-                             .request('GET', GUILD_MEMBERS(guildId, limit, after))
-                             .catch((e) => {
-                                 return e;
-                             })) as APIGuildMember[];
+        
+        const r = (await this.requestHandler.request('GET', GUILD_MEMBERS(guildId, limit, after)).catch((e) => {
+            return e;
+        })) as APIGuildMember[];
         const members: Member[] = [];
+        
         for (const m of r) {
+            
             const member = new Member(this, this.guilds.get(guildId)!, m);
             members.push(member);
+            
             if (setToCache) {
                 this.users.set(member.user.id, member.user);
                 this.guilds.get(guildId)!.members.set(member.user.id, member);
             }
         }
+        
         return members;
+        
     }
 
-    public createMessage(
-        channelId: Snowflake,
-        content: string,
-        msg?: MessageOptions
-    ): Promise<Message>;
-    public createMessage(
-        channelId: Snowflake,
-        msg: MessageOptionsWithContent
-    ): Promise<Message>;
-    public async createMessage(
-        channelId: Snowflake,
-        cOrM: string | MessageOptionsWithContent,
-        msg?: MessageOptions
-    ): Promise<Message> {
+    public createMessage(channelId: Snowflake,content: string, msg?: MessageOptions): Promise<Message>;
+    public createMessage(channelId: Snowflake, msg: MessageOptionsWithContent): Promise<Message>;
+    public async createMessage(channelId: Snowflake, cOrM: string | MessageOptionsWithContent, msg?: MessageOptions): Promise<Message> 
+    {
+        
         let r: APIMessage;
+        
         if (typeof cOrM === 'string') {
             if (msg) {
                 msg['content'] = cOrM;
                 r = await this.requestHandler.request('POST', MESSAGES(channelId), msg);
-            } else {
-                r = await this.requestHandler.request('POST', MESSAGES(channelId), {
-                    content: cOrM
-                });
-            }
-        } else {
+            } else
+                r = await this.requestHandler.request('POST', MESSAGES(channelId), {content: cOrM});
+        } else
             r = await this.requestHandler.request('POST', MESSAGES(channelId), cOrM);
-        }
-        if (r.guild_id && !this.guilds.has(r.guild_id))
+        if (r.guild_id || !this.guilds.has(r.guild_id))
             await this.fetchGuild(r.guild_id);
+        
         //TODO channel, user and members
         return new Message(this, r);
+        
     }
+    
+    //TODO
+    /*
+    public createDM(userId: Snowflake, content: string, msg?: MessageOptions): Promise<Message>;
+    public createDM(userId: Snowflake,msg: MessageOptionsWithContent): Promise<Message>;
+    public async createDM(userId: Snowflake,cOrM: string | MessageOptionsWithContent,msg?: MessageOptions): Promise<Message> 
+    {
+    
+        let r: APIMessage;
+        if (typeof cOrM === 'string') {
+            if (msg) {
+                msg['content'] = cOrM;
+                r = await this.requestHandler.request('POST', MESSAGES_DM, msg);
+            } else 
+                r = await this.requestHandler.request('POST', MESSAGES_DM, {content: cOrM});
+        } else 
+            r = await this.requestHandler.request('POST', MESSAGES_DM, cOrM);
+        if (r.guild_id && this.guilds.has(r.guild_id))
+            await this.fetchDM(r.guild_id);
+        
+        return new Message(this, r);
+    }
+    */
 
-    public async fetchApplicationCommands(): Promise<ApplicationCommand[] | undefined> {
-        if (!this.user) return undefined;
-        const cmds = await this.requestHandler.request(
-            'GET',
-            APPLICATION_GLOBAL_COMMANDS(this.user.id)
-        );
+    public async fetchApplicationCommands(): Promise<ApplicationCommand[] | undefined>
+    {
+        
+        if (!this.user) 
+            return undefined;
+        
         const commands: ApplicationCommand[] = [];
-        for (const cmd of cmds) {
+        
+        for (const cmd of await this.requestHandler.request('GET', APPLICATION_GLOBAL_COMMANDS(this.user.id))) {
             commands.push(new ApplicationCommand(this, cmd));
         }
+        
         return commands;
+        
     }
 }
 
