@@ -23,6 +23,7 @@ export const MESSAGE = (channelId: Snowflake, msgId: Snowflake) =>
     `/channels/${channelId}/messages/${msgId}`;
 export const MESSAGES = (channelId: Snowflake) =>
     `/channels/${channelId}/messages`;
+export const MESSAGES_DM = `${USER_ME}/channels/`;
 export const USER_ME = '/users/@me';
 
 //images
