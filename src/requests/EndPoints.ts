@@ -12,6 +12,7 @@ export const APPLICATION_GLOBAL_COMMAND = (
 ) => `/applications/${applicationId}/commands/${cmdId}`;
 export const APPLICATION_GLOBAL_COMMANDS = (applicationId: Snowflake) =>
     `/applications/${applicationId}/commands`;
+export const DM_CHANNEL = `${USER_ME}/channels/`;
 export const GATEWAY_CONNECT = '/gateway/bot';
 export const GUILD = (guildId: Snowflake) => `/guilds/${guildId}`;
 export const GUILD_MEMBERS = (
