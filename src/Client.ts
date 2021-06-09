@@ -3,7 +3,7 @@ import {
     APIGuildMember,
     APIMessage,
     GatewayDispatchEvents
-} from "discord-api-types";
+} from 'discord-api-types';
 import { EventEmitter } from 'events';
 import { Intents } from './Constants';
 import { Gateway, rawWSEvent } from './gateway/Gateway';
