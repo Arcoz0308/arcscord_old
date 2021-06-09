@@ -1,13 +1,15 @@
 import {
+    APIChannel,
     APIGuildMember,
     APIMessage,
     GatewayDispatchEvents
-} from 'discord-api-types';
+} from "discord-api-types";
 import { EventEmitter } from 'events';
 import { Intents } from './Constants';
 import { Gateway, rawWSEvent } from './gateway/Gateway';
 import {
     APPLICATION_GLOBAL_COMMANDS,
+    DM_CHANNEL,
     GATEWAY_CONNECT,
     GUILD,
     GUILD_MEMBERS,
@@ -24,6 +26,7 @@ import {
     MessageOptions,
     MessageOptionsWithContent,
     Presence,
+    PrivateChannel,
     User
 } from './structures';
 import { RequestError } from './utils/Errors';
@@ -275,27 +278,17 @@ export class Client extends EventEmitter {
         
     }
     
-    //TODO
-    /*
-    public createDM(userId: Snowflake, content: string, msg?: MessageOptions): Promise<Message>;
-    public createDM(userId: Snowflake,msg: MessageOptionsWithContent): Promise<Message>;
-    public async createDM(userId: Snowflake,cOrM: string | MessageOptionsWithContent,msg?: MessageOptions): Promise<Message> {
-    
-        let r: APIMessage;
-        if (typeof cOrM === 'string') {
-            if (msg) {
-                msg['content'] = cOrM;
-                r = await this.requestHandler.request('POST', MESSAGES_DM, msg);
-            } else 
-                r = await this.requestHandler.request('POST', MESSAGES_DM, {content: cOrM});
-        } else 
-            r = await this.requestHandler.request('POST', MESSAGES_DM, cOrM);
-        if (r.guild_id && this.guilds.has(r.guild_id))
-            await this.fetchDM(r.guild_id);
+    public async createDM(userId: Snowflake): Promise<PrivateChannel>{
+
+        let r: APIChannel = await this.requestHandler.request('POST', DM_CHANNEL, {recipient_id: userId});
+        const channel = new PrivateChannel(this, r);
+
+        if (!this.channels.get(channel.id))
+            this.channels.set(channel.id, channel);
+            
+        return new PrivateChannel(this, r)
         
-        return new Message(this, r);
     }
-    */
     
     public async fetchApplicationCommands(): Promise<ApplicationCommand[] | undefined> {
         

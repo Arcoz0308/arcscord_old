@@ -14,4 +14,5 @@ export class Guild extends Base {
     constructor(client: Client, data: APIGuild) {
         super(client);
     }
+
 }
