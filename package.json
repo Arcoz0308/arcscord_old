@@ -33,7 +33,8 @@
   },
   "keywords": [
     "discord",
-    "typescript"
+    "typescript",
+    "api'
   ],
   "directories": {
     "lib": "lib"
