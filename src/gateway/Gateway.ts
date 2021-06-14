@@ -9,19 +9,19 @@ import {
 } from 'discord-api-types';
 import { Client } from '../Client';
 import { API_VERSION } from '../Constants';
-import { GUILD } from '../requests/EndPoints';
+import { GUILD } from '../rest/EndPoints';
 import { ActivityTypes, Guild, Presence } from '../structures';
-import * as a from './actions';
+import * as ACTIONS from './actions';
 import WebSocket = require('ws');
 
 
 export interface rawWSEvent {
-    d: any;
-    t: string;
+    data: any;
+    eventName: string;
 }
 
 interface Actions {
-    READY?: a.READY;
+    READY?: ACTIONS.READY;
 }
 
 export type GatewayStatus = 'disconnected' | 'connected' | 'connecting...';
@@ -53,7 +53,7 @@ export class Gateway {
     }
 
     loadActions() {
-        this.actions.READY = new a.READY(this.client);
+        this.actions.READY = new ACTIONS.READY(this.client);
     }
 
     identify() {
@@ -132,8 +132,8 @@ export class Gateway {
 
     public async handleEvent(msg: GatewayDispatchPayload) {
         this.client.emit('rawWS', {
-            t: msg.t,
-            d: msg.d
+            eventName: msg.t,
+            data: msg.d
         });
         switch (msg.t) {
             case GatewayDispatchEvents.Ready:

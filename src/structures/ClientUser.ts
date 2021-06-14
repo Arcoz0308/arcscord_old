@@ -1,4 +1,4 @@
-import { USER_ME } from '../requests/EndPoints';
+import { USER_ME } from '../rest/EndPoints';
 import { Activity, Presence, PresenceStatus } from './';
 import { User } from './User';
 

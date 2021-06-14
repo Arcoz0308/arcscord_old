@@ -4,7 +4,7 @@ import { RequestError } from '../utils/Errors';
 import { BASE_URL } from './EndPoints';
 
 //TODO rate limit
-export class RequestHandler {
+export class RestManager {
     private _client: Client;
     private readonly _instance: AxiosInstance;
 

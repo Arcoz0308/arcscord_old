@@ -1,6 +1,6 @@
 import { APIUser } from 'discord-api-types';
 import { Client } from '../Client';
-import { DEFAULT_USER_AVATAR, USER_AVATAR } from '../requests/EndPoints';
+import { DEFAULT_USER_AVATAR, USER_AVATAR } from '../rest/EndPoints';
 import { getDate, Snowflake } from '../utils/Snowflake';
 import { ImageUrlOptions } from '../utils/Utils';
 import { Base } from './Base';

@@ -14,8 +14,8 @@ import {
     GUILD,
     GUILD_MEMBERS,
     MESSAGES
-} from './requests/EndPoints';
-import { RequestHandler } from './requests/RequestHandler';
+} from './rest/EndPoints';
+import { RestManager } from './rest/RestManager';
 import {
     ApplicationCommand,
     Channel,
@@ -130,7 +130,7 @@ export class Client extends EventEmitter {
      * bot gateway
      */
     public gateway: Gateway;
-    public requestHandler: RequestHandler;
+    public requestHandler: RestManager;
     /**
      * list of events that the bot don't emit
      */
@@ -180,7 +180,7 @@ export class Client extends EventEmitter {
         this.bot = typeof options.isABot === 'undefined' || options.isABot;
         
         this.gateway = new Gateway(this);
-        this.requestHandler = new RequestHandler(this);
+        this.requestHandler = new RestManager(this);
         
     }
     
