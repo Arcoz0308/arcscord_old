@@ -1,1 +1,2 @@
-- [x] the code are tested
+- [ ] The code is tested with not any errors,
+- [ ] The code is tested with errors,

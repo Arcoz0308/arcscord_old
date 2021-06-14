@@ -1,7 +1,7 @@
 {
   "name": "arcscord",
   "version": "0.2.0-beta",
-  "description": "a discord library in typescript",
+  "description": "A library to interact with the Discord API written in typescript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -13,7 +13,7 @@
     "docs": "typedoc --tsconfig typedoc.json"
   },
   "author": "arcoz0308",
-  "license": "ISC",
+  "license": "GPL-3.0",
   "dependencies": {
     "@types/node": "^15.0.1",
     "@types/ws": "^7.4.2",
@@ -33,7 +33,8 @@
   },
   "keywords": [
     "discord",
-    "typescript"
+    "typescript",
+    "api'
   ],
   "directories": {
     "lib": "lib"
