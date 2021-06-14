@@ -13,7 +13,7 @@
     "docs": "typedoc --tsconfig typedoc.json"
   },
   "author": "arcoz0308",
-  "license": "ISC",
+  "license": "GPL-3.0",
   "dependencies": {
     "@types/node": "^15.0.1",
     "@types/ws": "^7.4.2",
