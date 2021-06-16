@@ -229,30 +229,31 @@ export class Client extends EventEmitter {
         
     }
     
-    public async fetchMembers(guildId: Snowflake, limit: number = 100, setToCache: boolean = true, after: number = 0): Promise<Member[] | Error> {
-        
-        if (!this.guilds.get(guildId))
-            await this.fetchGuild(guildId);
-        if (!this.guilds.get(guildId))
-            return new Error('UNKNOWN ERROR on fetching members from ' + guildId);
-        
-        const r = (await this.requestHandler.request('GET', GUILD_MEMBERS(guildId, limit, after)).catch((e) => {
-            return e;
-        })) as APIGuildMember[];
-        const members: Member[] = [];
-        
-        for (const m of r) {
+    public async fetchMembers(guildId: Snowflake, limit: number = 100, setToCache: boolean = true, after: number = 0): Promise<Member[]> {
+        return new Promise<Member[]>(async (resolve, reject) => {
+            if (!this.guilds.get(guildId))
+                await this.fetchGuild(guildId);
+            if (!this.guilds.get(guildId))
+                reject(new Error('UNKNOWN ERROR on fetching members from ' + guildId));
             
-            const member = new Member(this, this.guilds.get(guildId)!, m);
-            members.push(member);
+            const r = (await this.requestHandler.request('GET', GUILD_MEMBERS(guildId, limit, after)).catch((e) => {
+                reject(e);
+            })) as APIGuildMember[];
+            const members: Member[] = [];
             
-            if (setToCache) {
-                this.users.set(member.user.id, member.user);
-                this.guilds.get(guildId)!.members.set(member.user.id, member);
+            for (const m of r) {
+                
+                const member = new Member(this, this.guilds.get(guildId)!, m);
+                members.push(member);
+                
+                if (setToCache) {
+                    this.users.set(member.user.id, member.user);
+                    this.guilds.get(guildId)!.members.set(member.user.id, member);
+                }
             }
-        }
+            resolve(members);
+        });
         
-        return members;
         
     }
     
@@ -290,15 +291,21 @@ export class Client extends EventEmitter {
         
     }
     
-    public async fetchApplicationCommands(): Promise<ApplicationCommand[] | undefined> {
+    /**
+     * get all global bot slash commands
+     * @param [cache=true] set the commands to cache
+     * @return a array of commands object
+     */
+    public async fetchApplicationCommands(cache = true): Promise<ApplicationCommand[] | undefined> {
         
         if (!this.user)
             return undefined;
         
         const commands: ApplicationCommand[] = [];
-        
         for (const cmd of await this.requestHandler.request('GET', APPLICATION_GLOBAL_COMMANDS(this.user.id))) {
-            commands.push(new ApplicationCommand(this, cmd));
+            const command = new ApplicationCommand(this, cmd);
+            commands.push(command);
+            if (cache) this.slashCommands.set(command.id, command);
         }
         
         return commands;
