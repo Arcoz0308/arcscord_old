@@ -234,10 +234,10 @@ export class Client extends EventEmitter {
             if (!this.guilds.get(guildId))
                 await this.fetchGuild(guildId);
             if (!this.guilds.get(guildId))
-                reject(new Error('UNKNOWN ERROR on fetching members from ' + guildId));
+                return reject(new Error('UNKNOWN ERROR on fetching members from ' + guildId));
             
             const r = (await this.requestHandler.request('GET', GUILD_MEMBERS(guildId, limit, after)).catch((e) => {
-                reject(e);
+                return reject(e);
             })) as APIGuildMember[];
             const members: Member[] = [];
             

@@ -2,6 +2,7 @@ import { APIApplicationCommand } from 'discord-api-types';
 import { Client } from '../Client';
 import { Snowflake } from '../utils/Snowflake';
 import { Base } from './Base';
+import { Guild } from './Guild';
 
 export interface ApplicationCommandBase {
     /**
@@ -35,6 +36,7 @@ export interface ApplicationCommandOption {
      */
     description: string;
     /**
+     * if the option is required
      * @default false
      */
     required: boolean;
@@ -62,17 +64,49 @@ export enum ApplicationCommandOptionsTypes {
     mentionable
 }
 export interface ApplicationCommandOptionChoice {
+    /**
+     * the name of the choice
+     */
     name: string;
+    /**
+     * the value of the choice
+     */
     value: string|number;
 }
 export type ApplicationCommandOptionsType = keyof typeof ApplicationCommandOptionsTypes;
 export class ApplicationCommand extends Base {
+    /**
+     * the id of the command
+     */
     public id: Snowflake;
+    
+    /**
+     * the guild of the command (is null for global commands)
+     */
+    public guild: Guild|null;
+    
+    /**
+     * the name of the command
+     */
+    public name: string;
+    
+    /**
+     * the description of the command
+     */
+    public description: string;
+    
+    /**
+     * @internal
+     */
     public data: APIApplicationCommand;
 
     constructor(client: Client, data: APIApplicationCommand) {
         super(client);
-        this.data = data;
         this.id = data.id;
+        this.guild = data['guild_id'] ? client.guilds.get(data['guild_id']) || null : null;
+        this.name = data.name;
+        this.description = data.description;
+        
+        this.data = data;
     }
 }
