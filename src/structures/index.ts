@@ -1,5 +1,5 @@
-export * from './channels/CategoryChannel';
 export * from './channels/Channel';
+export * from './channels/CategoryChannel';
 export * from './channels/GroupChannel';
 export * from './channels/GuildChannel';
 export * from './channels/NewsChannel';
