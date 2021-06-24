@@ -94,6 +94,19 @@ export class User extends Base {
     toString() {
         return `<@${this.id}>`;
     }
+    
+    toJSON(space = 1): string {
+        return JSON.stringify({
+            id: this.id,
+            username: this.username,
+            discriminator: this.discriminator,
+            avatar: this.avatar,
+            bot: this.bot,
+            system: this.system,
+            createAt: this.createAt,
+            public_flags: this.publicFlags
+        }, null, space)
+    }
 }
 
 /**

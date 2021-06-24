@@ -311,6 +311,11 @@ export class Client extends EventEmitter {
         return commands;
         
     }
+    public toJSON(space = 1): string {
+        return JSON.stringify({
+            user: this.user ? this.user.toJSON(space) : null
+        },null, space)
+    }
 }
 
 // events declaration for docs

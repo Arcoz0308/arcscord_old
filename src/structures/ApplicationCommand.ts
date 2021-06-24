@@ -96,6 +96,15 @@ export class ApplicationCommand extends Base {
     public description: string;
     
     /**
+     * the options of the command
+     */
+    public options: ApplicationCommandOption[]|null;
+    
+    /**
+     * if the command is enable by default on add guild
+     */
+    public defaultOptions: boolean;
+    /**
      * @internal
      */
     public data: APIApplicationCommand;
@@ -106,7 +115,12 @@ export class ApplicationCommand extends Base {
         this.guild = data['guild_id'] ? client.guilds.get(data['guild_id']) || null : null;
         this.name = data.name;
         this.description = data.description;
-        
+        this.options = data.options ? data.options as unknown as ApplicationCommandOption[] : null;
+        this.defaultOptions = typeof data.default_permission !== 'undefined' ? data.default_permission : true;
         this.data = data;
     }
+    public toString(): string {
+        return `${this.name} : ${this.description}`;
+    }
 }
+
