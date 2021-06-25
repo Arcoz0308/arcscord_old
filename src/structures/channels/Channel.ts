@@ -18,6 +18,7 @@ export class Channel extends Base {
         return `<#${this.id}>`;
     }
 }
+// @formatter:off
 // i imports channelClasses after exporting class Channel because else that create a circular error
 import { GroupChannel } from './GroupChannel';
 import { GuildChannel } from './GuildChannel';
@@ -27,6 +28,7 @@ import { StageChannel } from './StageChannel';
 import { StoreChannel } from './StoreChannel';
 import { TextChannel } from './TextChannel';
 import { VoiceChannel } from './VoiceChannel';
+// @formatter:on
 
 export enum ChannelTypes {
     TEXT_CHANNEL,

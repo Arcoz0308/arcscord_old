@@ -8,6 +8,7 @@ import { EventEmitter } from 'events';
 import { Intents } from './Constants';
 import { Gateway, rawWSEvent } from './gateway/Gateway';
 import {
+    APPLICATION_GLOBAL_COMMAND,
     APPLICATION_GLOBAL_COMMANDS,
     DM_CHANNEL,
     GATEWAY_CONNECT,
@@ -17,9 +18,9 @@ import {
 } from './rest/EndPoints';
 import { RestManager } from './rest/RestManager';
 import {
-    ApplicationCommand,
+    ApplicationCommand, ApplicationCommandBase,
     Channel,
-    ClientUser,
+    ClientUser, EditApplicationCommandOptions,
     Guild,
     Member,
     Message,
@@ -292,28 +293,86 @@ export class Client extends EventEmitter {
     }
     
     /**
-     * get all global bot slash commands
+     * get all global bot applications commands
      * @param [cache=true] set the commands to cache
      * @return a array of commands object
      */
-    public async fetchApplicationCommands(cache = true): Promise<ApplicationCommand[] | undefined> {
+    public fetchApplicationCommands(cache = true): Promise<ApplicationCommand[] | undefined> {
+        return new Promise(async (resolve, reject) => {
+            if (!this.user)
+                return reject(new Error('client don\'t are connected'));
+            
+            const commands: ApplicationCommand[] = [];
+            for (const cmd of await this.requestHandler.request('GET', APPLICATION_GLOBAL_COMMANDS(this.user.id))) {
+                const command = new ApplicationCommand(this, cmd);
+                commands.push(command);
+                if (cache) this.slashCommands.set(command.id, command);
+            }
         
-        if (!this.user)
-            return undefined;
+            resolve(commands);
+            
+        });
         
-        const commands: ApplicationCommand[] = [];
-        for (const cmd of await this.requestHandler.request('GET', APPLICATION_GLOBAL_COMMANDS(this.user.id))) {
-            const command = new ApplicationCommand(this, cmd);
-            commands.push(command);
-            if (cache) this.slashCommands.set(command.id, command);
-        }
-        
-        return commands;
         
     }
+    
+    /**
+     * Create a new global command. New global commands will be available in all guilds after 1 hour <br>
+     * ⚠ Creating a command with the same name as an existing command for your application will overwrite the old command. see [discord-api-docs](https://discord.com/developers/docs/interactions/slash-commands#create-global-application-command)
+     * @param data a base object of the command
+     * @param [cache=true] set the command to cache
+     */
+    public createApplicationCommand(data: ApplicationCommandBase, cache = true): Promise<ApplicationCommand> {
+        return new Promise(async (resolve, reject) => {
+            if (!this.user)
+                return reject(new Error('client don\'t are connected'));
+            const command = new ApplicationCommand(this, await this.requestHandler.request('POST', APPLICATION_GLOBAL_COMMANDS(this.user.id), data));
+            if (cache) this.slashCommands.set(command.id, command);
+            resolve(command);
+        });
+    }
+    
+    /**
+     * fetch a global application command with the command id
+     * @param commandId the id of the command
+     * @param [checkCache=true] check if the command are already in the cache
+     * @param [cache=true] set the command to cache
+     */
+    public fetchApplicationCommand(commandId: Snowflake, checkCache = true, cache = true): Promise<ApplicationCommand | undefined> {
+        return new Promise(async (resolve, reject) => {
+            if (!this.user)
+                return reject(new Error('client don\'t are connected'));
+            if (checkCache && this.slashCommands.has(commandId))
+                return resolve(this.slashCommands.get(commandId));
+            const command = new ApplicationCommand(this, await this.requestHandler.request('GET', APPLICATION_GLOBAL_COMMAND(this.user.id, commandId)));
+            if (cache) this.slashCommands.set(command.id, command);
+            resolve(command);
+            
+        });
+    }
+    
+    /**
+     * Edit a global command. Updates will be available in all guilds after 1 hour
+     * @param commandId the id of the command
+     * @param data options to edit
+     * @param [cache=true] set/update the command to cache
+     */
+    public editApplicationCommand(commandId: Snowflake, data: EditApplicationCommandOptions, cache = true): Promise<ApplicationCommand> {
+        return new Promise(async (resolve, reject) => {
+            if (!this.user)
+                return reject(new Error('client don\'t are connected'));
+            if (!(data.name && data.description && data.options && data.defaultPermissions))
+                return reject(new Error('you need to change one options or more'));
+            const command = new ApplicationCommand(this, await this.requestHandler.request('PATCH', APPLICATION_GLOBAL_COMMAND(this.user.id, commandId), data));
+            if (cache) this.slashCommands.set(command.id, command);
+            resolve(command);
+        });
+    }
+    
     public toJSON(space = 1): string {
         return JSON.stringify({
             user: this.user ? this.user.toJSON(space) : null
+            
         },null, space)
     }
 }

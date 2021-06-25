@@ -22,6 +22,24 @@ export interface ApplicationCommandBase {
      */
     defaultPermissions: boolean;
 }
+export interface EditApplicationCommandOptions {
+    /**
+     * the name of the command
+     */
+    name?: string;
+    /**
+     * the description of the command
+     */
+    description?: string;
+    /**
+     * the options of the command
+     */
+    options?: Array<ApplicationCommandOption|ApplicationCommandOptionWithSubCommand>;
+    /**
+     * if the command are enable when the app is add to a guild
+     */
+    defaultPermissions?: boolean;
+}
 export interface ApplicationCommandOption {
     /**
      * the type of the command option
