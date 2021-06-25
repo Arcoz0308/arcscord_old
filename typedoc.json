@@ -6,9 +6,11 @@
   "excludeProtected": true,
   "excludeInternal": true,
   "plugin": [
-    "typedoc-plugin-as-member-of"
+    "typedoc-plugin-as-member-of",
+    "typedoc-plugin-cname"
   ],
   "categorizeByGroup": true,
   "defaultCategory": "Other",
-  "tsconfig": "tsconfig.json"
+  "tsconfig": "tsconfig.json",
+  "cname": "arcscord.js.org"
 }
