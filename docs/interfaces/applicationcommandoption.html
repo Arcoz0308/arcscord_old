@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Activity | arcscord</title>
+	<title>ApplicationCommandOption | arcscord</title>
 	<meta name="description" content="Documentation for arcscord">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,10 +55,10 @@
 					<a href="../modules.html">arcscord</a>
 				</li>
 				<li>
-					<a href="activity.html">Activity</a>
+					<a href="applicationcommandoption.html">ApplicationCommandOption</a>
 				</li>
 			</ul>
-			<h1>Interface Activity</h1>
+			<h1>Interface ApplicationCommandOption</h1>
 		</div>
 	</div>
 </header>
@@ -69,7 +69,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Activity</span>
+						<span class="target">ApplicationCommandOption</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="applicationcommandoptionwithsubcommand.html" class="tsd-signature-type" data-tsd-kind="Interface">ApplicationCommandOptionWithSubCommand</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -80,9 +85,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="activity.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="activity.html#type" class="tsd-kind-icon">type</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="activity.html#url" class="tsd-kind-icon">url</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="applicationcommandoption.html#choices" class="tsd-kind-icon">choices</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="applicationcommandoption.html#description" class="tsd-kind-icon">description</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="applicationcommandoption.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="applicationcommandoption.html#required" class="tsd-kind-icon">required</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="applicationcommandoption.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 					</div>
@@ -91,55 +98,82 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="choices" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> choices</h3>
+					<div class="tsd-signature tsd-kind-icon">choices<span class="tsd-signature-symbol">:</span> <a href="applicationcommandoptionchoice.html" class="tsd-signature-type" data-tsd-kind="Interface">ApplicationCommandOptionChoice</a><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/arcoz0308/arcscord/blob/8983237/src/structures/ApplicationCommand.ts#L65">src/structures/ApplicationCommand.ts:65</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>choices of the command option,You can specify a maximum of 25 choices per option</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="description" class="tsd-anchor"></a>
+					<h3>description</h3>
+					<div class="tsd-signature tsd-kind-icon">description<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/arcoz0308/arcscord/blob/8983237/src/structures/ApplicationCommand.ts#L55">src/structures/ApplicationCommand.ts:55</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>description of the command option (1 to 100 characters)</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="name" class="tsd-anchor"></a>
 					<h3>name</h3>
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/arcoz0308/arcscord/blob/8983237/src/structures/User.ts#L182">src/structures/User.ts:182</a></li>
+							<li>Defined in <a href="https://github.com/arcoz0308/arcscord/blob/8983237/src/structures/ApplicationCommand.ts#L51">src/structures/ApplicationCommand.ts:51</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The activity&#39;s name</p>
+							<p>name of the command option (1 to 32 characters that match <code>^[\w-]{1,32}$</code>)</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="type" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> type</h3>
-					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;game&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;streaming&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;listening&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;watching&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;custom&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;competing&quot;</span></div>
+					<a name="required" class="tsd-anchor"></a>
+					<h3>required</h3>
+					<div class="tsd-signature tsd-kind-icon">required<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/arcoz0308/arcscord/blob/8983237/src/structures/User.ts#L189">src/structures/User.ts:189</a></li>
+							<li>Defined in <a href="https://github.com/arcoz0308/arcscord/blob/8983237/src/structures/ApplicationCommand.ts#L60">src/structures/ApplicationCommand.ts:60</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Activity type</p>
+							<p>if the option is required</p>
 						</div>
 						<dl class="tsd-comment-tags">
-							<dt>see</dt>
-							<dd><p><a href="https://discord.com/developers/docs/topics/gateway#activity-object-activity-types">https://discord.com/developers/docs/topics/gateway#activity-object-activity-types</a></p>
-							</dd>
 							<dt>default</dt>
-							<dd><p>&quot;game&quot;</p>
+							<dd><p>false</p>
 							</dd>
 						</dl>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="url" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> url</h3>
-					<div class="tsd-signature tsd-kind-icon">url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;string&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;boolean&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;subCommand&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;subCommandGroup&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;integer&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;user&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;channel&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;role&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;mentionable&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/arcoz0308/arcscord/blob/8983237/src/structures/User.ts#L193">src/structures/User.ts:193</a></li>
+							<li>Defined in <a href="https://github.com/arcoz0308/arcscord/blob/8983237/src/structures/ApplicationCommand.ts#L47">src/structures/ApplicationCommand.ts:47</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Stream url (only with type Streaming)</p>
+							<p>the type of the command option</p>
 						</div>
 					</div>
 				</section>
@@ -158,16 +192,22 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="activity.html" class="tsd-kind-icon">Activity</a>
+						<a href="applicationcommandoption.html" class="tsd-kind-icon">Application<wbr>Command<wbr>Option</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="activity.html#name" class="tsd-kind-icon">name</a>
+								<a href="applicationcommandoption.html#choices" class="tsd-kind-icon">choices</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="activity.html#type" class="tsd-kind-icon">type</a>
+								<a href="applicationcommandoption.html#description" class="tsd-kind-icon">description</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="activity.html#url" class="tsd-kind-icon">url</a>
+								<a href="applicationcommandoption.html#name" class="tsd-kind-icon">name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="applicationcommandoption.html#required" class="tsd-kind-icon">required</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="applicationcommandoption.html#type" class="tsd-kind-icon">type</a>
 							</li>
 						</ul>
 					</li>
