@@ -8,6 +8,8 @@ export const IMAGE_BASE_URL = 'https://cdn.discordapp.com/';
 // @formatter:off
 export const APPLICATION_GLOBAL_COMMAND =                       (applicationId: Snowflake, cmdId: Snowflake) => `/applications/${applicationId}/commands/${cmdId}`;
 export const APPLICATION_GLOBAL_COMMANDS =                                        (applicationId: Snowflake) => `/applications/${applicationId}/commands`;
+export const APPLICATION_GUILD_COMMAND =    (applicationId: Snowflake, guildId: Snowflake, cmdId: Snowflake) => `/applications/${applicationId}/guilds/${guildId}/commands/${cmdId}`;
+export const APPLICATION_GUILD_COMMANDS =                     (applicationId: Snowflake, guildId: Snowflake) => `/applications/${applicationId}/guilds/${guildId}/commands`;
 export const DM_CHANNEL =                                                                                       '/users/@me/channels';
 export const GATEWAY_CONNECT =                                                                                  '/gateway/bot';
 export const GUILD =                                                                    (guildId: Snowflake) => `/guilds/${guildId}`;

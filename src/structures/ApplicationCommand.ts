@@ -68,7 +68,7 @@ export interface ApplicationCommandOptionWithSubCommand extends ApplicationComma
     /**
      * options of command subCommand/subCommandGroup
      */
-    options?: ApplicationCommandOption;
+    options?: ApplicationCommandOptionWithSubCommand;
 }
 export enum ApplicationCommandOptionsTypes {
     subCommand = 1,
@@ -121,7 +121,7 @@ export class ApplicationCommand extends Base {
     /**
      * if the command is enable by default on add guild
      */
-    public defaultOptions: boolean;
+    public defaultPermission: boolean;
     /**
      * @internal
      */
@@ -134,11 +134,55 @@ export class ApplicationCommand extends Base {
         this.name = data.name;
         this.description = data.description;
         this.options = data.options ? data.options as unknown as ApplicationCommandOption[] : null;
-        this.defaultOptions = typeof data.default_permission !== 'undefined' ? data.default_permission : true;
+        this.defaultPermission = typeof data.default_permission !== 'undefined' ? data.default_permission : true;
         this.data = data;
+    }
+    
+    public edit(data: EditApplicationCommandOptions, cache = true): Promise<ApplicationCommand> {
+        return this.client.editApplicationCommand(this.id, data, cache);
     }
     public toString(): string {
         return `${this.name} : ${this.description}`;
     }
+    public toJSON(space = 1): string {
+        return JSON.stringify({
+            id: this.id,
+            application_id: this.client.user?.id || undefined,
+            guild_id: this.guild ? this.guild.id : undefined,
+            name: this.name,
+            description: this.description,
+            options: this.options || undefined,
+            default_permission: this.defaultPermission
+        }, null, space);
+    }
+    updateData(data: APIApplicationCommand): ApplicationCommand {
+        if (data.id && data.id !== this.id) this.id = data.id;
+        if (data.name && data.name !== this.name) this.name = data.name;
+        if (data.description && data.description !== this.description) this.description = data.description;
+        if (data.options && JSON.stringify(data.options as any) !== JSON.stringify(this.options)) this.options = data.options as any;
+        if (data.default_permission !== this.defaultPermission && typeof data.default_permission !== 'undefined') this.defaultPermission = data.default_permission;
+        this.data = data;
+        return this;
+    };
 }
 
+/**
+ * @internal
+ */
+export function resolveApplicationCommandForApi(cmd: object): object {
+    if (cmd.hasOwnProperty('options')) cmd['options'] = resolveApplicationCommandOptionsForApi([cmd['options']]);
+    return cmd;
+}
+
+/**
+ * @internal
+ */
+function resolveApplicationCommandOptionsForApi(options: object[]): object[] {
+    const newOptions = [];
+    for (let option of options) {
+        if (option['options']) option['options'] = resolveApplicationCommandOptionsForApi(option['options']);
+        option['type'] = ApplicationCommandOptionsTypes[option['type']];
+        newOptions.push(option);
+    }
+    return newOptions;
+}

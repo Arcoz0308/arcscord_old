@@ -1,6 +1,8 @@
 import { APIGuild } from 'discord-api-types';
 import { Client } from '../Client';
+import { Collection } from '../utils/Collection';
 import { Snowflake } from '../utils/Snowflake';
+import { ApplicationCommand } from './ApplicationCommand';
 import { Base } from './Base';
 import { Channel, ChannelTypes } from './channels/Channel';
 import { VoiceChannel } from './channels/VoiceChannel';
@@ -20,8 +22,8 @@ export class Guild extends Base {
     public ownerId: Snowflake;
     public owner: User;
     public afkChannelId: Snowflake|null;
-    public channels = new Map<Snowflake, Channel>();
-    public members = new Map<Snowflake, Member>();
+    public channels = new Collection<Snowflake, Channel>();
+    public members = new Collection<Snowflake, Member>();
     
     public data: APIGuild;
 
@@ -43,4 +45,13 @@ export class Guild extends Base {
                 this.channels.get(this.afkChannelId)!.type === ChannelTypes.VOICE_CHANNEL ? this.channels.get(this.afkChannelId) as VoiceChannel : null
             : null
     }
+    /**
+     * get all applications commands of this guild
+     * @param [cache=true] set the commands to cache
+     * @return a array of commands object
+     */
+    public fetchApplicationCommands(cache = true): Promise<ApplicationCommand[]> {
+        return this.client.fetchApplicationGuildCommands(this.id, cache);
+    }
 }
+

@@ -9,7 +9,7 @@ import { Intents } from './Constants';
 import { Gateway, rawWSEvent } from './gateway/Gateway';
 import {
     APPLICATION_GLOBAL_COMMAND,
-    APPLICATION_GLOBAL_COMMANDS,
+    APPLICATION_GLOBAL_COMMANDS, APPLICATION_GUILD_COMMANDS,
     DM_CHANNEL,
     GATEWAY_CONNECT,
     GUILD,
@@ -30,6 +30,7 @@ import {
     PrivateChannel,
     User
 } from './structures';
+import { Collection } from './utils/Collection';
 import { RequestError } from './utils/Errors';
 import { Snowflake } from './utils/Snowflake';
 
@@ -145,10 +146,10 @@ export class Client extends EventEmitter {
     public fetchAllMembers: boolean;
     public bot: boolean;
     
-    public users = new Map<Snowflake, User>();
-    public guilds = new Map<Snowflake, Guild>();
-    public channels = new Map<Snowflake, Channel>();
-    public slashCommands = new Map<Snowflake, ApplicationCommand>();
+    public users = new Collection<Snowflake, User>();
+    public guilds = new Collection<Snowflake, Guild>();
+    public channels = new Collection<Snowflake, Channel>();
+    public slashCommands = new Collection<Snowflake, ApplicationCommand>();
     
     public unavailableGuilds: Snowflake[] = [];
     
@@ -297,7 +298,7 @@ export class Client extends EventEmitter {
      * @param [cache=true] set the commands to cache
      * @return a array of commands object
      */
-    public fetchApplicationCommands(cache = true): Promise<ApplicationCommand[] | undefined> {
+    public fetchApplicationCommands(cache = true): Promise<ApplicationCommand[]> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
                 return reject(new Error('client don\'t are connected'));
@@ -310,10 +311,7 @@ export class Client extends EventEmitter {
             }
         
             resolve(commands);
-            
         });
-        
-        
     }
     
     /**
@@ -338,12 +336,12 @@ export class Client extends EventEmitter {
      * @param [checkCache=true] check if the command are already in the cache
      * @param [cache=true] set the command to cache
      */
-    public fetchApplicationCommand(commandId: Snowflake, checkCache = true, cache = true): Promise<ApplicationCommand | undefined> {
+    public fetchApplicationCommand(commandId: Snowflake, checkCache = true, cache = true): Promise<ApplicationCommand> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
                 return reject(new Error('client don\'t are connected'));
             if (checkCache && this.slashCommands.has(commandId))
-                return resolve(this.slashCommands.get(commandId));
+                return resolve(this.slashCommands.get(commandId)!);
             const command = new ApplicationCommand(this, await this.requestHandler.request('GET', APPLICATION_GLOBAL_COMMAND(this.user.id, commandId)));
             if (cache) this.slashCommands.set(command.id, command);
             resolve(command);
@@ -363,16 +361,73 @@ export class Client extends EventEmitter {
                 return reject(new Error('client don\'t are connected'));
             if (!(data.name && data.description && data.options && data.defaultPermissions))
                 return reject(new Error('you need to change one options or more'));
-            const command = new ApplicationCommand(this, await this.requestHandler.request('PATCH', APPLICATION_GLOBAL_COMMAND(this.user.id, commandId), data));
+            const cmd = await this.requestHandler.request('PATCH', APPLICATION_GLOBAL_COMMAND(this.user.id, commandId), data);
+            const command = this.slashCommands.has(commandId) ?
+                this.slashCommands.get(commandId)!.updateData(cmd) :
+                new ApplicationCommand(this, cmd);
             if (cache) this.slashCommands.set(command.id, command);
             resolve(command);
         });
     }
     
+    /**
+     * delete a global application command
+     * @param commandId the id of the command
+     */
+    public deleteApplicationCommand(commandId: Snowflake): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            if (!this.user)
+                return reject(new Error('client don\'t are connected'));
+            await this.requestHandler.request('DELETE', APPLICATION_GLOBAL_COMMAND(this.user.id, commandId));
+            this.slashCommands.delete(commandId);
+            resolve();
+        });
+    }
+    
+    /**
+     * Takes a list of application commands, overwriting existing commands that are registered globally for this application. Updates will be available in all guilds after 1 hour.
+     * @param commands a list of command object
+     * @param [cache=true] set commands to cache
+     */
+    public bulkOverwriteApplicationCommands(commands: ApplicationCommandBase, cache = true): Promise<ApplicationCommand[]> {
+        return new Promise(async (resolve, reject) => {
+            if (!this.user)
+                return reject(new Error('client don\'t are connected'));
+            const cmds = [];
+            for (const cmd of await this.requestHandler.request('PUT', APPLICATION_GLOBAL_COMMANDS(this.user.id), commands)) {
+                const command = new ApplicationCommand(this, cmd);
+                cmds.push(command);
+                if (cache) this.slashCommands.set(command.id, command);
+            }
+            resolve(cmds);
+        });
+    }
+    /**
+     * get all applications commands of a guild
+     * @param guildID the id of the guild
+     * @param [cache=true] set the commands to cache
+     * @return a array of commands object
+     */
+    public fetchApplicationGuildCommands(guildID: Snowflake, cache = true): Promise<ApplicationCommand[]> {
+        return new Promise(async (resolve, reject) => {
+            if (!this.user)
+                return reject(new Error('client don\'t are connected'));
+            
+            const commands: ApplicationCommand[] = [];
+            for (const cmd of await this.requestHandler.request('GET', APPLICATION_GUILD_COMMANDS(this.user.id, guildID))) {
+                if (!this.guilds.has(cmd.guild_id)) await this.fetchGuild(cmd.guild_id);
+                const command = new ApplicationCommand(this, cmd);
+                commands.push(command);
+                if (cache) this.slashCommands.set(command.id, command);
+            }
+            
+            resolve(commands);
+        });
+    }
     public toJSON(space = 1): string {
         return JSON.stringify({
-            user: this.user ? this.user.toJSON(space) : null
-            
+            user: this.user ? this.user.toJSON(space) : null,
+            application_global_commands: this.slashCommands.toJSON(space)
         },null, space)
     }
 }

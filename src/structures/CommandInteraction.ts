@@ -2,7 +2,6 @@ import { APIInteraction } from 'discord-api-types';
 import { isGuildInteraction } from 'discord-api-types/utils';
 import { Client } from '../Client';
 import { Snowflake } from '../utils/Snowflake';
-import { ApplicationCommandOption } from './ApplicationCommand';
 import { Base } from './Base';
 import { Channel } from './channels/Channel';
 import { Guild } from './Guild';
