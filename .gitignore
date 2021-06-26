@@ -4,3 +4,4 @@ lib
 .idea
 config.json
 docsjson
+package-lock.json
