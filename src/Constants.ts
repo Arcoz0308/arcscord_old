@@ -22,7 +22,7 @@ export enum Intents {
      * - THREAD_MEMBER_UPDATE
      * - THREAD_MEMBERS_UPDATE
      */
-    GUILDS = 1 << 0,
+    GUILDS = 1,
     /**
      * include events :
      * - GUILD_MEMBER_ADD
@@ -30,18 +30,18 @@ export enum Intents {
      * - GUILD_MEMBER_REMOVE
      * - THREAD_MEMBERS_UPDATE
      */
-    GUILD_MEMBERS = 1 << 1,
+    GUILD_MEMBERS = 2,
     /**
      * include events :
      * - GUILD_BAN_ADD
      * - GUILD_BAN_REMOVE
      */
-    GUILD_BANS = 1 << 2,
+    GUILD_BANS = 4,
     /**
      * include event :
      * GUILD_EMOJIS_UPDATE
      */
-    GUILD_EMOJIS = 1 << 3,
+    GUILD_EMOJIS = 8,
     /**
      * include events :
      *  - GUILD_INTEGRATIONS_UPDATE
@@ -49,28 +49,28 @@ export enum Intents {
      * - INTEGRATION_UPDATE
      * - INTEGRATION_DELETE
      */
-    GUILD_INTEGRATIONS = 1 << 4,
+    GUILD_INTEGRATIONS = 16,
     /**
      * include event :
      * - WEBHOOKS_UPDATE
      */
-    GUILD_WEBHOOKS = 1 << 5,
+    GUILD_WEBHOOKS = 32,
     /**
      * include events
      * - INVITE_CREATE
      * - INVITE_DELETE
      */
-    GUILD_INVITES = 1 << 6,
+    GUILD_INVITES = 64,
     /**
      * include event :
      * - VOICE_STATE_UPDATE
      */
-    GUILD_VOICE_STATES = 1 << 7,
+    GUILD_VOICE_STATES = 128,
     /**
      * include event :
      * - PRESENCE_UPDATE
      */
-    GUILD_PRESENCES = 1 << 8,
+    GUILD_PRESENCES = 256,
     /**
      * include events
      * - MESSAGE_CREATE
@@ -78,7 +78,7 @@ export enum Intents {
      * - MESSAGE_DELETE
      * - MESSAGE_DELETE_BULK
      */
-    GUILD_MESSAGES = 1 << 9,
+    GUILD_MESSAGES = 512,
     /**
      * include events :
      * - MESSAGE_REACTION_ADD
@@ -86,12 +86,12 @@ export enum Intents {
      * - MESSAGE_REACTION_REMOVE_ALL
      * - MESSAGE_REACTION_REMOVE_EMOJI
      */
-    GUILD_MESSAGE_REACTIONS = 1 << 10,
+    GUILD_MESSAGE_REACTIONS = 1024,
     /**
      * include event :
      * - TYPING_START
      */
-    GUILD_MESSAGE_TYPING = 1 << 11,
+    GUILD_MESSAGE_TYPING = 2048,
     /**
      * include events :
      * - MESSAGE_CREATE
@@ -99,7 +99,7 @@ export enum Intents {
      * - MESSAGE_DELETE
      * - CHANNEL_PINS_UPDATE
      */
-    DIRECT_MESSAGES = 1 << 12,
+    DIRECT_MESSAGES = 4096,
     /**
      * include events :
      * - MESSAGE_REACTION_ADD
@@ -107,12 +107,12 @@ export enum Intents {
      * - MESSAGE_REACTION_REMOVE_ALL
      * - MESSAGE_REACTION_REMOVE_EMOJI
      */
-    DIRECT_MESSAGE_REACTIONS = 1 << 13,
+    DIRECT_MESSAGE_REACTIONS = 8192,
     /**
      * include event :
      * - TYPING_START
      */
-    DIRECT_MESSAGE_TYPING = 1 << 14,
+    DIRECT_MESSAGE_TYPING = 16384,
 }
 
 export const API_VERSION: number = 9;

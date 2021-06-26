@@ -24,6 +24,7 @@ export class Guild extends Base {
     public afkChannelId: Snowflake|null;
     public channels = new Collection<Snowflake, Channel>();
     public members = new Collection<Snowflake, Member>();
+    public slashCommands = new Collection<Snowflake, ApplicationCommand>();
     
     public data: APIGuild;
 
@@ -51,7 +52,7 @@ export class Guild extends Base {
      * @return a array of commands object
      */
     public fetchApplicationCommands(cache = true): Promise<ApplicationCommand[]> {
-        return this.client.fetchApplicationGuildCommands(this.id, cache);
+        return this.client.fetchGuildApplicationCommands(this.id, cache);
     }
 }
 

@@ -408,7 +408,7 @@ export class Client extends EventEmitter {
      * @param [cache=true] set the commands to cache
      * @return a array of commands object
      */
-    public fetchApplicationGuildCommands(guildID: Snowflake, cache = true): Promise<ApplicationCommand[]> {
+    public fetchGuildApplicationCommands(guildID: Snowflake, cache = true): Promise<ApplicationCommand[]> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
                 return reject(new Error('client don\'t are connected'));
@@ -418,10 +418,38 @@ export class Client extends EventEmitter {
                 if (!this.guilds.has(cmd.guild_id)) await this.fetchGuild(cmd.guild_id);
                 const command = new ApplicationCommand(this, cmd);
                 commands.push(command);
-                if (cache) this.slashCommands.set(command.id, command);
+                if (cache) this.guilds.get(cmd.guild_id)!.slashCommands.set(command.id, command);
             }
             
             resolve(commands);
+        });
+    }
+    
+    /**
+     * Create a new guild command. <br>
+     * ⚠ Creating a command with the same name as an existing command for your application will overwrite the old command. see [discord-api-docs](https://discord.com/developers/docs/interactions/slash-commands#create-guild-application-command)
+     * @param guildId the id of the guild
+     * @param data a base object of the command
+     * @param [cache=true] set the command to cache
+     */
+    public createGuildApplicationCommand(guildId: Snowflake, data: ApplicationCommandBase, cache = true): Promise<ApplicationCommand> {
+        return new Promise(async (resolve, reject) => {
+            if (!this.user)
+                return reject(new Error('client don\'t are connected'));
+            if (!this.guilds.has(guildId)) await this.fetchGuild(guildId);
+            const command = new ApplicationCommand(this, await this.requestHandler.request('POST', APPLICATION_GUILD_COMMANDS(this.user.id, guildId), data));
+            if (cache) this.guilds.get(guildId)!.slashCommands.set(command.id, command);
+            resolve(command);
+        });
+    }
+    
+    public fetchGuildApplicationCommand(guildId: Snowflake, commandId: Snowflake, checkCache = true, cache = true): Promise<ApplicationCommand> {
+        return new Promise(async (resolve, reject) => {
+            if (!this.user)
+                return reject(new Error('client don\'t are connected'));
+            if (!this.guilds.has(guildId)) await this.fetchGuild(guildId);
+            if (checkCache && this.guilds.get(guildId)!.slashCommands.has(commandId))
+                return resolve(this.guilds.get(guildId)!.slashCommands.get(commandId)!);
         });
     }
     public toJSON(space = 1): string {

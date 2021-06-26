@@ -2,147 +2,147 @@ export enum Permissions {
     /**
      * Allows creation of instant invites
      */
-    CREATE_INSTANT_INVITE = 1 << 0,
+    CREATE_INSTANT_INVITE = 1,
     /**
      * Allows kicking members
      */
-    KICK_MEMBERS = 1 << 1,
+    KICK_MEMBERS = 2,
     /**
      * Allows banning members
      */
-    BAN_MEMBERS = 1 << 2,
+    BAN_MEMBERS = 4,
     /**
      * Allows all permissions and bypasses channel permission overwrites
      */
-    ADMINISTRATOR = 1 << 3,
+    ADMINISTRATOR = 8,
     /**
      * Allows management and editing of channels
      */
-    MANAGE_CHANNELS = 1 << 4,
+    MANAGE_CHANNELS = 16,
     /**
      * Allows management and editing of the guild
      */
-    MANAGE_GUILD1 = 1 << 5,
+    MANAGE_GUILDS = 32,
     /**
      * Allows for the addition of reactions to messages
      */
-    ADD_REACTIONS = 1 << 6,
+    ADD_REACTIONS = 64,
     /**
      * Allows for viewing of audit logs
      */
-    VIEW_AUDIT_LOG = 1 << 7,
+    VIEW_AUDIT_LOG = 128,
     /**
      * Allows for using priority speaker in a voice channel
      */
-    PRIORITY_SPEAKER = 1 << 8,
+    PRIORITY_SPEAKER = 256,
     /**
      * Allows the user to go live
      */
-    STREAM = 1 << 9,
+    STREAM = 512,
     /**
      * Allows guild members to view a channel, which includes reading messages in text channels
      */
-    VIEW_CHANNEL = 1 << 10,
+    VIEW_CHANNEL = 1024,
     /**
      * Allows for sending messages in a channel
      */
-    SEND_MESSAGES = 1 << 11,
+    SEND_MESSAGES = 2048,
     /**
      * Allows for sending of /tts messages
      */
-    SEND_TTS_MESSAGES = 1 << 12,
+    SEND_TTS_MESSAGES = 4096,
     /**
      * Allows for deletion of other users messages
      */
-    MANAGE_MESSAGES = 1 << 13,
+    MANAGE_MESSAGES = 8192,
     /**
      * Links sent by users with this permission will be auto-embedded
      */
-    EMBED_LINKS = 1 << 14,
+    EMBED_LINKS = 16384,
     /**
      * Allows for uploading images and files
      */
-    ATTACH_FILES = 1 << 15,
+    ATTACH_FILES = 32768,
     /**
      * Allows for reading of message history
      */
-    READ_MESSAGE_HISTORY = 1 << 16,
+    READ_MESSAGE_HISTORY = 65536,
     /**
      * Allows for using the @everyone tag to notify all users in a channel, and the @here tag to notify all online users in a channel
      */
-    MENTION_EVERYONE = 1 << 17,
+    MENTION_EVERYONE = 131072,
     /**
      * Allows the usage of custom emojis from other servers
      */
-    USE_EXTERNAL_EMOJIS = 1 << 18,
+    USE_EXTERNAL_EMOJIS = 262144,
     /**
      * Allows for viewing guild insights
      */
-    VIEW_GUILD_INSIGHTS = 1 << 19,
+    VIEW_GUILD_INSIGHTS = 524288,
     /**
      * Allows for joining of a voice channel
      */
-    CONNECT = 1 << 20,
+    CONNECT = 1048576,
     /**
      * Allows for speaking in a voice channel
      */
-    SPEAK = 1 << 21,
+    SPEAK = 2097152,
     /**
      * Allows for muting members in a voice channel
      */
-    MUTE_MEMBERS = 1 << 22,
+    MUTE_MEMBERS = 4194304,
     /**
      * Allows for deafening of members in a voice channel
      */
-    DEAFEN_MEMBERS = 1 << 23,
+    DEAFEN_MEMBERS = 8388608,
     /**
      * Allows for moving of members between voice channels
      */
-    MOVE_MEMBERS = 1 << 24,
+    MOVE_MEMBERS = 16777216,
     /**
      * Allows for using voice-activity-detection in a voice channel
      */
-    USE_VAD = 1 << 25,
+    USE_VAD = 33554432,
     /**
      * Allows for modification of own nickname
      */
-    CHANGE_NICKNAME = 1 << 26,
+    CHANGE_NICKNAME = 67108864,
     /**
      * Allows for modification of other users nicknames
      */
-    MANAGE_NICKNAMES = 1 << 27,
+    MANAGE_NICKNAMES = 134217728,
     /**
      * Allows management and editing of roles
      */
-    MANAGE_ROLES = 1 << 28,
+    MANAGE_ROLES = 268435456,
     /**
      * Allows management and editing of webhooks
      */
-    MANAGE_WEBHOOKS = 1 << 29,
+    MANAGE_WEBHOOKS = 536870912,
     /**
      * Allows management and editing of emojis
      */
-    MANAGE_EMOJIS = 1 << 30,
+    MANAGE_EMOJIS = 1073741824,
     /**
      * Allows members to use slash commands in text channels
      */
-    USE_SLASH_COMMANDS = 1 << 31,
+    USE_SLASH_COMMANDS = 2147483648,
     /**
      * Allows for requesting to speak in stage channels. (This permission is under active development and may be changed or removed.)
      */
-    REQUEST_TO_SPEAK = 1 << 32,
+    REQUEST_TO_SPEAK = 4294967296,
     /**
      * Allows for deleting and archiving threads, and viewing all private threads
      */
-    MANAGE_THREADS = 1 << 34,
+    MANAGE_THREADS = 17179869184,
     /**
      * Allows for creating and participating in threads
      */
-    USE_PUBLIC_THREADS = 1 << 35,
+    USE_PUBLIC_THREADS = 34359738368,
     /**
      * Allows for creating and participating in private threads
      */
-    USE_PRIVATE_THREADS = 1 << 36,
+    USE_PRIVATE_THREADS = 68719476736
 }
 
 export type Permission = keyof typeof Permissions;
