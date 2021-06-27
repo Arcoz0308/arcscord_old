@@ -9,7 +9,9 @@ import { Intents } from './Constants';
 import { Gateway, rawWSEvent } from './gateway/Gateway';
 import {
     APPLICATION_GLOBAL_COMMAND,
-    APPLICATION_GLOBAL_COMMANDS, APPLICATION_GUILD_COMMANDS,
+    APPLICATION_GLOBAL_COMMANDS,
+    APPLICATION_GUILD_COMMAND,
+    APPLICATION_GUILD_COMMANDS,
     DM_CHANNEL,
     GATEWAY_CONNECT,
     GUILD,
@@ -27,7 +29,7 @@ import {
     MessageOptions,
     MessageOptionsWithContent,
     Presence,
-    PrivateChannel,
+    PrivateChannel, resolveApplicationCommandForApi,
     User
 } from './structures';
 import { Collection } from './utils/Collection';
@@ -324,6 +326,7 @@ export class Client extends EventEmitter {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
                 return reject(new Error('client don\'t are connected'));
+            data = resolveApplicationCommandForApi(data) as ApplicationCommandBase;
             const command = new ApplicationCommand(this, await this.requestHandler.request('POST', APPLICATION_GLOBAL_COMMANDS(this.user.id), data));
             if (cache) this.slashCommands.set(command.id, command);
             resolve(command);
@@ -361,6 +364,7 @@ export class Client extends EventEmitter {
                 return reject(new Error('client don\'t are connected'));
             if (!(data.name && data.description && data.options && data.defaultPermissions))
                 return reject(new Error('you need to change one options or more'));
+            data = resolveApplicationCommandForApi(data) as EditApplicationCommandOptions;
             const cmd = await this.requestHandler.request('PATCH', APPLICATION_GLOBAL_COMMAND(this.user.id, commandId), data);
             const command = this.slashCommands.has(commandId) ?
                 this.slashCommands.get(commandId)!.updateData(cmd) :
@@ -389,10 +393,11 @@ export class Client extends EventEmitter {
      * @param commands a list of command object
      * @param [cache=true] set commands to cache
      */
-    public bulkOverwriteApplicationCommands(commands: ApplicationCommandBase, cache = true): Promise<ApplicationCommand[]> {
+    public bulkOverwriteApplicationCommands(commands: ApplicationCommandBase[], cache = true): Promise<ApplicationCommand[]> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
                 return reject(new Error('client don\'t are connected'));
+            commands = commands.map(cmd => resolveApplicationCommandForApi(cmd)) as ApplicationCommandBase[];
             const cmds = [];
             for (const cmd of await this.requestHandler.request('PUT', APPLICATION_GLOBAL_COMMANDS(this.user.id), commands)) {
                 const command = new ApplicationCommand(this, cmd);
@@ -436,6 +441,7 @@ export class Client extends EventEmitter {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
                 return reject(new Error('client don\'t are connected'));
+            data = resolveApplicationCommandForApi(data) as ApplicationCommandBase;
             if (!this.guilds.has(guildId)) await this.fetchGuild(guildId);
             const command = new ApplicationCommand(this, await this.requestHandler.request('POST', APPLICATION_GUILD_COMMANDS(this.user.id, guildId), data));
             if (cache) this.guilds.get(guildId)!.slashCommands.set(command.id, command);
@@ -443,6 +449,13 @@ export class Client extends EventEmitter {
         });
     }
     
+    /**
+     * fetch a guild command with id
+     * @param guildId the id of the guild
+     * @param commandId the id of the command
+     * @param [checkCache=true] check if  command are already in cache
+     * @param [cache=true] set the command to cache
+     */
     public fetchGuildApplicationCommand(guildId: Snowflake, commandId: Snowflake, checkCache = true, cache = true): Promise<ApplicationCommand> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
@@ -450,6 +463,68 @@ export class Client extends EventEmitter {
             if (!this.guilds.has(guildId)) await this.fetchGuild(guildId);
             if (checkCache && this.guilds.get(guildId)!.slashCommands.has(commandId))
                 return resolve(this.guilds.get(guildId)!.slashCommands.get(commandId)!);
+            const cmd = await this.requestHandler.request('GET',APPLICATION_GUILD_COMMAND(this.user.id, guildId, commandId));
+            const command = new ApplicationCommand(this, cmd);
+            if (cache) this.guilds.get(guildId)!.slashCommands.set(command.id, command);
+            resolve(command);
+        });
+    }
+    /**
+     * Edit a guild command.
+     * @param guildId the id of the guild
+     * @param commandId the id of the command
+     * @param data options to edit
+     * @param [cache=true] set/update the command to cache
+     */
+    public editGuildApplicationCommand(guildId: Snowflake, commandId: Snowflake, data: EditApplicationCommandOptions, cache = true): Promise<ApplicationCommand> {
+        return new Promise(async (resolve, reject) => {
+            if (!this.user)
+                return reject(new Error('client don\'t are connected'));
+            if (!(data.name && data.description && data.options && data.defaultPermissions))
+                return reject(new Error('you need to change one options or more'));
+            data = resolveApplicationCommandForApi(data) as EditApplicationCommandOptions;
+            const cmd = await this.requestHandler.request('PATCH', APPLICATION_GUILD_COMMAND(this.user.id, guildId, commandId), data);
+            if (!this.guilds.has(guildId)) await this.fetchGuild(guildId);
+            const command = this.guilds.get(guildId)!.slashCommands.has(commandId) ?
+                this.guilds.get(guildId)!.slashCommands.get(commandId)!.updateData(cmd) :
+                new ApplicationCommand(this, cmd);
+            if (cache) this.guilds.get(guildId)!.slashCommands.set(command.id, command);
+            resolve(command);
+        });
+    }
+    /**
+     * delete a guild command
+     * @param guildId the id of the guild
+     * @param commandId the id of the command
+     */
+    public deleteGuildApplicationCommand(guildId: Snowflake, commandId: Snowflake): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            if (!this.user)
+                return reject(new Error('client don\'t are connected'));
+            await this.requestHandler.request('DELETE', APPLICATION_GUILD_COMMAND(this.user.id, guildId, commandId));
+            if (this.guilds.has(guildId))this.guilds.get(guildId)!.slashCommands.delete(commandId);
+            resolve();
+        });
+    }
+    /**
+     * Takes a list of application commands, overwriting existing commands for the guild.
+     * @param guildId the id of the guild
+     * @param commands a list of command object
+     * @param [cache=true] set commands to cache
+     */
+    public bulkOverwriteGuildApplicationCommands(guildId: Snowflake, commands: ApplicationCommandBase[], cache = true): Promise<ApplicationCommand[]> {
+        return new Promise(async (resolve, reject) => {
+            if (!this.user)
+                return reject(new Error('client don\'t are connected'));
+            commands = commands.map(cmd => resolveApplicationCommandForApi(cmd)) as ApplicationCommandBase[];
+            const cmds = [];
+            if (!this.guilds.has(guildId)) await this.fetchGuild(guildId);
+            for (const cmd of await this.requestHandler.request('PUT', APPLICATION_GUILD_COMMANDS(this.user.id, guildId), commands)) {
+                const command = new ApplicationCommand(this, cmd);
+                cmds.push(command);
+                if (cache) this.slashCommands.set(command.id, command);
+            }
+            resolve(cmds);
         });
     }
     public toJSON(space = 1): string {

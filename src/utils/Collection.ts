@@ -23,6 +23,10 @@ export class Collection<K, V> extends Map<K, V> {
         return object;
     }
     public toJSON(space = 1): string {
-        return JSON.stringify(this.toObject(), null, space);
+        const object = this.toObject();
+        for (const key in object) {
+            if (object.hasOwnProperty(key) && typeof object[key] === 'object' && object[key].hasOwnProperty('toJSON')) object[key] = JSON.parse(object[key].toJSON());
+        }
+        return JSON.stringify(object, null, space);
     }
 }
