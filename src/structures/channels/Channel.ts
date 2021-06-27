@@ -1,4 +1,4 @@
-import { APIChannel, ChannelType } from 'discord-api-types';
+import { APIChannel} from 'discord-api-types';
 import { Client } from '../../Client';
 import { Snowflake } from '../../utils/Snowflake';
 import { Base } from '../Base';
@@ -18,17 +18,6 @@ export class Channel extends Base {
         return `<#${this.id}>`;
     }
 }
-// @formatter:off
-// i imports channelClasses after exporting class Channel because else that create a circular error
-import { GroupChannel } from './GroupChannel';
-import { GuildChannel } from './GuildChannel';
-import { NewsChannel } from './NewsChannel';
-import { PrivateChannel } from './PrivateChannel';
-import { StageChannel } from './StageChannel';
-import { StoreChannel } from './StoreChannel';
-import { TextChannel } from './TextChannel';
-import { VoiceChannel } from './VoiceChannel';
-// @formatter:on
 
 export enum ChannelTypes {
     TEXT_CHANNEL,
@@ -40,45 +29,4 @@ export enum ChannelTypes {
     STORE_CHANNEL,
     UNKNOWN,
     STAGE_CHANNEL = 13,
-}
-export function channelFrom(client: Client, data: APIChannel): Channel {
-    switch (data.type) {
-        case ChannelType.GUILD_TEXT:
-            return new TextChannel(client, data);
-        case ChannelType.DM:
-            return new PrivateChannel(client, data);
-        case ChannelType.GUILD_VOICE:
-            return new VoiceChannel(client, data);
-        case ChannelType.GROUP_DM:
-            return new GroupChannel(client, data);
-        case ChannelType.GUILD_CATEGORY:
-            return new GroupChannel(client, data);
-        case ChannelType.GUILD_NEWS:
-            return new NewsChannel(client, data);
-        case ChannelType.GUILD_STORE:
-            return new StoreChannel(client, data);
-        case ChannelType.GUILD_STAGE_VOICE:
-            return new StageChannel(client, data);
-        default:
-            if (data.guild_id) {
-                if (data.last_message_id) {
-                    client.emit(
-                        'warn',
-                        new Error(
-                            `unknown textChannel type : ${data.type} id : ${data.id}, guild id : ${data.guild_id}`
-                        )
-                    );
-                    return new TextChannel(client, data);
-                }
-                client.emit(
-                    'warn',
-                    new Error(
-                        `unknown GuildChannel type : ${data.type} id : ${data.id}, guild id : ${data.guild_id}`
-                    )
-                );
-                return new GuildChannel(client, data);
-            }
-            client.emit('warn', new Error('unknown channel type : ' + data.id));
-            return new Channel(client, data);
-    }
 }
