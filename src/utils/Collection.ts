@@ -5,15 +5,37 @@ export class Collection<K, V> extends Map<K, V> {
      * @param entries
      */
     public limit: number;
+    
     constructor(limit = 0, entries?: [K, V][] | null) {
         super(entries);
         this.limit = limit;
     }
+    
     public set(key: K, value: V): any {
         if (this.limit !== 0 && this.size === this.limit && !this.has(key)) {
             this.delete(this.keys().next().value);
         }
         return super.set(key, value);
+    }
+    
+    /**
+     * find a value in the collection
+     * @param cb the callback for find the value
+     * @example ```ts
+     * client.guilds.find(guild => guild.name === 'cool name');
+     *
+     */
+    public find(cb: (value: V, key: K) => boolean) {
+        for (const [key, value] of this) {
+            if (cb(value, key)) return value;
+        }
+    }
+    public filter(cb: (value: V, key: K) => boolean) {
+        const results = new Collection<K, V>(this.limit);
+        for (const [key, value] of this) {
+            if (cb(value, key)) results.set(key, value);
+        }
+        return results;
     }
     public toObject(): object {
         const object = {};

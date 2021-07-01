@@ -4,7 +4,7 @@ import {
     APIMessage,
     GatewayDispatchEvents
 } from 'discord-api-types';
-import { EventEmitter } from 'events';
+import { EventEmitter } from './utils/EventEmitter';
 import { Intents } from './Constants';
 import { Gateway, rawWSEvent } from './gateway/Gateway';
 import {
@@ -69,55 +69,31 @@ export interface ClientOptions {
     slashCommandByDefault?: boolean;
 }
 
-export declare interface Client {
-    // on function
+export class Client extends EventEmitter<{
     /**
      * when bot are online
      */
-    on(event: 'ready', listener: typeof ready): this;
+    ready: typeof ready
     
     /**
-     * when a gateway event are received
+     * when bot receive a Websocket event
      */
-    on(event: 'rawWS', listener: typeof rawWS): this;
+    rawWS: typeof rawWS
     
     /**
-     * when bot are connected to websocket
+     * when bot are connected to Websocket
      */
-    on(event: 'connected', listener: typeof connected): this;
+    connected: typeof connected
     
     /**
      * when the websocket connection have a error
      */
-    on(event: 'error', listener: typeof error): this;
+    error: typeof error
+     
+    [key: string]: (...param: any) => void;
+}> {
     
-    on(event: 'warn', listener: typeof warn): this;
     
-    // emit function
-    /**
-     * when bot are online
-     */
-    emit(event: 'ready'): boolean;
-    
-    /**
-     * when a gateway event are received
-     */
-    emit(event: 'rawWS', rawEvent: rawWSEvent): boolean;
-    
-    /**
-     * when bot are connected to websocket
-     */
-    emit(event: 'connected'): boolean;
-    
-    /**
-     * when the websocket connection have a error
-     */
-    emit(event: 'error', error: Error): boolean;
-    
-    emit(event: 'warn', error: Error): boolean;
-}
-
-export class Client extends EventEmitter {
     /**
      * the token of the bot
      */
@@ -148,6 +124,13 @@ export class Client extends EventEmitter {
     public fetchAllMembers: boolean;
     public bot: boolean;
     
+    public ws = {
+        ping: -1
+    }
+    public rest = {
+        ping: -1
+    }
+    
     public users = new Collection<Snowflake, User>();
     public guilds = new Collection<Snowflake, Guild>();
     public channels = new Collection<Snowflake, Channel>();
@@ -167,7 +150,7 @@ export class Client extends EventEmitter {
     constructor(token: string, options: ClientOptions = {}) {
         
         super();
-        
+        this.on('ready', () => {})
         this.token = token;
         this.slashCommand = typeof options.slashCommandByDefault === 'undefined' ? true : options.slashCommandByDefault;
         let intents = 32765;
@@ -188,12 +171,6 @@ export class Client extends EventEmitter {
         
     }
     
-    /**
-     * get bot ping (⚠ before the first heartbeat the ping are infinity)
-     */
-    public get ping(): number {
-        return this.gateway.latency;
-    }
     
     /**
      * connect the bot to discord
@@ -544,7 +521,7 @@ export class Client extends EventEmitter {
 export declare function ready(): void;
 
 /**
- * when a gateway event are received
+ * when bot receive a Websocket event
  * @param packet a object of ws packets
  * @asMemberOf Client
  * @event rawWS
