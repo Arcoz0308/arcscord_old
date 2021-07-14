@@ -280,7 +280,7 @@ export class Client extends EventEmitter<{
     public fetchApplicationCommands(cache = true): Promise<ApplicationCommand[]> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
-                return reject(new Error('client don\'t are connected'));
+                return reject(new Error('client isn\'t connected'));
             
             const commands: ApplicationCommand[] = [];
             for (const cmd of await this.requestHandler.request('GET', APPLICATION_GLOBAL_COMMANDS(this.user.id))) {
@@ -302,7 +302,7 @@ export class Client extends EventEmitter<{
     public createApplicationCommand(data: ApplicationCommandBase, cache = true): Promise<ApplicationCommand> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
-                return reject(new Error('client don\'t are connected'));
+                return reject(new Error('client isn\'t connected'));
             data = resolveApplicationCommandForApi(data) as ApplicationCommandBase;
             const command = new ApplicationCommand(this, await this.requestHandler.request('POST', APPLICATION_GLOBAL_COMMANDS(this.user.id), data));
             if (cache) this.slashCommands.set(command.id, command);
@@ -319,7 +319,7 @@ export class Client extends EventEmitter<{
     public fetchApplicationCommand(commandId: Snowflake, checkCache = true, cache = true): Promise<ApplicationCommand> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
-                return reject(new Error('client don\'t are connected'));
+                return reject(new Error('client isn\'t connected'));
             if (checkCache && this.slashCommands.has(commandId))
                 return resolve(this.slashCommands.get(commandId)!);
             const command = new ApplicationCommand(this, await this.requestHandler.request('GET', APPLICATION_GLOBAL_COMMAND(this.user.id, commandId)));
@@ -338,7 +338,7 @@ export class Client extends EventEmitter<{
     public editApplicationCommand(commandId: Snowflake, data: EditApplicationCommandOptions, cache = true): Promise<ApplicationCommand> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
-                return reject(new Error('client don\'t are connected'));
+                return reject(new Error('client isn\'t connected'));
             if (!(data.name && data.description && data.options && data.defaultPermissions))
                 return reject(new Error('you need to change one options or more'));
             data = resolveApplicationCommandForApi(data) as EditApplicationCommandOptions;
@@ -358,7 +358,7 @@ export class Client extends EventEmitter<{
     public deleteApplicationCommand(commandId: Snowflake): Promise<void> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
-                return reject(new Error('client don\'t are connected'));
+                return reject(new Error('client isn\'t connected'));
             await this.requestHandler.request('DELETE', APPLICATION_GLOBAL_COMMAND(this.user.id, commandId));
             this.slashCommands.delete(commandId);
             resolve();
@@ -373,7 +373,7 @@ export class Client extends EventEmitter<{
     public bulkOverwriteApplicationCommands(commands: ApplicationCommandBase[], cache = true): Promise<ApplicationCommand[]> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
-                return reject(new Error('client don\'t are connected'));
+                return reject(new Error('client isn\'t connected'));
             commands = commands.map(cmd => resolveApplicationCommandForApi(cmd)) as ApplicationCommandBase[];
             const cmds = [];
             for (const cmd of await this.requestHandler.request('PUT', APPLICATION_GLOBAL_COMMANDS(this.user.id), commands)) {
@@ -393,7 +393,7 @@ export class Client extends EventEmitter<{
     public fetchGuildApplicationCommands(guildID: Snowflake, cache = true): Promise<ApplicationCommand[]> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
-                return reject(new Error('client don\'t are connected'));
+                return reject(new Error('client isn\'t connected'));
             
             const commands: ApplicationCommand[] = [];
             for (const cmd of await this.requestHandler.request('GET', APPLICATION_GUILD_COMMANDS(this.user.id, guildID))) {
@@ -417,7 +417,7 @@ export class Client extends EventEmitter<{
     public createGuildApplicationCommand(guildId: Snowflake, data: ApplicationCommandBase, cache = true): Promise<ApplicationCommand> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
-                return reject(new Error('client don\'t are connected'));
+                return reject(new Error('client isn\'t connected'));
             data = resolveApplicationCommandForApi(data) as ApplicationCommandBase;
             if (!this.guilds.has(guildId)) await this.fetchGuild(guildId);
             const command = new ApplicationCommand(this, await this.requestHandler.request('POST', APPLICATION_GUILD_COMMANDS(this.user.id, guildId), data));
@@ -436,7 +436,7 @@ export class Client extends EventEmitter<{
     public fetchGuildApplicationCommand(guildId: Snowflake, commandId: Snowflake, checkCache = true, cache = true): Promise<ApplicationCommand> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
-                return reject(new Error('client don\'t are connected'));
+                return reject(new Error('client isn\'t connected'));
             if (!this.guilds.has(guildId)) await this.fetchGuild(guildId);
             if (checkCache && this.guilds.get(guildId)!.slashCommands.has(commandId))
                 return resolve(this.guilds.get(guildId)!.slashCommands.get(commandId)!);
@@ -456,7 +456,7 @@ export class Client extends EventEmitter<{
     public editGuildApplicationCommand(guildId: Snowflake, commandId: Snowflake, data: EditApplicationCommandOptions, cache = true): Promise<ApplicationCommand> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
-                return reject(new Error('client don\'t are connected'));
+                return reject(new Error('client isn\'t connected'));
             if (!(data.name && data.description && data.options && data.defaultPermissions))
                 return reject(new Error('you need to change one options or more'));
             data = resolveApplicationCommandForApi(data) as EditApplicationCommandOptions;
@@ -477,7 +477,7 @@ export class Client extends EventEmitter<{
     public deleteGuildApplicationCommand(guildId: Snowflake, commandId: Snowflake): Promise<void> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
-                return reject(new Error('client don\'t are connected'));
+                return reject(new Error('client isn\'t connected'));
             await this.requestHandler.request('DELETE', APPLICATION_GUILD_COMMAND(this.user.id, guildId, commandId));
             if (this.guilds.has(guildId))this.guilds.get(guildId)!.slashCommands.delete(commandId);
             resolve();
@@ -492,7 +492,7 @@ export class Client extends EventEmitter<{
     public bulkOverwriteGuildApplicationCommands(guildId: Snowflake, commands: ApplicationCommandBase[], cache = true): Promise<ApplicationCommand[]> {
         return new Promise(async (resolve, reject) => {
             if (!this.user)
-                return reject(new Error('client don\'t are connected'));
+                return reject(new Error('client isn\'t connected'));
             commands = commands.map(cmd => resolveApplicationCommandForApi(cmd)) as ApplicationCommandBase[];
             const cmds = [];
             if (!this.guilds.has(guildId)) await this.fetchGuild(guildId);

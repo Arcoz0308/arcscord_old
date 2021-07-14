@@ -5,3 +5,5 @@ lib
 config.json
 docsjson
 package-lock.json
+deno/.idea
+deno/config.ts
