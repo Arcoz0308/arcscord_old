@@ -88,7 +88,7 @@ export class Gateway {
 
     public connect(gatewayURL: string) {
         if (this.ws && this.ws.readyState != WebSocket.CLOSED) {
-            this.client.emit('error', new Error('the bot is already connect !'));
+            this.client.emit('error', new Error('the bot is already connected!'));
             return;
         }
         if (gatewayURL.includes('?')) {
