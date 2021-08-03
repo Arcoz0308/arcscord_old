@@ -6,13 +6,13 @@ import {
     GatewayOPCodes,
     GatewayPresenceUpdateData,
     GatewayReceivePayload
-} from 'discord-api-types';
-import { Client } from '../Client';
-import { API_VERSION } from '../Constants';
-import { GUILD } from '../rest/EndPoints';
-import { ActivityTypes, Guild, Presence } from '../structures';
-import * as ACTIONS from './actions';
-import * as WebSocket from 'ws'
+} from 'https://deno.land/x/discord_api_types/v9.ts';
+import { Client } from '../Client.ts';
+import { API_VERSION } from '../Constants.ts';
+import { GUILD } from '../rest/EndPoints.ts';
+import { ActivityTypes, Guild, Presence } from '../structures/mod.ts';
+import * as ACTIONS from './actions/mod.ts';
+import WebSocket = require('ws');
 
 
 export interface rawWSEvent {

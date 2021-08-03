@@ -10,7 +10,8 @@
   "scripts": {
     "test": "ts-node Test.ts",
     "build": "tsc",
-    "docs": "typedoc --tsconfig typedoc.json"
+    "docs": "typedoc --tsconfig typedoc.json",
+    "deno": "node script/deno"
   },
   "author": "arcoz0308",
   "license": "GPL-3.0",
