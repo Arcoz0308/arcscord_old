@@ -12,7 +12,8 @@ import { API_VERSION } from '../Constants';
 import { GUILD } from '../rest/EndPoints';
 import { ActivityTypes, Guild, Presence } from '../structures';
 import * as ACTIONS from './actions';
-import * as WebSocket from 'ws'
+import * as WebSocket from 'ws';
+import {platform} from '../utils/Platform';
 
 
 export interface rawWSEvent {
@@ -60,7 +61,7 @@ export class Gateway {
         const data: GatewayIdentifyData = {
             token: this._token,
             properties: {
-                $os: process.platform,
+                $os: platform,
                 $device: 'arcscord',
                 $browser: 'arcscord'
             },

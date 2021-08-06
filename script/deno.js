@@ -39,7 +39,9 @@ function copyfile(path) {
     });
     content = convertImports(path, content);
     if (path.endsWith('.deno.ts')) {
-        if (content.startsWith('//ts-ignore')) content = content.split('\n').slice().join('\n');
+        if (content.startsWith('// @ts-ignore')) {
+            content = content.split('\n').slice(1).join('\n');
+        }
         path = path.replace(input, output).replace('.deno', '');
     } else path = path.replace(input, output);
     if (path.endsWith('index.ts')) path = path.replace('index.ts', 'mod.ts')

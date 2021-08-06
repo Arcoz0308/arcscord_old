@@ -12,7 +12,8 @@ import { API_VERSION } from '../Constants.ts';
 import { GUILD } from '../rest/EndPoints.ts';
 import { ActivityTypes, Guild, Presence } from '../structures/mod.ts';
 import * as ACTIONS from './actions/mod.ts';
-import WebSocket = require('ws');
+import * as WebSocket from 'ws.ts';
+import {platform} from '../utils/Platform.ts';
 
 
 export interface rawWSEvent {
@@ -60,7 +61,7 @@ export class Gateway {
         const data: GatewayIdentifyData = {
             token: this._token,
             properties: {
-                $os: process.platform,
+                $os: platform,
                 $device: 'arcscord',
                 $browser: 'arcscord'
             },
@@ -88,7 +89,7 @@ export class Gateway {
 
     public connect(gatewayURL: string) {
         if (this.ws && this.ws.readyState != WebSocket.CLOSED) {
-            this.client.emit('error', new Error('the bot is already connect !'));
+            this.client.emit('error', new Error('the bot is already connected!'));
             return;
         }
         if (gatewayURL.includes('?')) {
