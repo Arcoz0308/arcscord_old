@@ -20,7 +20,7 @@ export class CommandInteraction extends Base {
     public member: Member | null;
     public token: string;
     public data: APIInteraction;
-
+    
     constructor(client: Client, data: APIInteraction) {
         super(client);
         this.data = data;
@@ -40,6 +40,7 @@ export class CommandInteraction extends Base {
         }
     }
 }
+
 /*
 TODO finish this
 export async function resolveInteractionCmdUserOption(option: ApplicationCommandOption): User|null {

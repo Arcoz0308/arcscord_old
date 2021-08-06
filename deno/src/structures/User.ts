@@ -14,47 +14,47 @@ export class User extends Base {
      * the id of the user
      */
     public id: Snowflake;
-
+    
     /**
      * hash of user avatar
      */
     public avatar: string | null;
-
+    
     /**
      * username of the user
      */
     public username: string;
-
+    
     /**
      * discriminator of the user
      */
     public discriminator: string;
-
+    
     /**
      * tag of the user (username#descriminator)
      */
     public tag: string;
-
+    
     /**
      * if the user is a bot
      */
     public bot: boolean;
-
+    
     /**
      * if the user are a official discord system user
      */
     public system: boolean;
-
+    
     /**
      * the date of the user account was created in timestamp
      */
     public readonly createAt: number;
-
+    
     /**
      * user public's flags
      */
     public publicFlags: number;
-
+    
     /**
      *
      * @param client
@@ -62,7 +62,7 @@ export class User extends Base {
      */
     constructor(client: Client, data: APIUser) {
         super(client);
-
+        
         // init data
         this.id = data.id;
         this.avatar = data.avatar;
@@ -74,7 +74,7 @@ export class User extends Base {
         this.createAt = getDate(data.id);
         this.publicFlags = data.public_flags ? data.public_flags : 0;
     }
-
+    
     /**
      * get avatar URL
      * @param format the format of image
@@ -90,7 +90,7 @@ export class User extends Base {
         if (dynamic && this.avatar && this.avatar.startsWith('a_')) format = 'gif';
         return USER_AVATAR(this.id, this.avatar, format, size);
     }
-
+    
     toString() {
         return `<@${this.id}>`;
     }
@@ -105,7 +105,7 @@ export class User extends Base {
             system: this.system,
             createAt: this.createAt,
             public_flags: this.publicFlags
-        }, null, space)
+        }, null, space);
     }
 }
 

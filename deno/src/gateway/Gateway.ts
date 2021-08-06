@@ -7,13 +7,13 @@ import {
     GatewayPresenceUpdateData,
     GatewayReceivePayload
 } from 'https://deno.land/x/discord_api_types/v9.ts';
+import * as WebSocket from 'ws.ts';
 import { Client } from '../Client.ts';
 import { API_VERSION } from '../Constants.ts';
 import { GUILD } from '../rest/EndPoints.ts';
 import { ActivityTypes, Guild, Presence } from '../structures/mod.ts';
+import { platform } from '../utils/Platform.ts';
 import * as ACTIONS from './actions/mod.ts';
-import * as WebSocket from 'ws.ts';
-import {platform} from '../utils/Platform.ts';
 
 
 export interface rawWSEvent {
@@ -41,7 +41,7 @@ export class Gateway {
     public lastHeartbeatAck: boolean = true;
     private readonly _token: string;
     private readonly intents: number;
-
+    
     constructor(client: Client) {
         this._token = client.bot
             ? client.token.startsWith('Bot ')
@@ -52,11 +52,11 @@ export class Gateway {
         this.client = client;
         this.loadActions();
     }
-
+    
     loadActions() {
         this.actions.READY = new ACTIONS.READY(this.client);
     }
-
+    
     identify() {
         const data: GatewayIdentifyData = {
             token: this._token,
@@ -77,7 +77,7 @@ export class Gateway {
             this.heartbeat();
         }, this.heartbeatInterval);
     }
-
+    
     public heartbeat() {
         if (!this.lastHeartbeatAck) {
             //TODO reconnecting
@@ -86,7 +86,7 @@ export class Gateway {
         this.lastHeartbeatSend = Date.now();
         this.sendWS(GatewayOPCodes.Heartbeat, this.lastSequence);
     }
-
+    
     public connect(gatewayURL: string) {
         if (this.ws && this.ws.readyState != WebSocket.CLOSED) {
             this.client.emit('error', new Error('the bot is already connected!'));
@@ -98,7 +98,7 @@ export class Gateway {
         this.gatewayURL = gatewayURL;
         this.initWS();
     }
-
+    
     public initWS() {
         this.status = 'connecting...';
         this.ws = new WebSocket(
@@ -109,7 +109,7 @@ export class Gateway {
         this.ws.on('error', (error) => this.onWsError(error));
         this.ws.on('close', (code, raison) => this.onWsClose(code, raison));
     }
-
+    
     public onWsMessage(message: string) {
         const msg: GatewayReceivePayload = JSON.parse(
             message
@@ -130,7 +130,7 @@ export class Gateway {
                 break;
         }
     }
-
+    
     public async handleEvent(msg: GatewayDispatchPayload) {
         this.client.emit('rawWS', {
             eventName: msg.t,
@@ -144,18 +144,18 @@ export class Gateway {
             case GatewayDispatchEvents.MessageCreate:
         }
     }
-
+    
     public sendWS(code: GatewayOPCodes, data: any) {
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
         this.ws.send(JSON.stringify({ op: code, d: data }));
     }
-
+    
     public updatePresence(presence: Presence) {
         const data = this.resolvePresence(presence);
-
+        
         this.sendWS(GatewayOPCodes.PresenceUpdate, data);
     }
-
+    
     resolvePresence(presence: Presence): any {
         const data: { activities: any[]; afk: boolean; status: string } = {
             status: presence.status || 'online',
@@ -180,7 +180,7 @@ export class Gateway {
         }
         return data;
     }
-
+    
     public async createGuild(guild: APIUnavailableGuild) {
         const response = await this.client.requestHandler.request(
             'GET',
@@ -189,14 +189,14 @@ export class Gateway {
         const g = new Guild(this.client, response);
         this.client.guilds.set(guild.id, g);
     }
-
+    
     private onWsOpen() {
         this.client.emit('connected');
     }
-
+    
     private onWsError(err: Error) {
     }
-
+    
     private onWsClose(code: number, reason: string) {
     }
 }

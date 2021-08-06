@@ -14,7 +14,7 @@ export class ClientUser extends User {
         if (this.client.presence) return this.client.presence;
         return null;
     }
-
+    
     /**
      * update bot presence
      * @param presence a object of presence
@@ -34,7 +34,7 @@ export class ClientUser extends User {
         this.client.presence = presence;
         this.client.gateway.updatePresence(presence);
     }
-
+    
     /**
      * update the status of the ClientUser
      * @param status the status to set
@@ -45,7 +45,7 @@ export class ClientUser extends User {
         this.client.presence.status = status;
         this.client.gateway.updatePresence(this.client.presence);
     }
-
+    
     /**
      * update the activity of the ClientUser
      * @param activity the activity to set
@@ -59,7 +59,7 @@ export class ClientUser extends User {
         this.client.presence.activity = activity;
         this.client.gateway.updatePresence(this.client.presence);
     }
-
+    
     public edit(data: { username?: string; avatar?: string }) {
         this.client.requestHandler
             .request('PATCH', USER_ME, data)
@@ -69,11 +69,11 @@ export class ClientUser extends User {
             })
             .catch(console.error);
     }
-
+    
     public setUsername(username: string) {
         this.edit({ username });
     }
-
+    
     public setAvatar(avatar: string) {
         //TODO check data format
         this.edit({ avatar });

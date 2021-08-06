@@ -6,7 +6,7 @@ import { Client } from '../Client.ts';
  */
 export abstract class Base {
     public readonly client: Client;
-
+    
     protected constructor(client: Client) {
         this.client = client;
     }

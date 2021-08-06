@@ -16,18 +16,18 @@ import { User } from './User';
 export class Guild extends Base {
     public readonly id: Snowflake;
     public name: string;
-    public icon: string|null;
-    public slash: string|null;
-    public discoverySlash: string|null;
+    public icon: string | null;
+    public slash: string | null;
+    public discoverySlash: string | null;
     public ownerId: Snowflake;
     public owner: User;
-    public afkChannelId: Snowflake|null;
+    public afkChannelId: Snowflake | null;
     public channels = new Collection<Snowflake, Channel>();
     public members = new Collection<Snowflake, Member>();
     public slashCommands = new Collection<Snowflake, ApplicationCommand>();
     
     public data: APIGuild;
-
+    
     constructor(client: Client, data: APIGuild) {
         super(client);
         this.id = data.id;
@@ -41,11 +41,13 @@ export class Guild extends Base {
         
         this.data = data;
     }
-    get afkChannel(): VoiceChannel|null {
+    
+    get afkChannel(): VoiceChannel | null {
         return this.afkChannelId && this.channels.has(this.afkChannelId) ?
-                this.channels.get(this.afkChannelId)!.type === ChannelTypes.VOICE_CHANNEL ? this.channels.get(this.afkChannelId) as VoiceChannel : null
-            : null
+            this.channels.get(this.afkChannelId)!.type === ChannelTypes.VOICE_CHANNEL ? this.channels.get(this.afkChannelId) as VoiceChannel : null
+            : null;
     }
+    
     /**
      * get all applications commands of this guild
      * @param [cache=true] set the commands to cache

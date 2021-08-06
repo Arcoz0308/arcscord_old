@@ -16,8 +16,7 @@ type EventsType =
 /**
  * The event emitter.
  */
-export class EventEmitter <E extends EventsType = { }>
-{
+export class EventEmitter<E extends EventsType = {}> {
     
     /**
      * This is where the events and listeners are stored.
@@ -29,15 +28,14 @@ export class EventEmitter <E extends EventsType = { }>
      * @param event The typed event name to listen for.
      * @param listener The typed listener function.
      */
-    public on <K extends keyof E> (event: K, listener: E[K]): this;
+    public on<K extends keyof E>(event: K, listener: E[K]): this;
     
     /**
      * Listen for an event.
      * @param event The event name to listen for.
      * @param listener The listener function.
      */
-    public on (event: EventName, listener: Callback): this
-    {
+    public on(event: EventName, listener: Callback): this {
         if (!this._events_.has(event)) this._events_.set(event, new Set());
         this._events_.get(event)!.add(listener);
         return this;
@@ -48,15 +46,14 @@ export class EventEmitter <E extends EventsType = { }>
      * @param event The typed event name to listen for.
      * @param listener The typed listener function.
      */
-    public once <K extends keyof E> (event: K, listener: E[K]): this;
+    public once<K extends keyof E>(event: K, listener: E[K]): this;
     
     /**
      * Listen for an event once.
      * @param event The event name to listen for.
      * @param listener The listener function.
      */
-    public once (event: EventName, listener: Callback): this
-    {
+    public once(event: EventName, listener: Callback): this {
         const l: Listener = listener;
         l.__once__ = true;
         return this.on(event, l as any);
@@ -68,18 +65,18 @@ export class EventEmitter <E extends EventsType = { }>
      * @param event The typed event name.
      * @param listener The typed event listener function.
      */
-    public off <K extends keyof E> (event: K, listener: E[K]): this;
+    public off<K extends keyof E>(event: K, listener: E[K]): this;
     
     /**
      * Remove all listeners on a specific typed event.
      * @param event The typed event name.
      */
-    public off <K extends keyof E> (event: K): this;
+    public off<K extends keyof E>(event: K): this;
     
     /**
      * Remove all events from the event listener.
      */
-    public off (): this;
+    public off(): this;
     
     /**
      * Remove a specific listener on a specific event if both `event`
@@ -89,22 +86,19 @@ export class EventEmitter <E extends EventsType = { }>
      * @param event The event name.
      * @param listener The event listener function.
      */
-    public off (event?: EventName, listener?: Callback): this
-    {
+    public off(event?: EventName, listener?: Callback): this {
         if (!event && listener)
-            throw new Error("Why is there a listener defined here?");
+            throw new Error('Why is there a listener defined here?');
         else if (!event && !listener)
             this._events_.clear();
         else if (event && !listener)
             this._events_.delete(event);
-        else if (event && listener && this._events_.has(event))
-        {
+        else if (event && listener && this._events_.has(event)) {
             const _ = this._events_.get(event)!;
             _.delete(listener);
             if (_.size === 0) this._events_.delete(event);
-        } else
-        {
-            throw new Error("Unknown action!");
+        } else {
+            throw new Error('Unknown action!');
         }
         return this;
     }
@@ -115,23 +109,20 @@ export class EventEmitter <E extends EventsType = { }>
      * @param event The typed event name to emit.
      * @param args The arguments to pass to the typed listeners.
      */
-    public emitSync <K extends keyof E> (event: K, ...args: Parameters<E[K]>): this;
+    public emitSync<K extends keyof E>(event: K, ...args: Parameters<E[K]>): this;
     
     /**
      * Emit an event without waiting for each listener to return.
      * @param event The event name to emit.
      * @param args The arguments to pass to the listeners.
      */
-    public emitSync (event: EventName, ...args: Parameters<Callback>): this
-    {
+    public emitSync(event: EventName, ...args: Parameters<Callback>): this {
         if (!this._events_.has(event)) return this;
         const _ = this._events_.get(event)!;
-        for (let [, listener ] of _.entries())
-        {
+        for (let [, listener] of _.entries()) {
             const r = listener(...args);
             if (r instanceof Promise) r.catch(console.error);
-            if (listener.__once__)
-            {
+            if (listener.__once__) {
                 delete listener.__once__;
                 _.delete(listener);
             }
@@ -145,29 +136,24 @@ export class EventEmitter <E extends EventsType = { }>
      * @param event The typed event name to emit.
      * @param args The arguments to pass to the typed listeners.
      */
-    public async emit <K extends keyof E> (event: K, ...args: Parameters<E[K]>): Promise<this>;
+    public async emit<K extends keyof E>(event: K, ...args: Parameters<E[K]>): Promise<this>;
     
     /**
      * Emit an event and wait for each listener to return.
      * @param event The event name to emit.
      * @param args The arguments to pass to the listeners.
      */
-    public async emit (event: EventName, ...args: Parameters<Callback>): Promise<this>
-    {
+    public async emit(event: EventName, ...args: Parameters<Callback>): Promise<this> {
         if (!this._events_.has(event)) return this;
         const _ = this._events_.get(event)!;
-        for (let [, listener ] of _.entries())
-        {
-            try
-            {
+        for (let [, listener] of _.entries()) {
+            try {
                 await listener(...args);
-                if (listener.__once__)
-                {
+                if (listener.__once__) {
                     delete listener.__once__;
                     _.delete(listener);
                 }
-            } catch (error)
-            {
+            } catch (error) {
                 console.error(error);
             }
         }
@@ -181,7 +167,7 @@ export class EventEmitter <E extends EventsType = { }>
      * @param event The typed event name.
      * @param args The arguments to pass to the typed listeners.
      */
-    public queue <K extends keyof E> (event: K, ...args: Parameters<E[K]>): this;
+    public queue<K extends keyof E>(event: K, ...args: Parameters<E[K]>): this;
     
     /**
      * The same as emitSync, but wait for each listener to return
@@ -189,8 +175,7 @@ export class EventEmitter <E extends EventsType = { }>
      * @param event The event name.
      * @param args The arguments to pass to the listeners.
      */
-    public queue (event: EventName, ...args: Parameters<Callback>): this
-    {
+    public queue(event: EventName, ...args: Parameters<Callback>): this {
         (async () => await this.emit(event, ...args as any))().catch(console.error);
         return this;
     }

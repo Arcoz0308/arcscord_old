@@ -6,7 +6,7 @@ export class PermissionOverwrite {
     public id: Snowflake;
     public allow: number;
     public deny: number;
-
+    
     constructor(data: {
         id: Snowflake;
         type: number;

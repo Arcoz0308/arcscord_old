@@ -10,7 +10,7 @@ import { Base } from './Base.ts';
 export class Message extends Base {
     public id: Snowflake;
     public channelId: Snowflake;
-
+    
     constructor(client: Client, data: APIMessage) {
         super(client);
         this.id = data.id;

@@ -1,6 +1,7 @@
 export interface InteractionResponse {
     type: InteractionResponseType;
 }
+
 export enum InteractionResponseTypes {
     /**
      * ACK a Ping
@@ -23,4 +24,5 @@ export enum InteractionResponseTypes {
      */
     UpdateMessage
 }
+
 export type InteractionResponseType = keyof typeof InteractionResponseTypes;

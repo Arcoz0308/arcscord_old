@@ -13,7 +13,7 @@ export class GuildChannel extends Channel {
     public position: number;
     public parentId: Snowflake | null;
     public permissionOverwrites: PermissionOverwrite[] = [];
-
+    
     constructor(client: Client, data: APIChannel) {
         super(client, data);
         this.guild = client.guilds.get(data.guild_id!)!;
@@ -29,7 +29,7 @@ export class GuildChannel extends Channel {
             }
         }
     }
-
+    
     update(data: APIChannel): GuildChannel {
         if (data.name !== this.name) this.name = data.name!;
         if (data.nsfw !== this.nsfw) this.nsfw = !!data.nsfw;

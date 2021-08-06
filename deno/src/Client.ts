@@ -4,7 +4,6 @@ import {
     APIMessage,
     GatewayDispatchEvents
 } from 'https://deno.land/x/discord_api_types/v9.ts';
-import { EventEmitter } from './utils/EventEmitter.ts';
 import { Intents } from './Constants.ts';
 import { Gateway, rawWSEvent } from './gateway/Gateway.ts';
 import {
@@ -20,20 +19,24 @@ import {
 } from './rest/EndPoints.ts';
 import { RestManager } from './rest/RestManager.ts';
 import {
-    ApplicationCommand, ApplicationCommandBase,
+    ApplicationCommand,
+    ApplicationCommandBase,
     Channel,
-    ClientUser, EditApplicationCommandOptions,
+    ClientUser,
+    EditApplicationCommandOptions,
     Guild,
     Member,
     Message,
     MessageOptions,
     MessageOptionsWithContent,
     Presence,
-    PrivateChannel, resolveApplicationCommandForApi,
+    PrivateChannel,
+    resolveApplicationCommandForApi,
     User
 } from './structures/mod.ts';
 import { Collection } from './utils/Collection.ts';
 import { RequestError } from './utils/Errors.ts';
+import { EventEmitter } from './utils/EventEmitter.ts';
 import { Snowflake } from './utils/Snowflake.ts';
 
 
@@ -89,7 +92,7 @@ export class Client extends EventEmitter<{
      * when the websocket connection have a error
      */
     error: typeof error
-     
+    
     [key: string]: (...param: any) => void;
 }> {
     
@@ -126,10 +129,10 @@ export class Client extends EventEmitter<{
     
     public ws = {
         ping: -1
-    }
+    };
     public rest = {
         ping: -1
-    }
+    };
     
     public users = new Collection<Snowflake, User>();
     public guilds = new Collection<Snowflake, Guild>();
@@ -150,7 +153,8 @@ export class Client extends EventEmitter<{
     constructor(token: string, options: ClientOptions = {}) {
         
         super();
-        this.on('ready', () => {})
+        this.on('ready', () => {
+        });
         this.token = token;
         this.slashCommand = typeof options.slashCommandByDefault === 'undefined' ? true : options.slashCommandByDefault;
         let intents = 32765;
@@ -260,15 +264,15 @@ export class Client extends EventEmitter<{
         
     }
     
-    public async createDM(userId: Snowflake): Promise<PrivateChannel>{
-
-        let r: APIChannel = await this.requestHandler.request('POST', DM_CHANNEL, {recipient_id: userId});
+    public async createDM(userId: Snowflake): Promise<PrivateChannel> {
+        
+        let r: APIChannel = await this.requestHandler.request('POST', DM_CHANNEL, { recipient_id: userId });
         const channel = new PrivateChannel(this, r);
-
+        
         if (!this.channels.get(channel.id))
             this.channels.set(channel.id, channel);
-            
-        return new PrivateChannel(this, r)
+        
+        return new PrivateChannel(this, r);
         
     }
     
@@ -288,7 +292,7 @@ export class Client extends EventEmitter<{
                 commands.push(command);
                 if (cache) this.slashCommands.set(command.id, command);
             }
-        
+            
             resolve(commands);
         });
     }
@@ -384,6 +388,7 @@ export class Client extends EventEmitter<{
             resolve(cmds);
         });
     }
+    
     /**
      * get all applications commands of a guild
      * @param guildID the id of the guild
@@ -440,12 +445,13 @@ export class Client extends EventEmitter<{
             if (!this.guilds.has(guildId)) await this.fetchGuild(guildId);
             if (checkCache && this.guilds.get(guildId)!.slashCommands.has(commandId))
                 return resolve(this.guilds.get(guildId)!.slashCommands.get(commandId)!);
-            const cmd = await this.requestHandler.request('GET',APPLICATION_GUILD_COMMAND(this.user.id, guildId, commandId));
+            const cmd = await this.requestHandler.request('GET', APPLICATION_GUILD_COMMAND(this.user.id, guildId, commandId));
             const command = new ApplicationCommand(this, cmd);
             if (cache) this.guilds.get(guildId)!.slashCommands.set(command.id, command);
             resolve(command);
         });
     }
+    
     /**
      * Edit a guild command.
      * @param guildId the id of the guild
@@ -469,6 +475,7 @@ export class Client extends EventEmitter<{
             resolve(command);
         });
     }
+    
     /**
      * delete a guild command
      * @param guildId the id of the guild
@@ -479,10 +486,11 @@ export class Client extends EventEmitter<{
             if (!this.user)
                 return reject(new Error('client isn\'t connected'));
             await this.requestHandler.request('DELETE', APPLICATION_GUILD_COMMAND(this.user.id, guildId, commandId));
-            if (this.guilds.has(guildId))this.guilds.get(guildId)!.slashCommands.delete(commandId);
+            if (this.guilds.has(guildId)) this.guilds.get(guildId)!.slashCommands.delete(commandId);
             resolve();
         });
     }
+    
     /**
      * Takes a list of application commands, overwriting existing commands for the guild.
      * @param guildId the id of the guild
@@ -504,11 +512,12 @@ export class Client extends EventEmitter<{
             resolve(cmds);
         });
     }
+    
     public toJSON(space = 1): string {
         return JSON.stringify({
             user: this.user ? this.user.toJSON(space) : null,
             application_global_commands: this.slashCommands.toJSON(space)
-        },null, space)
+        }, null, space);
     }
 }
 

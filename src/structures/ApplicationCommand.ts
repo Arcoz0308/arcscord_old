@@ -4,6 +4,7 @@ import { Snowflake } from '../utils/Snowflake';
 import { Base } from './Base';
 import { Guild } from './Guild';
 
+
 export interface ApplicationCommandBase {
     /**
      * the name of the command
@@ -16,12 +17,13 @@ export interface ApplicationCommandBase {
     /**
      * the options of the command
      */
-    options: Array<ApplicationCommandOption|ApplicationCommandOptionWithSubCommand>;
+    options: Array<ApplicationCommandOption | ApplicationCommandOptionWithSubCommand>;
     /**
      * if the command are enable when the app is add to a guild
      */
     defaultPermissions: boolean;
 }
+
 export interface EditApplicationCommandOptions {
     /**
      * the name of the command
@@ -34,12 +36,13 @@ export interface EditApplicationCommandOptions {
     /**
      * the options of the command
      */
-    options?: Array<ApplicationCommandOption|ApplicationCommandOptionWithSubCommand>;
+    options?: Array<ApplicationCommandOption | ApplicationCommandOptionWithSubCommand>;
     /**
      * if the command are enable when the app is add to a guild
      */
     defaultPermissions?: boolean;
 }
+
 export interface ApplicationCommandOption {
     /**
      * the type of the command option
@@ -64,12 +67,14 @@ export interface ApplicationCommandOption {
      */
     choices?: ApplicationCommandOptionChoice[];
 }
-export interface ApplicationCommandOptionWithSubCommand extends ApplicationCommandOption{
+
+export interface ApplicationCommandOptionWithSubCommand extends ApplicationCommandOption {
     /**
      * options of command subCommand/subCommandGroup
      */
     options?: ApplicationCommandOptionWithSubCommand;
 }
+
 export enum ApplicationCommandOptionsTypes {
     subCommand = 1,
     subCommandGroup,
@@ -81,6 +86,7 @@ export enum ApplicationCommandOptionsTypes {
     role,
     mentionable
 }
+
 export interface ApplicationCommandOptionChoice {
     /**
      * the name of the choice
@@ -89,9 +95,11 @@ export interface ApplicationCommandOptionChoice {
     /**
      * the value of the choice
      */
-    value: string|number;
+    value: string | number;
 }
+
 export type ApplicationCommandOptionsType = keyof typeof ApplicationCommandOptionsTypes;
+
 export class ApplicationCommand extends Base {
     /**
      * the id of the command
@@ -101,7 +109,7 @@ export class ApplicationCommand extends Base {
     /**
      * the guild of the command (is null for global commands)
      */
-    public guild: Guild|null;
+    public guild: Guild | null;
     
     /**
      * the name of the command
@@ -116,7 +124,7 @@ export class ApplicationCommand extends Base {
     /**
      * the options of the command
      */
-    public options: ApplicationCommandOption[]|null;
+    public options: ApplicationCommandOption[] | null;
     
     /**
      * if the command is enable by default on add guild
@@ -126,7 +134,7 @@ export class ApplicationCommand extends Base {
      * @internal
      */
     public data: APIApplicationCommand;
-
+    
     constructor(client: Client, data: APIApplicationCommand) {
         super(client);
         this.id = data.id;
@@ -141,9 +149,11 @@ export class ApplicationCommand extends Base {
     public edit(data: EditApplicationCommandOptions, cache = true): Promise<ApplicationCommand> {
         return this.client.editApplicationCommand(this.id, data, cache);
     }
+    
     public toString(): string {
         return `${this.name} : ${this.description}`;
     }
+    
     public toJSON(space = 1): string {
         return JSON.stringify({
             id: this.id,
@@ -155,6 +165,7 @@ export class ApplicationCommand extends Base {
             default_permission: this.defaultPermission
         }, null, space);
     }
+    
     updateData(data: APIApplicationCommand): ApplicationCommand {
         if (data.id && data.id !== this.id) this.id = data.id;
         if (data.name && data.name !== this.name) this.name = data.name;

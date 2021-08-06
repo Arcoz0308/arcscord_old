@@ -30,6 +30,7 @@ export class Collection<K, V> extends Map<K, V> {
             if (cb(value, key)) return value;
         }
     }
+    
     public filter(cb: (value: V, key: K) => boolean) {
         const results = new Collection<K, V>(this.limit);
         for (const [key, value] of this) {
@@ -37,13 +38,15 @@ export class Collection<K, V> extends Map<K, V> {
         }
         return results;
     }
+    
     public toObject(): object {
         const object = {};
         this.forEach((value, key) => {
-            object[typeof key === 'string' ? key : (typeof key === 'number' ? key.toString(10) : `invalidKey:${key}`)] = value
+            object[typeof key === 'string' ? key : (typeof key === 'number' ? key.toString(10) : `invalidKey:${key}`)] = value;
         });
         return object;
     }
+    
     public toJSON(space = 1): string {
         const object = this.toObject();
         for (const key in object) {

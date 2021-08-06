@@ -4,7 +4,7 @@ export class RequestError extends Error {
     public data?: any;
     public status?: string;
     public msg?: string;
-
+    
     constructor(
         message: string,
         method: string,

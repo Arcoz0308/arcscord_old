@@ -18,10 +18,10 @@ export class Member extends Base {
     public deaf: boolean;
     public mute: boolean;
     public guild: Guild;
-
+    
     constructor(client: Client, guild: Guild, data: APIGuildMember) {
         super(client);
-
+        
         this.user =
             this.client.users.get(data.user?.id as Snowflake) ||
             new User(client, data.user!);
@@ -34,7 +34,7 @@ export class Member extends Base {
         this.mute = data.mute;
         this.guild = guild;
     }
-
+    
     toString(): string {
         return `<@${this.nick ? '!' : ''}${this.user?.id}>`;
     }

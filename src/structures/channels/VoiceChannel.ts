@@ -9,7 +9,7 @@ export class VoiceChannel extends GuildChannel {
         | ChannelTypes.VOICE_CHANNEL
         | ChannelTypes.STAGE_CHANNEL
         | ChannelTypes.UNKNOWN;
-
+    
     constructor(client: Client, data: APIChannel) {
         super(client, data);
         if (!this['type'])

@@ -5,6 +5,7 @@ import { Channel, ChannelTypes } from './Channel.ts';
 
 export class GroupChannel extends Channel {
     public readonly type = ChannelTypes.GROUP_CHANNEL;
+    
     constructor(client: Client, data: APIChannel) {
         super(client, data);
     }
