@@ -1,12 +1,14 @@
+import { GatewayHelloData } from 'discord-api-types/gateway/v9.ts';
 import {
     APIUnavailableGuild,
     GatewayDispatchEvents,
     GatewayDispatchPayload,
     GatewayIdentifyData,
-    GatewayOPCodes,
+    GatewayOpcodes,
     GatewayPresenceUpdateData,
     GatewayReceivePayload
-} from 'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts';
+} from 'discord-api-types/v9.ts';
+import { Snowflake } from '../utils/Snowflake.ts';
 import {WebSocket} from './WebSocket.ts'
 import { Client } from '../Client.ts';
 import { API_VERSION } from '../Constants.ts';
@@ -72,7 +74,7 @@ export class Gateway {
             const presence = this.resolvePresence(this.client.presence);
             data.presence = presence as GatewayPresenceUpdateData;
         }
-        this.sendWS(GatewayOPCodes.Identify, data);
+        this.sendWS(GatewayOpcodes.Identify, data);
         setInterval(() => {
             this.heartbeat();
         }, this.heartbeatInterval);
@@ -84,7 +86,7 @@ export class Gateway {
         }
         this.lastHeartbeatAck = false;
         this.lastHeartbeatSend = Date.now();
-        this.sendWS(GatewayOPCodes.Heartbeat, this.lastSequence);
+        this.sendWS(GatewayOpcodes.Heartbeat, this.lastSequence);
     }
     
     public connect(gatewayURL: string) {
@@ -116,14 +118,14 @@ export class Gateway {
         ) as GatewayReceivePayload;
         if (msg.s) this.lastSequence = msg.s;
         switch (msg.op) {
-            case GatewayOPCodes.Hello:
-                this.heartbeatInterval = msg.d.heartbeat_interval;
+            case GatewayOpcodes.Hello:
+                this.heartbeatInterval = (msg.d as GatewayHelloData).heartbeat_interval;
                 this.identify();
                 break;
-            case GatewayOPCodes.Dispatch:
-                this.handleEvent(msg).then();
+            case GatewayOpcodes.Dispatch:
+                this.handleEvent(msg as GatewayDispatchPayload).then();
                 break;
-            case GatewayOPCodes.HeartbeatAck:
+            case GatewayOpcodes.HeartbeatAck:
                 this.lastHeartbeatAck = true;
                 this.lastHeartbeatReceive = Date.now();
                 this.latency = this.lastHeartbeatReceive - this.lastHeartbeatSend;
@@ -145,7 +147,7 @@ export class Gateway {
         }
     }
     
-    public sendWS(code: GatewayOPCodes, data: any) {
+    public sendWS(code: GatewayOpcodes, data: any) {
         if (!this.ws || this.ws.isClosed) return;
         this.ws.send(JSON.stringify({ op: code, d: data }));
     }
@@ -153,7 +155,7 @@ export class Gateway {
     public updatePresence(presence: Presence) {
         const data = this.resolvePresence(presence);
         
-        this.sendWS(GatewayOPCodes.PresenceUpdate, data);
+        this.sendWS(GatewayOpcodes.PresenceUpdate, data);
     }
     
     resolvePresence(presence: Presence): any {
@@ -184,10 +186,10 @@ export class Gateway {
     public async createGuild(guild: APIUnavailableGuild) {
         const response = await this.client.requestHandler.request(
             'GET',
-            GUILD(guild.id)
+            GUILD(guild.id as Snowflake)
         );
         const g = new Guild(this.client, response);
-        this.client.guilds.set(guild.id, g);
+        this.client.guilds.set(guild.id as Snowflake, g);
     }
     
     private onWsOpen() {

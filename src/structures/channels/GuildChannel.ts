@@ -1,4 +1,4 @@
-import { APIChannel } from 'discord-api-types';
+import { APIChannel } from 'discord-api-types/v9';
 import { Client } from '../../Client';
 import { PermissionOverwrite } from '../../utils/PermissionOverwrite';
 import { Snowflake } from '../../utils/Snowflake';
@@ -16,15 +16,20 @@ export class GuildChannel extends Channel {
     
     constructor(client: Client, data: APIChannel) {
         super(client, data);
-        this.guild = client.guilds.get(data.guild_id!)!;
+        this.guild = client.guilds.get(data.guild_id as Snowflake)!;
         this.name = data.name!;
         this.nsfw = !!data.nsfw;
         this.position = data.position || 0;
-        this.parentId = data.parent_id || null;
+        this.parentId = data.parent_id as Snowflake || null;
         if (data.permission_overwrites) {
             for (const permissionOverwrite of data.permission_overwrites) {
                 this.permissionOverwrites.push(
-                    new PermissionOverwrite(permissionOverwrite)
+                    new PermissionOverwrite(permissionOverwrite as {
+                        id: Snowflake;
+                        type: number;
+                        allow: string;
+                        deny: string;
+                    })
                 );
             }
         }
@@ -36,12 +41,17 @@ export class GuildChannel extends Channel {
         if (data.position && this.position !== data.position)
             this.position = data.position;
         if (data.parent_id && this.parentId !== data.parent_id)
-            this.parentId = data.parent_id;
+            this.parentId = data.parent_id as Snowflake;
         this.permissionOverwrites = [];
         if (data.permission_overwrites) {
             for (const permissionOverwrite of data.permission_overwrites) {
                 this.permissionOverwrites.push(
-                    new PermissionOverwrite(permissionOverwrite)
+                    new PermissionOverwrite(permissionOverwrite as {
+                        id: Snowflake;
+                        type: number;
+                        allow: string;
+                        deny: string;
+                    })
                 );
             }
         }

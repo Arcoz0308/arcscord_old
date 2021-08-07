@@ -1,4 +1,4 @@
-import { APIApplicationCommand } from 'discord-api-types';
+import { APIApplicationCommand } from 'discord-api-types/v9';
 import { Client } from '../Client';
 import { Snowflake } from '../utils/Snowflake';
 import { Base } from './Base';
@@ -167,7 +167,7 @@ export class ApplicationCommand extends Base {
     }
     
     updateData(data: APIApplicationCommand): ApplicationCommand {
-        if (data.id && data.id !== this.id) this.id = data.id;
+        if (data.id && data.id !== this.id) this.id = data.id as Snowflake;
         if (data.name && data.name !== this.name) this.name = data.name;
         if (data.description && data.description !== this.description) this.description = data.description;
         if (data.options && JSON.stringify(data.options as any) !== JSON.stringify(this.options)) this.options = data.options as any;

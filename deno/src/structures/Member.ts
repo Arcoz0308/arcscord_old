@@ -1,4 +1,4 @@
-import { APIGuildMember } from 'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts';
+import { APIGuildMember } from 'discord-api-types/v9.ts';
 import { Client } from '../Client.ts';
 import { Snowflake } from '../utils/Snowflake.ts';
 import { Base } from './Base.ts';
@@ -26,7 +26,7 @@ export class Member extends Base {
             this.client.users.get(data.user?.id as Snowflake) ||
             new User(client, data.user!);
         this.nick = typeof data.nick !== 'undefined' ? data.nick : null;
-        this.roles = data.roles;
+        this.roles = data.roles as Snowflake[];
         this.joinedAt = data.joined_at;
         this.premiumSince =
             typeof data.premium_since !== 'undefined' ? data.premium_since : null;

@@ -33,6 +33,6 @@ export class WebSocket extends EventEmitter<{
         return !this.isClosed
     }
     get isClosed(): boolean {
-        return this._ws.isClosed;
+        return !!this._ws.isClosed;
     }
 }

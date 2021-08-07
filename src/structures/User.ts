@@ -1,4 +1,4 @@
-import { APIUser } from 'discord-api-types';
+import { APIUser } from 'discord-api-types/v9';
 import { Client } from '../Client';
 import { DEFAULT_USER_AVATAR, USER_AVATAR } from '../rest/EndPoints';
 import { getDate, Snowflake } from '../utils/Snowflake';
@@ -64,14 +64,14 @@ export class User extends Base {
         super(client);
         
         // init data
-        this.id = data.id;
+        this.id = data.id as Snowflake;
         this.avatar = data.avatar;
         this.username = data.username;
         this.discriminator = data.discriminator;
         this.tag = `${data.username}#${data.discriminator}`;
         this.bot = !!data.bot;
         this.system = !!data.system;
-        this.createAt = getDate(data.id);
+        this.createAt = getDate(data.id as Snowflake);
         this.publicFlags = data.public_flags ? data.public_flags : 0;
     }
     

@@ -1,4 +1,4 @@
-import { APIChannel} from 'discord-api-types';
+import { APIChannel} from 'discord-api-types/v9';
 import { Client } from '../../Client';
 import { Snowflake } from '../../utils/Snowflake';
 import { Base } from '../Base';

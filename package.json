@@ -19,7 +19,7 @@
     "@types/node": "^15.0.1",
     "@types/ws": "^7.4.2",
     "axios": "^0.21.1",
-    "discord-api-types": "^0.18.1",
+    "discord-api-types": "^0.22.0",
     "ws": "^7.4.5"
   },
   "devDependencies": {

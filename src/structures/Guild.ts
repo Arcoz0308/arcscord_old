@@ -1,4 +1,4 @@
-import { APIGuild } from 'discord-api-types';
+import { APIGuild } from 'discord-api-types/v9';
 import { Client } from '../Client';
 import { Collection } from '../utils/Collection';
 import { Snowflake } from '../utils/Snowflake';
@@ -30,14 +30,14 @@ export class Guild extends Base {
     
     constructor(client: Client, data: APIGuild) {
         super(client);
-        this.id = data.id;
+        this.id = data.id as Snowflake;
         this.name = data.name;
         this.icon = data.icon;
         this.slash = data.splash;
         this.discoverySlash = data.discovery_splash;
-        this.ownerId = data.owner_id;
-        this.owner = client.users.get(data.owner_id)!;
-        this.afkChannelId = data.afk_channel_id;
+        this.ownerId = data.owner_id as Snowflake;
+        this.owner = client.users.get(data.owner_id as Snowflake)!;
+        this.afkChannelId = data.afk_channel_id as Snowflake;
         
         this.data = data;
     }

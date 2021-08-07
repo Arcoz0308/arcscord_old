@@ -1,4 +1,4 @@
-import { APIMessage } from 'discord-api-types';
+import { APIMessage } from 'discord-api-types/v9';
 import { Client } from '../Client';
 import { Snowflake } from '../utils/Snowflake';
 import { Base } from './Base';
@@ -13,8 +13,8 @@ export class Message extends Base {
     
     constructor(client: Client, data: APIMessage) {
         super(client);
-        this.id = data.id;
-        this.channelId = data.channel_id;
+        this.id = data.id as Snowflake;
+        this.channelId = data.channel_id as Snowflake;
     }
 }
 

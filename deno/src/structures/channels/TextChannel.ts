@@ -1,4 +1,4 @@
-import { APIChannel } from 'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts';
+import { APIChannel } from 'discord-api-types/v9.ts';
 import { Client } from '../../Client.ts';
 import { Snowflake } from '../../utils/Snowflake.ts';
 import { Message, MessageOptions, MessageOptionsWithContent } from '../Message.ts';
@@ -19,11 +19,11 @@ export class TextChannel extends GuildChannel {
         super(client, data);
         this.topic = data.topic || null;
         this.rateLimitPerUser = data.rate_limit_per_user || null;
-        this.lastMessageId = data.last_message_id || null;
+        this.lastMessageId = data.last_message_id as Snowflake|| null;
     }
     
     update(data: APIChannel): GuildChannel {
-        this.lastMessageId = data.last_message_id || null;
+        this.lastMessageId = data.last_message_id as Snowflake || null;
         this.topic = data.topic || null;
         this.rateLimitPerUser = data.rate_limit_per_user || null;
         return super.update(data);

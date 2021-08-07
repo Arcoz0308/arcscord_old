@@ -1,4 +1,4 @@
-import { APIChannel } from 'discord-api-types';
+import { APIChannel } from 'discord-api-types/v9';
 import { Client } from '../../Client';
 import { Snowflake } from '../../utils/Snowflake';
 import { Message, MessageOptions, MessageOptionsWithContent } from '../Message';
@@ -19,11 +19,11 @@ export class TextChannel extends GuildChannel {
         super(client, data);
         this.topic = data.topic || null;
         this.rateLimitPerUser = data.rate_limit_per_user || null;
-        this.lastMessageId = data.last_message_id || null;
+        this.lastMessageId = data.last_message_id as Snowflake|| null;
     }
     
     update(data: APIChannel): GuildChannel {
-        this.lastMessageId = data.last_message_id || null;
+        this.lastMessageId = data.last_message_id as Snowflake || null;
         this.topic = data.topic || null;
         this.rateLimitPerUser = data.rate_limit_per_user || null;
         return super.update(data);

@@ -1,12 +1,13 @@
-import { GatewayReadyDispatchData } from 'discord-api-types';
+import { GatewayReadyDispatchData } from 'discord-api-types/v9';
 import { ClientUser } from '../../structures';
+import { Snowflake } from '../../utils/Snowflake';
 import { Action } from './Action';
 
 
 export class READY extends Action {
     async handle(d: GatewayReadyDispatchData) {
         this.client.user = new ClientUser(this.client, d.user);
-        this.client.users.set(d.user.id, this.client.user);
+        this.client.users.set(d.user.id as Snowflake, this.client.user);
         for (const guild of d.guilds) {
             await this.client.gateway.createGuild(guild);
         }

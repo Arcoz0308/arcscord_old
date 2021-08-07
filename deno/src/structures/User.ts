@@ -1,4 +1,4 @@
-import { APIUser } from 'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts';
+import { APIUser } from 'discord-api-types/v9.ts';
 import { Client } from '../Client.ts';
 import { DEFAULT_USER_AVATAR, USER_AVATAR } from '../rest/EndPoints.ts';
 import { getDate, Snowflake } from '../utils/Snowflake.ts';
@@ -64,14 +64,14 @@ export class User extends Base {
         super(client);
         
         // init data
-        this.id = data.id;
+        this.id = data.id as Snowflake;
         this.avatar = data.avatar;
         this.username = data.username;
         this.discriminator = data.discriminator;
         this.tag = `${data.username}#${data.discriminator}`;
         this.bot = !!data.bot;
         this.system = !!data.system;
-        this.createAt = getDate(data.id);
+        this.createAt = getDate(data.id as Snowflake);
         this.publicFlags = data.public_flags ? data.public_flags : 0;
     }
     
