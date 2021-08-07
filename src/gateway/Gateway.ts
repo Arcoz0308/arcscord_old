@@ -1,4 +1,3 @@
-import { GatewayHelloData } from 'discord-api-types/gateway/v9';
 import {
     APIUnavailableGuild,
     GatewayDispatchEvents,
@@ -6,16 +5,17 @@ import {
     GatewayIdentifyData,
     GatewayOpcodes,
     GatewayPresenceUpdateData,
-    GatewayReceivePayload
+    GatewayReceivePayload,
+    GatewayHelloData
 } from 'discord-api-types/v9';
-import { Snowflake } from '../utils/Snowflake';
-import {WebSocket} from './WebSocket'
 import { Client } from '../Client';
 import { API_VERSION } from '../Constants';
 import { GUILD } from '../rest/EndPoints';
 import { ActivityTypes, Guild, Presence } from '../structures';
 import { platform } from '../utils/Platform';
+import { Snowflake } from '../utils/Snowflake';
 import * as ACTIONS from './actions';
+import { WebSocket } from './WebSocket';
 
 
 export interface rawWSEvent {
