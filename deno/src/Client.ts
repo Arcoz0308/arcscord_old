@@ -3,7 +3,7 @@ import {
     APIGuildMember,
     APIMessage,
     GatewayDispatchEvents
-} from 'https://deno.land/x/discord_api_types/v9.ts';
+} from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
 import { Intents } from './Constants.ts';
 import { Gateway, rawWSEvent } from './gateway/Gateway.ts';
 import {

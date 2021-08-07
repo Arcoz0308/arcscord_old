@@ -6,7 +6,7 @@ import {
     GatewayOPCodes,
     GatewayPresenceUpdateData,
     GatewayReceivePayload
-} from 'https://deno.land/x/discord_api_types/v9.ts';
+} from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
 import {WebSocket} from './WebSocket.ts'
 import { Client } from '../Client.ts';
 import { API_VERSION } from '../Constants.ts';

@@ -1,4 +1,4 @@
-import { APIUser } from 'https://deno.land/x/discord_api_types/v9.ts';
+import { APIUser } from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
 import { Client } from '../Client.ts';
 import { DEFAULT_USER_AVATAR, USER_AVATAR } from '../rest/EndPoints.ts';
 import { getDate, Snowflake } from '../utils/Snowflake.ts';

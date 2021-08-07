@@ -1,4 +1,4 @@
-import { APIGuildMember } from 'https://deno.land/x/discord_api_types/v9.ts';
+import { APIGuildMember } from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
 import { Client } from '../Client.ts';
 import { Snowflake } from '../utils/Snowflake.ts';
 import { Base } from './Base.ts';
