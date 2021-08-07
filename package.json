@@ -1,6 +1,6 @@
 {
   "name": "arcscord",
-  "version": "0.2.0-beta",
+  "version": "0.3.0-beta",
   "description": "A library to interact with the Discord API written in typescript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
