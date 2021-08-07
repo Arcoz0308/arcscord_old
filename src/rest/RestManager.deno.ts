@@ -1,5 +1,5 @@
-import { Client } from '../Client.ts';
-import { BASE_URL } from './EndPoints.ts';
+import { Client } from '../Client';
+import { BASE_URL } from './EndPoints';
 export type Method =
     | 'get' | 'GET'
     | 'delete' | 'DELETE'
