@@ -12,10 +12,9 @@ export class VoiceChannel extends GuildChannel {
     
     constructor(client: Client, data: APIChannel) {
         super(client, data);
-        if (!this['type'])
-            this.type =
-                (data.type as unknown as ChannelTypes) === ChannelTypes.VOICE_CHANNEL
-                    ? ChannelTypes.VOICE_CHANNEL
-                    : ChannelTypes.UNKNOWN;
+        this.type =
+            (data.type as unknown as ChannelTypes) === ChannelTypes.VOICE_CHANNEL
+                ? ChannelTypes.VOICE_CHANNEL
+                : ChannelTypes.UNKNOWN;
     }
 }
