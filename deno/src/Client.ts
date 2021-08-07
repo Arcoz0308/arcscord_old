@@ -4,8 +4,8 @@ import {
     APIMessage,
     GatewayDispatchEvents
 } from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
-import { Intents } from './Constants.ts';
-import { Gateway, rawWSEvent } from './gateway/Gateway.ts';
+import { Intents } from './constants.ts';
+import { Gateway, rawWSEvent } from './gateway/gateway.ts';
 import {
     APPLICATION_GLOBAL_COMMAND,
     APPLICATION_GLOBAL_COMMANDS,
@@ -16,8 +16,8 @@ import {
     GUILD,
     GUILD_MEMBERS,
     MESSAGES
-} from './rest/EndPoints.ts';
-import { RestManager } from './rest/RestManager.ts';
+} from './rest/endpoints.ts';
+import { RestManager } from './rest/restmanager.ts';
 import {
     ApplicationCommand,
     ApplicationCommandBase,
@@ -34,10 +34,10 @@ import {
     resolveApplicationCommandForApi,
     User
 } from './structures/mod.ts';
-import { Collection } from './utils/Collection.ts';
-import { RequestError } from './utils/Errors.ts';
-import { EventEmitter } from './utils/EventEmitter.ts';
-import { Snowflake } from './utils/Snowflake.ts';
+import { Collection } from './utils/collection.ts';
+import { RequestError } from './utils/errors.ts';
+import { EventEmitter } from './utils/eventemitter.ts';
+import { Snowflake } from './utils/snowflake.ts';
 
 
 export interface ClientOptions {

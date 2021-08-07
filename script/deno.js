@@ -16,8 +16,8 @@ function convertImports(filePath, fileContent) {
     return  fileContent.replace(/from '(.*)'/g, (_, importPath) => {
         if(isDir(resolve(filePath.split(sep).slice(0, -1).join(sep), importPath))) return `from '${importPath.endsWith('/') ? importPath : importPath + '/'}mod.ts'`;
         if (importPath === 'discord-api-types') return 'from \'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts\'';
-        if (importPath.endsWith('.ts')) return `from '${importPath}'`;
-        return `from '${importPath}.ts'`;
+        if (importPath.endsWith('.ts')) return `from '${importPath.toLowerCase}'`;
+        return `from '${importPath.toLowerCase()}.ts'`;
     });
 }
 function readDir(dirPath) {
@@ -46,7 +46,7 @@ function copyfile(path) {
         path = path.replace(input, output).replace('.deno', '');
     } else path = path.replace(input, output);
     if (path.endsWith('index.ts')) path = path.replace('index.ts', 'mod.ts')
-    writeFileSync(path, content, {
+    writeFileSync(path.toLowerCase(), content, {
         encoding: 'utf-8'
     });
 }

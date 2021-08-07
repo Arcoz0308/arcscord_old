@@ -1,6 +1,6 @@
 import { APIChannel } from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
-import { Client } from '../../Client.ts';
-import { Channel, ChannelTypes } from './Channel.ts';
+import { Client } from '../../client.ts';
+import { Channel, ChannelTypes } from './channel.ts';
 
 
 export class GroupChannel extends Channel {

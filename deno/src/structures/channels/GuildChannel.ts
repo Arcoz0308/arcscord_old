@@ -1,9 +1,9 @@
 import { APIChannel } from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
-import { Client } from '../../Client.ts';
-import { PermissionOverwrite } from '../../utils/PermissionOverwrite.ts';
-import { Snowflake } from '../../utils/Snowflake.ts';
-import { Guild } from '../Guild.ts';
-import { Channel } from './Channel.ts';
+import { Client } from '../../client.ts';
+import { PermissionOverwrite } from '../../utils/permissionoverwrite.ts';
+import { Snowflake } from '../../utils/snowflake.ts';
+import { Guild } from '../guild.ts';
+import { Channel } from './channel.ts';
 
 
 export class GuildChannel extends Channel {

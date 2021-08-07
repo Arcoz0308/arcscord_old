@@ -1,6 +1,6 @@
 import { GatewayReadyDispatchData } from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
 import { ClientUser } from '../../structures/mod.ts';
-import { Action } from './Action.ts';
+import { Action } from './action.ts';
 
 
 export class READY extends Action {

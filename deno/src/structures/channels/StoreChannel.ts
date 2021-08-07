@@ -1,5 +1,5 @@
-import { ChannelTypes } from './Channel.ts';
-import { GuildChannel } from './GuildChannel.ts';
+import { ChannelTypes } from './channel.ts';
+import { GuildChannel } from './guildchannel.ts';
 
 
 export class StoreChannel extends GuildChannel {

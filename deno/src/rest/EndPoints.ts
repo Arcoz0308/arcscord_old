@@ -1,5 +1,5 @@
-import { Snowflake } from '../utils/Snowflake.ts';
-import { imageFormats, imageSize } from '../utils/Utils.ts';
+import { Snowflake } from '../utils/snowflake.ts';
+import { imageFormats, imageSize } from '../utils/utils.ts';
 
 
 export const REST_VERSION = 9;

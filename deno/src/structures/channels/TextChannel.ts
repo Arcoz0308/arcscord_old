@@ -1,9 +1,9 @@
 import { APIChannel } from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
-import { Client } from '../../Client.ts';
-import { Snowflake } from '../../utils/Snowflake.ts';
-import { Message, MessageOptions, MessageOptionsWithContent } from '../Message.ts';
-import { ChannelTypes } from './Channel.ts';
-import { GuildChannel } from './GuildChannel.ts';
+import { Client } from '../../client.ts';
+import { Snowflake } from '../../utils/snowflake.ts';
+import { Message, MessageOptions, MessageOptionsWithContent } from '../message.ts';
+import { ChannelTypes } from './channel.ts';
+import { GuildChannel } from './guildchannel.ts';
 
 
 export class TextChannel extends GuildChannel {

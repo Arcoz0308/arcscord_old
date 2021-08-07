@@ -1,4 +1,4 @@
-import { Client } from '../../Client.ts';
+import { Client } from '../../client.ts';
 
 
 export class Action {

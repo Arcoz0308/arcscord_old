@@ -1,1 +1,1 @@
-export * from './READY.ts';
+export * from './ready.ts';

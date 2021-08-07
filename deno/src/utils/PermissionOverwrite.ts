@@ -1,4 +1,4 @@
-import { Snowflake } from './Snowflake.ts';
+import { Snowflake } from './snowflake.ts';
 
 
 export class PermissionOverwrite {

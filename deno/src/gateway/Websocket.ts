@@ -1,5 +1,5 @@
 import * as Ws from 'ws.ts';
-import {EventEmitter} from '../utils/EventEmitter.ts';
+import {EventEmitter} from '../utils/eventemitter.ts';
 export class WebSocket extends EventEmitter<{
     open: () => void;
     close: (code: number, reason: string) => void;

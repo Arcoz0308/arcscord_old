@@ -1,6 +1,6 @@
-import { USER_ME } from '../rest/EndPoints.ts';
+import { USER_ME } from '../rest/endpoints.ts';
 import { Activity, Presence, PresenceStatus } from './mod.ts';
-import { User } from './User.ts';
+import { User } from './user.ts';
 
 
 /**

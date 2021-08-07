@@ -7,12 +7,12 @@ import {
     GatewayPresenceUpdateData,
     GatewayReceivePayload
 } from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
-import {WebSocket} from './WebSocket.ts'
-import { Client } from '../Client.ts';
-import { API_VERSION } from '../Constants.ts';
-import { GUILD } from '../rest/EndPoints.ts';
+import {WebSocket} from './websocket.ts'
+import { Client } from '../client.ts';
+import { API_VERSION } from '../constants.ts';
+import { GUILD } from '../rest/endpoints.ts';
 import { ActivityTypes, Guild, Presence } from '../structures/mod.ts';
-import { platform } from '../utils/Platform.ts';
+import { platform } from '../utils/platform.ts';
 import * as ACTIONS from './actions/mod.ts';
 
 

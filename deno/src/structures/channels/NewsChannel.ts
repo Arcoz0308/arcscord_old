@@ -1,5 +1,5 @@
-import { ChannelTypes } from './Channel.ts';
-import { TextChannel } from './TextChannel.ts';
+import { ChannelTypes } from './channel.ts';
+import { TextChannel } from './textchannel.ts';
 
 
 export class NewsChannel extends TextChannel {

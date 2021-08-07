@@ -1,5 +1,5 @@
-import { ChannelTypes } from './Channel.ts';
-import { VoiceChannel } from './VoiceChannel.ts';
+import { ChannelTypes } from './channel.ts';
+import { VoiceChannel } from './voicechannel.ts';
 
 
 export class StageChannel extends VoiceChannel {

@@ -1,4 +1,4 @@
-import { Base } from '../Base.ts';
+import { Base } from '../base.ts';
 
 
 export class Thread extends Base {

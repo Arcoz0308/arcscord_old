@@ -1,13 +1,13 @@
 import { APIGuild } from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
-import { Client } from '../Client.ts';
-import { Collection } from '../utils/Collection.ts';
-import { Snowflake } from '../utils/Snowflake.ts';
-import { ApplicationCommand } from './ApplicationCommand.ts';
-import { Base } from './Base.ts';
-import { Channel, ChannelTypes } from './channels/Channel.ts';
-import { VoiceChannel } from './channels/VoiceChannel.ts';
-import { Member } from './Member.ts';
-import { User } from './User.ts';
+import { Client } from '../client.ts';
+import { Collection } from '../utils/collection.ts';
+import { Snowflake } from '../utils/snowflake.ts';
+import { ApplicationCommand } from './applicationcommand.ts';
+import { Base } from './base.ts';
+import { Channel, ChannelTypes } from './channels/channel.ts';
+import { VoiceChannel } from './channels/voicechannel.ts';
+import { Member } from './member.ts';
+import { User } from './user.ts';
 
 
 /**

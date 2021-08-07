@@ -1,7 +1,7 @@
 import { APIChannel } from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
-import { Client } from '../../Client.ts';
-import { ChannelTypes } from './Channel.ts';
-import { GuildChannel } from './GuildChannel.ts';
+import { Client } from '../../client.ts';
+import { ChannelTypes } from './channel.ts';
+import { GuildChannel } from './guildchannel.ts';
 
 
 export class VoiceChannel extends GuildChannel {
