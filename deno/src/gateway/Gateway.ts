@@ -7,7 +7,7 @@ import {
     GatewayOpcodes,
     GatewayPresenceUpdateData,
     GatewayReceivePayload
-} from 'discord-api-types/v9.ts';
+} from 'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts';
 import { Snowflake } from '../utils/Snowflake.ts';
 import {WebSocket} from './WebSocket.ts'
 import { Client } from '../Client.ts';

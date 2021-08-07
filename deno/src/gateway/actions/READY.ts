@@ -1,4 +1,4 @@
-import { GatewayReadyDispatchData } from 'discord-api-types/v9.ts';
+import { GatewayReadyDispatchData } from 'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts';
 import { ClientUser } from '../../structures/mod.ts';
 import { Snowflake } from '../../utils/Snowflake.ts';
 import { Action } from './Action.ts';

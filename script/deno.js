@@ -15,7 +15,7 @@ function isDir(path) {
 function convertImports(filePath, fileContent) {
     return  fileContent.replace(/from '(.*)'/g, (_, importPath) => {
         if(isDir(resolve(filePath.split(sep).slice(0, -1).join(sep), importPath))) return `from '${importPath.endsWith('/') ? importPath : importPath + '/'}mod.ts'`;
-        if (importPath === 'discord-api-types') return 'from \'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts\'';
+        if (importPath === 'discord-api-types/v9') return 'from \'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts\'';
         if (importPath.endsWith('.ts')) return `from '${importPath}'`;
         return `from '${importPath}.ts'`;
     });
