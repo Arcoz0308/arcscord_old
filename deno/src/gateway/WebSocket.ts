@@ -1,6 +1,5 @@
-import { WebSocketClient, StandardWebSocketClient} from "https://deno.land/x/websocket@v0.1.1/mod.ts";
 import {EventEmitter} from '../utils/EventEmitter.ts';
-export class WebSocket extends EventEmitter<{
+export class AWebSocket extends EventEmitter<{
     open: () => void;
     close: (code: number, reason: string) => void;
     message: (message: string) => void;
@@ -8,30 +7,31 @@ export class WebSocket extends EventEmitter<{
     pong: (body: any) =>  void;
     error: (error: Error) => void;
 }>{
-    private _ws: WebSocketClient;
+    private _ws: WebSocket;
     constructor(endpoint: string) {
         super();
-        this._ws = new StandardWebSocketClient(endpoint);
-        this._ws.on('open', () => this.emit('open'));
-        this._ws.on('close', (code, reason) => this.emit('close', code, reason));
-        this._ws.on('message', (data) => this.emit('message', data as string));
-        this._ws.on('ping', (data) => this.emit('ping', data));
-        this._ws.on('pong', (data) => this.emit('pong', data));
-        this._ws.on('error', (error) => this.emit('error', error));
+        this._ws = new WebSocket(endpoint);
+        this._ws.onmessage = (message) => {
+            this.emit('message', message.data);
+        }
+        this._ws.onopen = () => this.emit('open');
+        this._ws.onclose = (ev) => {
+            this.emit('close', ev.code, ev.reason);
+        }
+        this._ws.onerror = (ev) => {
+            this.emit('error', ev as any);
+        }
     }
     send(message: string) {
         this._ws.send(message);
-    }
-    ping(message: string) {
-        this._ws.ping(message);
     }
     close(code: number, reason?: string) {
         this._ws.close(code, reason);
     }
     get isOpen(): boolean {
-        return !this.isClosed
+        return this._ws.readyState === WebSocket.OPEN;
     }
     get isClosed(): boolean {
-        return !!this._ws.isClosed;
+        return this._ws.readyState === WebSocket.CLOSED || this._ws.readyState === WebSocket.CLOSING;
     }
 }

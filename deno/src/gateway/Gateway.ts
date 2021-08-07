@@ -15,7 +15,7 @@ import { ActivityTypes, Guild, Presence } from '../structures/mod.ts';
 import { platform } from '../utils/Platform.ts';
 import { Snowflake } from '../utils/Snowflake.ts';
 import * as ACTIONS from './actions/mod.ts';
-import { WebSocket } from './WebSocket.ts';
+import { AWebSocket } from './WebSocket.ts';
 
 
 export interface rawWSEvent {
@@ -30,7 +30,7 @@ interface Actions {
 export type GatewayStatus = 'disconnected' | 'connected' | 'connecting...';
 
 export class Gateway {
-    public ws?: WebSocket;
+    public ws?: AWebSocket;
     public status: GatewayStatus = 'disconnected';
     public gatewayURL?: string;
     public client: Client;
@@ -103,7 +103,7 @@ export class Gateway {
     
     public initWS() {
         this.status = 'connecting...';
-        this.ws = new WebSocket(
+        this.ws = new AWebSocket(
             `${this.gatewayURL}?v=${API_VERSION}&encoding=json`
         );
         this.ws.on('open', () => this.onWsOpen);

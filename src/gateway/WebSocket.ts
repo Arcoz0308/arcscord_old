@@ -1,6 +1,6 @@
 import * as Ws from 'ws';
 import {EventEmitter} from '../utils/EventEmitter';
-export class WebSocket extends EventEmitter<{
+export class AWebSocket extends EventEmitter<{
     open: () => void;
     close: (code: number, reason: string) => void;
     message: (message: string) => void;
@@ -21,9 +21,6 @@ export class WebSocket extends EventEmitter<{
     }
     send(message: string) {
         this._ws.send(message);
-    }
-    ping(message: string) {
-        this._ws.ping(message);
     }
     close(code: number, reason?: string) {
         this._ws.close(code, reason);
