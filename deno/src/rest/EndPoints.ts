@@ -4,7 +4,7 @@ import { imageFormats, imageSize } from '../utils/Utils.ts';
 
 export const REST_VERSION = 9;
 export const BASE_URL = `https://discord.com/api/v${REST_VERSION}`;
-export const IMAGE_BASE_URL = 'https://cdn.discordapp.com/';
+export const IMAGE_BASE_URL = 'https://cdn.discordapp.com';
 // @formatter:off
 export const APPLICATION_GLOBAL_COMMAND =                       (applicationId: Snowflake, cmdId: Snowflake) => `/applications/${applicationId}/commands/${cmdId}`;
 export const APPLICATION_GLOBAL_COMMANDS =                                        (applicationId: Snowflake) => `/applications/${applicationId}/commands`;

@@ -525,7 +525,7 @@ export class Client extends EventEmitter<{
 /**
  * when bot are online
  * @asMemberOf Client
- * @event ready
+ * @event Client#ready
  */
 export declare function ready(): void;
 
@@ -533,14 +533,14 @@ export declare function ready(): void;
  * when bot receive a Websocket event
  * @param packet a object of ws packets
  * @asMemberOf Client
- * @event rawWS
+ * @event Client#rawWS
  */
 export declare function rawWS(packet: rawWSEvent): void;
 
 /**
  * when bot are connected to websocket
  * @asMemberOf Client
- * @event connected
+ * @event Client#connected
  */
 export declare function connected(): void;
 
@@ -548,7 +548,7 @@ export declare function connected(): void;
  * when the websocket connection have a error
  * @param error the error
  * @asMemberOf Client
- * @event error
+ * @event Client#error
  */
 export declare function error(error: Error): void;
 

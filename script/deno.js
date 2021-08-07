@@ -39,7 +39,7 @@ function copyfile(path) {
     });
     content = convertImports(path, content);
     if (path.endsWith('.deno.ts')) {
-        if (content.startsWith('// @ts-ignore')) {
+        if (content.startsWith('// @ts-ignore') || content.startsWith('// @ts-nocheck')) {
             content = content.split('\n').slice(1).join('\n');
         }
         path = path.replace(input, output).replace('.deno', '');
