@@ -1,5 +1,4 @@
-import { APIInteraction } from 'discord-api-types';
-import { isGuildInteraction } from 'discord-api-types/utils';
+import { APIInteraction, Utils } from 'discord-api-types';
 import { Client } from '../Client';
 import { Snowflake } from '../utils/Snowflake';
 import { Base } from './Base';
@@ -27,7 +26,7 @@ export class CommandInteraction extends Base {
         this.id = data.id;
         this.channel = client.channels.get(data.channel_id) || null;
         this.token = data.token;
-        if (isGuildInteraction(data)) {
+        if (Utils.isGuildInteraction(data)) {
             this.guild = client.guilds.get(data.guild_id)!;
             this.member =
                 this.guild.members.get(data.member.user.id) ||

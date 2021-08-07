@@ -1,5 +1,4 @@
-import { APIInteraction } from 'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts';
-import { isGuildInteraction } from 'discord-api-types/utils.ts';
+import { APIInteraction, Utils } from 'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts';
 import { Client } from '../client.ts';
 import { Snowflake } from '../utils/snowflake.ts';
 import { Base } from './base.ts';
@@ -27,7 +26,7 @@ export class CommandInteraction extends Base {
         this.id = data.id;
         this.channel = client.channels.get(data.channel_id) || null;
         this.token = data.token;
-        if (isGuildInteraction(data)) {
+        if (Utils.isGuildInteraction(data)) {
             this.guild = client.guilds.get(data.guild_id)!;
             this.member =
                 this.guild.members.get(data.member.user.id) ||
