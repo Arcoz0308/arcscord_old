@@ -1,4 +1,4 @@
-import * as Ws from 'ws.ts';
+import { WebSocketClient, StandardWebSocketClient, WebSocketState } from "https://deno.land/x/websocket@v0.1.1/mod.ts";
 import {EventEmitter} from '../utils/eventemitter.ts';
 export class WebSocket extends EventEmitter<{
     open: () => void;
@@ -8,10 +8,10 @@ export class WebSocket extends EventEmitter<{
     pong: (body: Buffer) =>  void;
     error: (error: Error) => void;
 }>{
-    private _ws: Ws;
+    private _ws: WebSocketClient;
     constructor(endpoint: string) {
         super();
-        this._ws = new Ws(endpoint);
+        this._ws = new StandardWebSocketClient(endpoint);
         this._ws.on('open', () => this.emit('open'));
         this._ws.on('close', (code, reason) => this.emit('close', code, reason));
         this._ws.on('message', (data) => this.emit('message', data as string));
@@ -29,9 +29,9 @@ export class WebSocket extends EventEmitter<{
         this._ws.close(code, reason);
     }
     get isOpen(): boolean {
-        return this._ws.readyState === Ws.OPEN;
+        return this._ws.stade === WebSocketState.OPEN;
     }
     get isClosed(): boolean {
-        return this._ws.readyState === Ws.CLOSED || this._ws.readyState === Ws.CLOSING;
+        return this._ws.isClose;
     }
 }
