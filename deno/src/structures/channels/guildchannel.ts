@@ -1,4 +1,4 @@
-import { APIChannel } from 'https://raw.githubusercontent.com/Arcoz0308/discord-api-types/main/deno/v9.ts';
+import { APIChannel } from 'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts';
 import { Client } from '../../client.ts';
 import { PermissionOverwrite } from '../../utils/permissionoverwrite.ts';
 import { Snowflake } from '../../utils/snowflake.ts';
