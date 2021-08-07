@@ -1,6 +1,5 @@
-// @ts-nocheck
-import { WebSocketClient, StandardWebSocketClient} from "https://deno.land/x/websocket@v0.1.1/mod.ts";
-import {EventEmitter} from '../utils/EventEmitter';
+import { WebSocketClient, StandardWebSocketClient, WebSocketState } from "https://deno.land/x/websocket@v0.1.1/mod.ts";
+import {EventEmitter} from '../utils/EventEmitter.ts';
 export class WebSocket extends EventEmitter<{
     open: () => void;
     close: (code: number, reason: string) => void;

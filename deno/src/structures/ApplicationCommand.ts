@@ -1,8 +1,8 @@
-import { APIApplicationCommand } from 'discord-api-types';
-import { Client } from '../Client';
-import { Snowflake } from '../utils/Snowflake';
-import { Base } from './Base';
-import { Guild } from './Guild';
+import { APIApplicationCommand } from 'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts';
+import { Client } from '../Client.ts';
+import { Snowflake } from '../utils/Snowflake.ts';
+import { Base } from './Base.ts';
+import { Guild } from './Guild.ts';
 
 
 export interface ApplicationCommandBase {

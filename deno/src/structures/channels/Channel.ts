@@ -1,7 +1,7 @@
-import { APIChannel} from 'discord-api-types';
-import { Client } from '../../Client';
-import { Snowflake } from '../../utils/Snowflake';
-import { Base } from '../Base';
+import { APIChannel} from 'https://raw.githubusercontent.com/discordjs/discord-api-types/main/deno/v9.ts';
+import { Client } from '../../Client.ts';
+import { Snowflake } from '../../utils/Snowflake.ts';
+import { Base } from '../Base.ts';
 
 
 export class Channel extends Base {

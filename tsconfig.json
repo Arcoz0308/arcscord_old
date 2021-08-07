@@ -7,9 +7,7 @@
     "module": "commonjs",
     "strict": true,
     "moduleResolution": "node",
-    "suppressImplicitAnyIndexErrors": true,
     "declaration": true,
-    "resolveJsonModule": true,
     "outDir": "./lib",
     "typeRoots": [
       "src/typing",

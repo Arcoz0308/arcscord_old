@@ -25,7 +25,7 @@ export class WebSocket extends EventEmitter<{
     ping(message: string) {
         this._ws.ping(message);
     }
-    close(code?: number, reason?: string) {
+    close(code: number, reason?: string) {
         this._ws.close(code, reason);
     }
     get isOpen(): boolean {
