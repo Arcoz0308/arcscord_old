@@ -1,4 +1,4 @@
-export * from './client';
+export * from './Client';
 export * from './Constants';
 export * from './structures';
 export * from './utils/Collection';

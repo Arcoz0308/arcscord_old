@@ -1,4 +1,4 @@
-export * from './client.ts';
+export * from './Client.ts';
 export * from './Constants.ts';
 export * from './structures/mod.ts';
 export * from './utils/Collection.ts';
