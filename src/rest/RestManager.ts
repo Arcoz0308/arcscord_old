@@ -29,7 +29,7 @@ export class RestManager {
     constructor(client: Client) {
         this.token = client.token.startsWith('Bot ') ?
             client.token :
-            'Bot' + client.token;
+            'Bot ' + client.token;
     }
     request(method: Method, url: string, data?: object): Promise<any> {
         return new Promise(async (resolve, reject) => {
@@ -43,9 +43,11 @@ export class RestManager {
                 },
                 timeout: 1000
             }).catch(e => {
-                return reject(new RequestError('API ERROR', method, url, data, e.data.code, e.data.message));
+                console.log(e);
+                return reject(new RequestError('API ERROR', method, url, data, e.response.data.code, e.response.data.message));
             });
-            resolve(response);
+            if (response) resolve(response.data);
+            else reject('UNKNOWN ERROR');
         });
     }
 }

@@ -16,6 +16,7 @@ function convertImports(filePath, fileContent) {
     return  fileContent.replace(/from '(.*)'/g, (_, importPath) => {
         if(isDir(resolve(filePath.split(sep).slice(0, -1).join(sep), importPath))) return `from '${importPath.endsWith('/') ? importPath : importPath + '/'}mod.ts'`;
         if (importPath === 'discord-api-types') return 'from \'https://deno.land/x/discord_api_types/v9.ts\'';
+        if (importPath.endsWith('.ts')) return `from '${importPath}'`;
         return `from '${importPath}.ts'`;
     });
 }

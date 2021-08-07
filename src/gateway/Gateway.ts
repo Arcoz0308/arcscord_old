@@ -7,7 +7,7 @@ import {
     GatewayPresenceUpdateData,
     GatewayReceivePayload
 } from 'discord-api-types';
-import * as WebSocket from 'ws';
+import {WebSocket} from './WebSocket'
 import { Client } from '../Client';
 import { API_VERSION } from '../Constants';
 import { GUILD } from '../rest/EndPoints';
@@ -88,7 +88,7 @@ export class Gateway {
     }
     
     public connect(gatewayURL: string) {
-        if (this.ws && this.ws.readyState != WebSocket.CLOSED) {
+        if (this.ws && this.ws.isOpen) {
             this.client.emit('error', new Error('the bot is already connected!'));
             return;
         }
@@ -105,7 +105,7 @@ export class Gateway {
             `${this.gatewayURL}?v=${API_VERSION}&encoding=json`
         );
         this.ws.on('open', () => this.onWsOpen);
-        this.ws.on('message', (msg) => this.onWsMessage(msg as string));
+        this.ws.on('message', (msg) => this.onWsMessage(msg));
         this.ws.on('error', (error) => this.onWsError(error));
         this.ws.on('close', (code, raison) => this.onWsClose(code, raison));
     }
@@ -146,7 +146,7 @@ export class Gateway {
     }
     
     public sendWS(code: GatewayOPCodes, data: any) {
-        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return;
+        if (!this.ws || this.ws.isClosed) return;
         this.ws.send(JSON.stringify({ op: code, d: data }));
     }
     

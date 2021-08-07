@@ -76,22 +76,22 @@ export class Client extends EventEmitter<{
     /**
      * when bot are online
      */
-    ready: typeof ready
+    ready: typeof ready;
     
     /**
      * when bot receive a Websocket event
      */
-    rawWS: typeof rawWS
+    rawWS: typeof rawWS;
     
     /**
      * when bot are connected to Websocket
      */
-    connected: typeof connected
+    connected: typeof connected;
     
     /**
      * when the websocket connection have a error
      */
-    error: typeof error
+    error: typeof error;
     
     [key: string]: (...param: any) => void;
 }> {

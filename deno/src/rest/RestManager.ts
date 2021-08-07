@@ -27,7 +27,7 @@ export class RestManager {
     constructor(client: Client) {
         this.token = client.token.startsWith('Bot ') ?
             client.token :
-            'Bot' + client.token;
+            'Bot ' + client.token;
     }
     request(method: Method, url: string, data?: any): Promise<any> {
         return new Promise(async (resolve, reject) => {
