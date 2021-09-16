@@ -8,11 +8,16 @@ import { Base } from './Base';
  * @category Structures
  */
 export class Message extends Base {
-    public id: Snowflake;
-    public channelId: Snowflake;
+    
+    public id!: Snowflake;
+    public channelId!: Snowflake;
     
     constructor(client: Client, data: APIMessage) {
         super(client);
+        this._patchData(data);
+    }
+    
+    _patchData(data: APIMessage) {
         this.id = data.id as Snowflake;
         this.channelId = data.channel_id as Snowflake;
     }

@@ -13,47 +13,47 @@ export class User extends Base {
     /**
      * the id of the user
      */
-    public id: Snowflake;
+    public id!: Snowflake;
     
     /**
      * hash of user avatar
      */
-    public avatar: string | null;
+    public avatar!: string | null;
     
     /**
      * username of the user
      */
-    public username: string;
+    public username!: string;
     
     /**
      * discriminator of the user
      */
-    public discriminator: string;
+    public discriminator!: string;
     
     /**
      * tag of the user (username#descriminator)
      */
-    public tag: string;
+    public tag!: string;
     
     /**
      * if the user is a bot
      */
-    public bot: boolean;
+    public bot!: boolean;
     
     /**
      * if the user are a official discord system user
      */
-    public system: boolean;
+    public system!: boolean;
     
     /**
      * the date of the user account was created in timestamp
      */
-    public readonly createAt: number;
+    public createAt!: number;
     
     /**
      * user public's flags
      */
-    public publicFlags: number;
+    public publicFlags!: number;
     
     /**
      *
@@ -64,15 +64,7 @@ export class User extends Base {
         super(client);
         
         // init data
-        this.id = data.id as Snowflake;
-        this.avatar = data.avatar;
-        this.username = data.username;
-        this.discriminator = data.discriminator;
-        this.tag = `${data.username}#${data.discriminator}`;
-        this.bot = !!data.bot;
-        this.system = !!data.system;
-        this.createAt = getDate(data.id as Snowflake);
-        this.publicFlags = data.public_flags ? data.public_flags : 0;
+        this._patchData(data);
     }
     
     /**
@@ -106,6 +98,18 @@ export class User extends Base {
             createAt: this.createAt,
             public_flags: this.publicFlags
         }, null, space);
+    }
+    
+    _patchData(data: APIUser) {
+        this.id = data.id as Snowflake;
+        this.avatar = data.avatar;
+        this.username = data.username;
+        this.discriminator = data.discriminator;
+        this.tag = `${data.username}#${data.discriminator}`;
+        this.bot = !!data.bot;
+        this.system = !!data.system;
+        this.createAt = getDate(data.id as Snowflake);
+        this.publicFlags = data.public_flags ? data.public_flags : 0;
     }
 }
 

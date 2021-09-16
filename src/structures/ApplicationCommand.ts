@@ -1,4 +1,3 @@
-import { APIApplicationCommand } from 'discord-api-types/v9';
 import { Client } from '../Client';
 import { Snowflake } from '../utils/Snowflake';
 import { Base } from './Base';
@@ -104,36 +103,36 @@ export class ApplicationCommand extends Base {
     /**
      * the id of the command
      */
-    public id: Snowflake;
+    public id!: Snowflake;
     
     /**
      * the guild of the command (is null for global commands)
      */
-    public guild: Guild | null;
+    public guild!: Guild | null;
     
     /**
      * the name of the command
      */
-    public name: string;
+    public name!: string;
     
     /**
      * the description of the command
      */
-    public description: string;
+    public description!: string;
     
     /**
      * the options of the command
      */
-    public options: ApplicationCommandOption[] | null;
+    public options!: ApplicationCommandOption[] | null;
     
     /**
      * if the command is enable by default on add guild
      */
-    public defaultPermission: boolean;
+    public defaultPermission!: boolean;
     /**
      * @internal
      */
-    public data: {[index: string]: any};
+    public data: { [index: string]: any };
     
     constructor(client: Client, data: {[index: string]: any}) {
         super(client);
@@ -166,14 +165,14 @@ export class ApplicationCommand extends Base {
         }, null, space);
     }
     
-    updateData(data: APIApplicationCommand): ApplicationCommand {
-        if (data.id && data.id !== this.id) this.id = data.id as Snowflake;
-        if (data.name && data.name !== this.name) this.name = data.name;
-        if (data.description && data.description !== this.description) this.description = data.description;
-        if (data.options && JSON.stringify(data.options as any) !== JSON.stringify(this.options)) this.options = data.options as any;
-        if (data.default_permission !== this.defaultPermission && typeof data.default_permission !== 'undefined') this.defaultPermission = data.default_permission;
+    _patchData(data: { [index: string]: any }) {
+        this.id = data.id;
+        this.guild = data['guild_id'] ? this.client.guilds.get(data['guild_id']) || null : null;
+        this.name = data.name;
+        this.description = data.description;
+        this.options = data.options ? data.options as unknown as ApplicationCommandOption[] : null;
+        this.defaultPermission = typeof data.default_permission !== 'undefined' ? data.default_permission : true;
         this.data = data;
-        return this;
     };
 }
 
