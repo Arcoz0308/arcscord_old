@@ -14,32 +14,23 @@ import { User } from './User';
  * @category Structures
  */
 export class Guild extends Base {
-    public readonly id: Snowflake;
-    public name: string;
-    public icon: string | null;
-    public slash: string | null;
-    public discoverySlash: string | null;
-    public ownerId: Snowflake;
-    public owner: User;
-    public afkChannelId: Snowflake | null;
+    public id!: Snowflake;
+    public name!: string;
+    public icon!: string | null;
+    public slash!: string | null;
+    public discoverySlash!: string | null;
+    public ownerId!: Snowflake;
+    public owner!: User;
+    public afkChannelId!: Snowflake | null;
     public channels = new Collection<Snowflake, Channel>();
     public members = new Collection<Snowflake, Member>();
     public slashCommands = new Collection<Snowflake, ApplicationCommand>();
     
-    public data: APIGuild;
+    public data!: APIGuild;
     
     constructor(client: Client, data: APIGuild) {
         super(client);
-        this.id = data.id as Snowflake;
-        this.name = data.name;
-        this.icon = data.icon;
-        this.slash = data.splash;
-        this.discoverySlash = data.discovery_splash;
-        this.ownerId = data.owner_id as Snowflake;
-        this.owner = client.users.get(data.owner_id as Snowflake)!;
-        this.afkChannelId = data.afk_channel_id as Snowflake;
-        
-        this.data = data;
+        this._patchData(data);
     }
     
     get afkChannel(): VoiceChannel | null {
@@ -55,6 +46,19 @@ export class Guild extends Base {
      */
     public fetchApplicationCommands(cache = true): Promise<ApplicationCommand[]> {
         return this.client.fetchGuildApplicationCommands(this.id, cache);
+    }
+    
+    _patchData(data: APIGuild) {
+        this.id = data.id as Snowflake;
+        this.name = data.name;
+        this.icon = data.icon;
+        this.slash = data.splash;
+        this.discoverySlash = data.discovery_splash;
+        this.ownerId = data.owner_id as Snowflake;
+        this.owner = this.client.users.get(data.owner_id as Snowflake)!;
+        this.afkChannelId = data.afk_channel_id as Snowflake;
+        
+        this.data = data;
     }
 }
 

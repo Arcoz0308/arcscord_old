@@ -5,3 +5,6 @@ docs/
 config.json
 typedoc.json
 node_modules
+deno/
+.github/
+script/

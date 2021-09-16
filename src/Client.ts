@@ -350,8 +350,8 @@ export class Client extends EventEmitter<{
             const command = this.slashCommands.has(commandId) ?
                 this.slashCommands.get(commandId)!.updateData(cmd) :
                 new ApplicationCommand(this, cmd);
-            if (cache) this.slashCommands.set(command.id, command);
-            resolve(command);
+            if (cache && command) this.slashCommands.set(command.id, command);
+            if (command) resolve(command);
         });
     }
     
@@ -471,8 +471,8 @@ export class Client extends EventEmitter<{
             const command = this.guilds.get(guildId)!.slashCommands.has(commandId) ?
                 this.guilds.get(guildId)!.slashCommands.get(commandId)!.updateData(cmd) :
                 new ApplicationCommand(this, cmd);
-            if (cache) this.guilds.get(guildId)!.slashCommands.set(command.id, command);
-            resolve(command);
+            if (cache && command) this.guilds.get(guildId)!.slashCommands.set(command.id, command);
+            if (command) resolve(command);
         });
     }
     
