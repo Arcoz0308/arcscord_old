@@ -2,7 +2,7 @@ import { Snowflake } from '../utils/Snowflake';
 import { imageFormats, imageSize } from '../utils/Utils';
 
 
-export const REST_VERSION = 9;
+export const REST_VERSION = 10;
 export const BASE_URL = `https://discord.com/api/v${REST_VERSION}`;
 export const IMAGE_BASE_URL = 'https://cdn.discordapp.com';
 // @formatter:off

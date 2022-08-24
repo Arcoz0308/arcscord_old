@@ -1,4 +1,4 @@
-import { GatewayReadyDispatchData } from 'discord-api-types/v9';
+import { GatewayReadyDispatchData } from 'discord-api-types/v10';
 import { ClientUser } from '../../structures';
 import { Snowflake } from '../../utils/Snowflake';
 import { Action } from './Action';

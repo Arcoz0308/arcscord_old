@@ -1,4 +1,4 @@
-import { APIChannel } from 'discord-api-types/v9';
+import { APIChannel } from 'discord-api-types/v10';
 import { Client } from '../../Client';
 import { Channel, ChannelTypes } from './Channel';
 

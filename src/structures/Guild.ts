@@ -1,4 +1,4 @@
-import { APIGuild } from 'discord-api-types/v9';
+import { APIGuild } from 'discord-api-types/v10';
 import { Client } from '../Client';
 import { Collection } from '../utils/Collection';
 import { Snowflake } from '../utils/Snowflake';

@@ -2,12 +2,12 @@ import {
     APIUnavailableGuild,
     GatewayDispatchEvents,
     GatewayDispatchPayload,
+    GatewayHelloData,
     GatewayIdentifyData,
     GatewayOpcodes,
     GatewayPresenceUpdateData,
-    GatewayReceivePayload,
-    GatewayHelloData
-} from 'discord-api-types/v9';
+    GatewayReceivePayload
+} from 'discord-api-types/v10';
 import { Client } from '../Client';
 import { API_VERSION } from '../Constants';
 import { GUILD } from '../rest/EndPoints';
@@ -43,6 +43,7 @@ export class Gateway {
     public lastHeartbeatAck: boolean = true;
     private readonly _token: string;
     private readonly intents: number;
+    private resumeGatewayURL?: string;
     
     constructor(client: Client) {
         this._token = client.bot
@@ -63,9 +64,9 @@ export class Gateway {
         const data: GatewayIdentifyData = {
             token: this._token,
             properties: {
-                $os: platform,
-                $device: 'arcscord',
-                $browser: 'arcscord'
+                os: platform,
+                device: 'arcscord',
+                browser: 'arcscord'
             },
             compress: false,
             intents: this.intents
@@ -123,7 +124,7 @@ export class Gateway {
                 this.identify();
                 break;
             case GatewayOpcodes.Dispatch:
-                this.handleEvent(msg as GatewayDispatchPayload).then();
+                this.handleEvent(msg as GatewayDispatchPayload);
                 break;
             case GatewayOpcodes.HeartbeatAck:
                 this.lastHeartbeatAck = true;
@@ -133,13 +134,14 @@ export class Gateway {
         }
     }
     
-    public async handleEvent(msg: GatewayDispatchPayload) {
+    public handleEvent(msg: GatewayDispatchPayload) {
         this.client.emit('rawWS', {
             eventName: msg.t,
             data: msg.d
         });
         switch (msg.t) {
             case GatewayDispatchEvents.Ready:
+                this.resumeGatewayURL = msg.d.resume_gateway_url;
                 this.heartbeat();
                 this.actions.READY!.handle(msg.d).then();
                 break;

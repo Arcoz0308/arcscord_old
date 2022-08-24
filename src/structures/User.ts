@@ -1,4 +1,4 @@
-import { APIUser } from 'discord-api-types/v9';
+import { APIUser } from 'discord-api-types/v10';
 import { Client } from '../Client';
 import { DEFAULT_USER_AVATAR, USER_AVATAR } from '../rest/EndPoints';
 import { getDate, Snowflake } from '../utils/Snowflake';

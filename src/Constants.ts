@@ -115,4 +115,4 @@ export enum Intents {
     DIRECT_MESSAGE_TYPING = 16384,
 }
 
-export const API_VERSION: number = 9;
+export const API_VERSION: number = 10;

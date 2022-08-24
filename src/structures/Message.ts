@@ -1,4 +1,4 @@
-import { APIMessage } from 'discord-api-types/v9';
+import { APIMessage } from 'discord-api-types/v10';
 import { Client } from '../Client';
 import { Snowflake } from '../utils/Snowflake';
 import { Base } from './Base';

@@ -1,4 +1,4 @@
-import { APIChannel } from 'discord-api-types/v9';
+import { APITextChannel } from 'discord-api-types/v10';
 import { Client } from '../../Client';
 import { Snowflake } from '../../utils/Snowflake';
 import { Message, MessageOptions, MessageOptionsWithContent } from '../Message';
@@ -15,14 +15,14 @@ export class TextChannel extends GuildChannel {
     public rateLimitPerUser: number | null;
     public lastMessageId: Snowflake | null;
     
-    constructor(client: Client, data: APIChannel) {
+    constructor(client: Client, data: APITextChannel) {
         super(client, data);
         this.topic = data.topic || null;
         this.rateLimitPerUser = data.rate_limit_per_user || null;
-        this.lastMessageId = data.last_message_id as Snowflake|| null;
+        this.lastMessageId = data.last_message_id as Snowflake || null;
     }
     
-    update(data: APIChannel): GuildChannel {
+    update(data: APITextChannel): GuildChannel {
         this.lastMessageId = data.last_message_id as Snowflake || null;
         this.topic = data.topic || null;
         this.rateLimitPerUser = data.rate_limit_per_user || null;

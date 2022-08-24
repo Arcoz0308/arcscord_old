@@ -3,7 +3,7 @@ import {
     APIGuildMember,
     APIMessage,
     GatewayDispatchEvents
-} from 'discord-api-types/v9';
+} from 'discord-api-types/v10';
 import { Intents } from './Constants';
 import { Gateway, rawWSEvent } from './gateway/Gateway';
 import {
@@ -256,8 +256,6 @@ export class Client extends EventEmitter<{
                 r = await this.requestHandler.request('POST', MESSAGES(channelId), { content: cOrM });
         } else
             r = await this.requestHandler.request('POST', MESSAGES(channelId), cOrM);
-        if (r.guild_id && !this.guilds.has(r.guild_id as Snowflake))
-            await this.fetchGuild(r.guild_id as Snowflake);
         
         //TODO channel, user and members
         return new Message(this, r);
