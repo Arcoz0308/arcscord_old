@@ -5,7 +5,7 @@ import {
     GatewayDispatchEvents,
     GatewayReceivePayload
 } from 'discord-api-types/v10';
-import { Intents } from './Constants';
+import { IntentOptions, Intents } from './Constants';
 import { Gateway } from './gateway/Gateway';
 import {
     APPLICATION_GLOBAL_COMMAND,
@@ -50,10 +50,8 @@ export interface ClientOptions {
      * list of events that the client don't must emit
      */
     disablesEvents?: (keyof typeof GatewayDispatchEvents)[];
-    /**
-     * list of intents to disable [list-of-intents](https://discord.com/developers/docs/topics/gateway#list-of-intents)
-     */
-    disableIntents?: (keyof typeof Intents)[];
+    
+    intents?: IntentOptions;
     
     /**
      * fetch all members and users
@@ -166,20 +164,34 @@ export class Client extends EventEmitter<{
      * @param options options of the bot
      */
     constructor(token: string, options: ClientOptions = {}) {
-        
+    
         super();
         this.on('ready', () => {
         });
         this.token = token;
         this.slashCommand = typeof options.slashCommandByDefault === 'undefined' ? true : options.slashCommandByDefault;
-        let intents = 32765;
-        
-        if (options.disableIntents)
-            for (const intent of options.disableIntents) {
-                intents -= Intents[intent];
+        if (options.intents && options.intents.intents && options.intents.intents.length >= 1) {
+            if (options.intents.mode && options.intents.mode === 'remove') {
+                let i = Intents.ALL;
+                options.intents.intents.forEach((v) => {
+                    i &= ~v;
+                });
+                if (i < 0) i = 0;
+                this.intents = i;
+            } else {
+                let i = 0;
+                options.intents.intents.forEach((v) => {
+                    i |= v;
+                });
+                if (i > Intents.ALL) {
+                    throw new Error('too height value of intent');
+                }
+                this.intents = i;
             }
-        this.intents = intents;
-        
+        } else {
+            this.intents = 0;
+        }
+    
         this.disableEvents = options.disablesEvents;
         this.presence = options.presence ? options.presence : {};
         this.fetchAllMembers = !!options.fetchAllMembers;
