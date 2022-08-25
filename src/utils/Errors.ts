@@ -27,3 +27,15 @@ message : ${msg}`;
         this.msg = msg;
     }
 }
+
+export class InvalidTokenError extends Error {
+    constructor(message: string = 'Your token are invalid !') {
+        super(message);
+    }
+}
+
+export class GatewayAlreadyConnectedError extends Error {
+    constructor(message: string = 'the bot is already connected !') {
+        super(message);
+    }
+}

@@ -6,12 +6,14 @@ import {
     GatewayIdentifyData,
     GatewayOpcodes,
     GatewayPresenceUpdateData,
-    GatewayReceivePayload
+    GatewayReceivePayload,
+    GatewayResumeData
 } from 'discord-api-types/v10';
 import { Client } from '../Client';
 import { API_VERSION } from '../Constants';
 import { GUILD } from '../rest/EndPoints';
 import { ActivityTypes, Guild, Presence } from '../structures';
+import { GatewayAlreadyConnectedError } from '../utils/Errors';
 import { platform } from '../utils/Platform';
 import { Snowflake } from '../utils/Snowflake';
 import * as ACTIONS from './actions';
@@ -27,7 +29,11 @@ interface Actions {
     READY?: ACTIONS.READY;
 }
 
-export type GatewayStatus = 'disconnected' | 'connected' | 'connecting...';
+export type GatewayStatus =
+    'disconnected'
+    | 'connected'
+    | 'connecting...'
+    | 'resuming...';
 
 export class Gateway {
     public ws?: AWebSocket;
@@ -36,7 +42,8 @@ export class Gateway {
     public client: Client;
     public actions: Actions = {};
     public heartbeatInterval?: number;
-    public lastSequence: number = 0;
+    public seq: number = 0;
+    private heartbeatTimer?: NodeJS.Timeout;
     public latency: number = Infinity;
     public lastHeartbeatSend: number = Infinity;
     public lastHeartbeatReceive: number = Infinity;
@@ -44,6 +51,7 @@ export class Gateway {
     private readonly _token: string;
     private readonly intents: number;
     private resumeGatewayURL?: string;
+    private sessionId?: string;
     
     constructor(client: Client) {
         this._token = client.bot
@@ -76,23 +84,23 @@ export class Gateway {
             data.presence = presence as GatewayPresenceUpdateData;
         }
         this.sendWS(GatewayOpcodes.Identify, data);
-        setInterval(() => {
-            this.heartbeat();
+        this.heartbeatTimer = setInterval(() => {
+            if (this.status === 'connected') this.heartbeat();
         }, this.heartbeatInterval);
     }
     
     public heartbeat() {
         if (!this.lastHeartbeatAck) {
-            //TODO reconnecting
+            this.resume();
         }
         this.lastHeartbeatAck = false;
         this.lastHeartbeatSend = Date.now();
-        this.sendWS(GatewayOpcodes.Heartbeat, this.lastSequence);
+        this.sendWS(GatewayOpcodes.Heartbeat, this.seq);
     }
     
     public connect(gatewayURL: string) {
         if (this.ws && this.ws.isOpen) {
-            this.client.emit('error', new Error('the bot is already connected!'));
+            this.client.emit('error', new GatewayAlreadyConnectedError());
             return;
         }
         if (gatewayURL.includes('?')) {
@@ -107,7 +115,7 @@ export class Gateway {
         this.ws = new AWebSocket(
             `${this.gatewayURL}?v=${API_VERSION}&encoding=json`
         );
-        this.ws.on('open', () => this.onWsOpen);
+        this.ws.on('open', () => this.onWsOpen());
         this.ws.on('message', (msg) => this.onWsMessage(msg));
         this.ws.on('error', (error) => this.onWsError(error));
         this.ws.on('close', (code, raison) => this.onWsClose(code, raison));
@@ -117,13 +125,15 @@ export class Gateway {
         const msg: GatewayReceivePayload = JSON.parse(
             message
         ) as GatewayReceivePayload;
-        if (msg.s) this.lastSequence = msg.s;
         switch (msg.op) {
             case GatewayOpcodes.Hello:
+                this.lastHeartbeatAck = true;
                 this.heartbeatInterval = (msg.d as GatewayHelloData).heartbeat_interval;
-                this.identify();
+                if (this.sessionId) this.sendResume();
+                else this.identify();
                 break;
             case GatewayOpcodes.Dispatch:
+                this.seq = msg.s;
                 this.handleEvent(msg as GatewayDispatchPayload);
                 break;
             case GatewayOpcodes.HeartbeatAck:
@@ -131,6 +141,11 @@ export class Gateway {
                 this.lastHeartbeatReceive = Date.now();
                 this.latency = this.lastHeartbeatReceive - this.lastHeartbeatSend;
                 break;
+            case GatewayOpcodes.Reconnect:
+                this.resume();
+                break;
+            case GatewayOpcodes.InvalidSession:
+                throw new Error('invalid gateway session !');
         }
     }
     
@@ -142,8 +157,11 @@ export class Gateway {
         switch (msg.t) {
             case GatewayDispatchEvents.Ready:
                 this.resumeGatewayURL = msg.d.resume_gateway_url;
-                this.heartbeat();
+                this.sessionId = msg.d.session_id;
                 this.actions.READY!.handle(msg.d).then();
+                break;
+            case GatewayDispatchEvents.Resumed:
+                this.client.emit('resumed');
                 break;
             case GatewayDispatchEvents.MessageCreate:
         }
@@ -160,7 +178,7 @@ export class Gateway {
         this.sendWS(GatewayOpcodes.PresenceUpdate, data);
     }
     
-    resolvePresence(presence: Presence): any {
+    public resolvePresence(presence: Presence): any {
         const data: { activities: any[]; afk: boolean; status: string } = {
             status: presence.status || 'online',
             afk: !!presence.afk,
@@ -194,13 +212,41 @@ export class Gateway {
         this.client.guilds.set(guild.id as Snowflake, g);
     }
     
+    public resume() {
+        if (this.heartbeatTimer) clearInterval(this.heartbeatTimer);
+        if (this.ws && !this.ws.isClosed) this.ws.close(1009, 'arcscord : restart');
+        this.status = 'resuming...';
+        this.ws = new AWebSocket(`${this.resumeGatewayURL}?v=${API_VERSION}&encoding=json`);
+        
+        this.ws.on('open', () => this.onWsOpen());
+        this.ws.on('message', (msg) => this.onWsMessage(msg));
+        this.ws.on('error', (error) => this.onWsError(error));
+        this.ws.on('close', (code, raison) => this.onWsClose(code, raison));
+    }
+    
+    private sendResume() {
+        this.heartbeatTimer = setInterval(() => {
+            if (this.status === 'connected') this.heartbeat();
+        }, this.heartbeatInterval);
+        const data: GatewayResumeData = {
+            token: this._token,
+            seq: this.seq,
+            session_id: this.sessionId!
+        };
+        this.sendWS(GatewayOpcodes.Resume, data);
+    }
+    
     private onWsOpen() {
-        this.client.emit('connected');
+        if (this.status === 'resuming...') {
+            this.client.emit('reconnected');
+        } else this.client.emit('connected');
+        this.status = 'connected';
     }
     
     private onWsError(err: Error) {
     }
     
     private onWsClose(code: number, reason: string) {
+        this.status = 'disconnected';
     }
 }

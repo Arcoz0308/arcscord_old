@@ -35,7 +35,7 @@ import {
     User
 } from './structures';
 import { Collection } from './utils/Collection';
-import { RequestError } from './utils/Errors';
+import { InvalidTokenError, RequestError } from './utils/Errors';
 import { EventEmitter } from './utils/EventEmitter';
 import { Snowflake } from './utils/Snowflake';
 
@@ -88,6 +88,15 @@ export class Client extends EventEmitter<{
      */
     connected: typeof connected;
     
+    /**
+     * when the bot are reconnected to websocket after lost connection
+     */
+    reconnected: typeof reconnected;
+    
+    /**
+     * when the bot session are resumed with success
+     */
+    resumed: typeof resumed;
     /**
      * when the websocket connection have a error
      */
@@ -184,7 +193,7 @@ export class Client extends EventEmitter<{
         this.requestHandler.request('GET', GATEWAY_CONNECT).then((r) => {
             
             if (r instanceof RequestError) {
-                if (r.status === '403') throw new Error('TOKEN ARE INVALID !');
+                if (r.status === '403') throw new InvalidTokenError();
                 throw r;
             }
             
@@ -541,6 +550,20 @@ export declare function rawWS(packet: rawWSEvent): void;
  * @event Client#connected
  */
 export declare function connected(): void;
+
+/**
+ * when the bot are reconnected to websocket after lost connection
+ * @asMemberOf Client
+ * @event Client#reconnected
+ */
+export declare function reconnected(): void;
+
+/**
+ * when the bot session are resumed with success
+ * @asMemberOf Client
+ * @event Client#resumed
+ */
+export declare function resumed(): void
 
 /**
  * when the websocket connection have a error
