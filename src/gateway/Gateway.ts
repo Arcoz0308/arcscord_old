@@ -7,10 +7,12 @@ import {
     GatewayReceivePayload,
     GatewayResumeData
 } from 'discord-api-types/v10';
-import { CLOSED as wsCLOSED } from 'ws';
 import { Client } from '../Client';
 import { ActivityTypes, Presence } from '../structures';
-import { GatewayAlreadyConnectedError } from '../utils/Errors';
+import {
+    GatewayAlreadyConnectedError,
+    InvalidTokenError
+} from '../utils/Errors';
 import * as Actions from './eventHandlers';
 import { AWebSocket } from './WebSocket';
 
@@ -50,6 +52,7 @@ export class Gateway {
     private readonly token: string;
     
     private connectTimeout?: NodeJS.Timer;
+    private connectTentatives: number = 0;
     private reconnectTime: number = 1000;
     
     private isResuming: boolean = false;
@@ -66,7 +69,7 @@ export class Gateway {
     }
     
     public connect(url: string) {
-        if (this.ws && this.ws.readyState !== wsCLOSED) {
+        if (this.ws && this.ws.isOpen) {
             this.client.emit('error', new GatewayAlreadyConnectedError());
             return;
         }
@@ -75,7 +78,7 @@ export class Gateway {
     }
     
     public disconnect(reconnect: boolean = false) {
-        if (!this.ws || this.ws.readyState === wsCLOSED) {
+        if (!this.ws || this.ws.isClosed) {
             if (reconnect) {
                 this.ws = null;
                 this.initWS();
@@ -86,11 +89,17 @@ export class Gateway {
         this.ws.close(3000, 'arcscord : ' + reconnect ? 'resume' : 'disconnect');
         this.ws = null;
         if (reconnect) {
-            if (this.sessionId && this.resumeTentatives > 3) this.sessionId = undefined;
+            if (this.sessionId && this.resumeTentatives > 5) {
+                this.debug('too many resume tentative, set auto to restart gateway');
+                this.sessionId = undefined;
+            }
             if (this.sessionId) {
+                this.debug(`trying resuming after connexion lost, tentative count : ${this.resumeTentatives}`);
+                this.resumeTentatives++;
                 this.isResuming = true;
                 this.initWS();
             } else {
+                this.debug(`tentative N° ${this.connectTentatives} of connection in ${this.reconnectTime}ms`);
                 this.isResuming = false;
                 this.connectTimeout = setTimeout(() => {
                     this.initWS();
@@ -112,19 +121,26 @@ export class Gateway {
     }
     
     private initWS() {
+        this.connectTentatives++;
         this.status = this.isResuming ? 'resuming...' : 'connecting...';
-        this.ws = new AWebSocket(this.isResuming && this.resumeURL ? this.resumeURL : this.gatewayURL);
+        try {
         
-        this.ws.on('open', () => this.onWSOpen());
-        this.ws.on('message', (msg) => this.onWSMessage(msg));
-        this.ws.on('error', (err) => this.onWSError(err));
-        this.ws.on('close', (code, reason) => this.onWSClose(code, reason));
+            this.ws = new AWebSocket(this.isResuming && this.resumeURL ? this.resumeURL : this.gatewayURL);
         
-        this.connectTimeout = setTimeout(() => {
-            if (this.status === 'resuming...' || this.status === 'connecting...') {
-                this.disconnect(true);
-            }
-        }, this.client.connectTimeout);
+            this.ws.on('open', () => this.onWSOpen());
+            this.ws.on('message', (msg) => this.onWSMessage(msg));
+            this.ws.on('error', (err) => this.onWSError(err));
+            this.ws.on('close', (code, reason) => this.onWSClose(code, reason));
+        
+            this.connectTimeout = setTimeout(() => {
+                if (this.status === 'resuming...' || this.status === 'connecting...') {
+                    this.disconnect(true);
+                }
+            }, this.client.connectTimeout);
+        } catch (err) {
+            this.debug(`connexion failed, error : ${err}, retrying...`);
+            this.disconnect(true);
+        }
     }
     
     private resume() {
@@ -158,6 +174,14 @@ export class Gateway {
         if (this.status === 'resuming...' || this.status === 'identifying...') return;
         if (normal) {
             if (!this.heartbeatACK) {
+                this.debug('heartbeat timeout, trying restart ! Additional information\'s : ' + JSON.stringify({
+                    lastReceive: this.lastHeartbeatReceive,
+                    lastSend: this.lastHeartbeatSend,
+                    latency: this.latency,
+                    status: this.status,
+                    connected: this.ws?.isOpen,
+                    timestamp: Date.now()
+                }));
                 return this.disconnect(true);
             }
             this.heartbeatACK = false;
@@ -242,7 +266,37 @@ export class Gateway {
     }
     
     private onWSClose(code: number, raison: string) {
-    
+        let connect = true;
+        switch (code) {
+            case 1000:
+                this.debug('unknown gateway close (code 1000), trying restart');
+                break;
+            case 4000:
+            case 4001:
+            case 4002:
+            case 4003:
+            case 4005:
+                this.debug(`unknown gateway error (code ${code}, trying restart, if this error reproduce many time, create a issue`);
+                break;
+            case 4004:
+                throw new InvalidTokenError();
+            case 4007:
+                this.sessionId = undefined;
+                this.debug('invalid seq, restart without resume trying');
+                break;
+            case 4008:
+                this.debug('rate limited, restart gateway');
+                break;
+            case 4009:
+                this.debug('connexion timeout, trying restart');
+                break;
+            case 3000:
+                connect = false;
+                break;
+            default:
+                this.debug(`unknown close error ${code}, trying restart`);
+        }
+        this.disconnect(connect);
     }
     
     public resolvePresence(presence: Presence): any {
@@ -268,5 +322,9 @@ export class Gateway {
             }
         }
         return data;
+    }
+    
+    private debug(msg: string) {
+        return this.client.emit('debug', msg);
     }
 }

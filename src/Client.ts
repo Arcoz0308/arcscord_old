@@ -104,6 +104,7 @@ export class Client extends EventEmitter<{
      * when the websocket connection have a error
      */
     error: typeof error;
+    debug: typeof debug;
     
     [key: string]: (...param: any) => void;
 }> {
@@ -579,3 +580,5 @@ export declare function resumed(): void
 export declare function error(error: Error): void;
 
 export declare function warn(error: Error): void;
+
+export declare function debug(msg: string): void;
