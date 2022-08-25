@@ -1,7 +1,7 @@
 import { Client } from '../../Client';
 
 
-export class Action {
+export class EventHandler {
     public client: Client;
     
     constructor(client: Client) {

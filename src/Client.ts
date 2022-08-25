@@ -2,10 +2,11 @@ import {
     APIChannel,
     APIGuildMember,
     APIMessage,
-    GatewayDispatchEvents
+    GatewayDispatchEvents,
+    GatewayReceivePayload
 } from 'discord-api-types/v10';
 import { Intents } from './Constants';
-import { Gateway, rawWSEvent } from './gateway/Gateway';
+import { Gateway } from './gateway/Gateway';
 import {
     APPLICATION_GLOBAL_COMMAND,
     APPLICATION_GLOBAL_COMMANDS,
@@ -70,6 +71,8 @@ export interface ClientOptions {
      * @default true
      */
     slashCommandByDefault?: boolean;
+    
+    connectTimeout?: number;
 }
 
 export class Client extends EventEmitter<{
@@ -117,7 +120,7 @@ export class Client extends EventEmitter<{
     /**
      * bot current presence
      */
-    public presence: Presence = {};
+    public presence: Presence;
     /**
      * bot gateway
      */
@@ -155,6 +158,8 @@ export class Client extends EventEmitter<{
      */
     public readonly slashCommand: boolean;
     
+    public connectTimeout: number;
+    
     /**
      * @param token the token of the bot
      * @param options options of the bot
@@ -178,6 +183,7 @@ export class Client extends EventEmitter<{
         this.presence = options.presence ? options.presence : {};
         this.fetchAllMembers = !!options.fetchAllMembers;
         this.bot = typeof options.isABot === 'undefined' || options.isABot;
+        this.connectTimeout = typeof options.connectTimeout === 'undefined' ? 3000 : options.connectTimeout;
         
         this.gateway = new Gateway(this);
         this.requestHandler = new RestManager(this);
@@ -196,18 +202,17 @@ export class Client extends EventEmitter<{
                 if (r.status === '403') throw new InvalidTokenError();
                 throw r;
             }
-            
+    
             let url: string = r.url;
             this.gateway.connect(url);
-            
+    
         });
-        
+    
         return this;
-        
+    
     }
     
     public async fetchGuild(id: Snowflake, checkCache: boolean = true, setToCache: boolean = true): Promise<Guild> {
-        
         if (checkCache && this.guilds.has(id))
             return this.guilds.get(id)!;
         
@@ -542,7 +547,7 @@ export declare function ready(): void;
  * @asMemberOf Client
  * @event Client#rawWS
  */
-export declare function rawWS(packet: rawWSEvent): void;
+export declare function rawWS(packet: GatewayReceivePayload): void;
 
 /**
  * when bot are connected to websocket

@@ -34,7 +34,12 @@ export class AWebSocket extends EventEmitter<{
     get isOpen(): boolean {
         return this._ws.readyState === Ws.OPEN;
     }
+    
     get isClosed(): boolean {
         return this._ws.readyState === Ws.CLOSED || this._ws.readyState === Ws.CLOSING;
+    }
+    
+    get readyState(): 0 | 1 | 2 | 3 {
+        return this._ws.readyState;
     }
 }
