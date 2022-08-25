@@ -204,11 +204,13 @@ export class Gateway {
     private handleDispatchPacket(msg: GatewayDispatchPayload) {
         switch (msg.t) {
             case GatewayDispatchEvents.Ready:
+                this.status = 'connected';
                 this.sessionId = msg.d.session_id;
                 this.resumeURL = msg.d.resume_gateway_url;
                 this.eventHandlers.READY.handle(msg.d);
                 break;
             case GatewayDispatchEvents.Resumed:
+                this.status = 'connected';
                 this.isResuming = false;
                 this.client.emit('resumed');
                 break;
