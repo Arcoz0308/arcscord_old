@@ -11,9 +11,8 @@ export class AWebSocket extends EventEmitter<{
     error: (error: Error) => void;
 }> {
     private _ws: Ws;
-    constructor(endpoint: string) {
+    constructor(endpoint: string | URL) {
         super();
-        this._ws = new Ws(endpoint);
         this._ws = new Ws(endpoint);
         this._ws.on('open', () => this.emit('open'));
         this._ws.on('close', (code, reason) => this.emit('close', code, reason));

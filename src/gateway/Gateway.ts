@@ -7,6 +7,7 @@ import {
     GatewayReceivePayload,
     GatewayResumeData
 } from 'discord-api-types/v10';
+import * as dns from 'dns';
 import { Client } from '../Client';
 import { ActivityTypes, Presence } from '../structures';
 import {
@@ -34,7 +35,7 @@ export class Gateway {
     public intents: number;
     public presence: Presence;
     public ws: AWebSocket | null = null;
-    public gatewayURL: string = '';
+    public gatewayURL!: URL;
     
     public eventHandlers!: EventHandlers;
     
@@ -47,13 +48,13 @@ export class Gateway {
     public status: GatewayStatus = 'init...';
     public seq: number = 0;
     public sessionId?: string;
-    public resumeURL?: string;
+    public resumeURL?: URL;
     
     private readonly token: string;
     
     private connectTimeout?: NodeJS.Timer;
     private connectTentatives: number = 0;
-    private reconnectTime: number = 1000;
+    private reconnectTime: number = 3000;
     
     private isResuming: boolean = false;
     private resumeTentatives: number = 0;
@@ -73,36 +74,32 @@ export class Gateway {
             this.client.emit('error', new GatewayAlreadyConnectedError());
             return;
         }
-        this.gatewayURL = url;
+        this.gatewayURL = new URL(url);
         this.initWS();
     }
     
     public disconnect(reconnect: boolean = false) {
-        if (!this.ws || this.ws.isClosed) {
-            if (reconnect) {
-                this.ws = null;
-                this.initWS();
-            }
-            return;
-        }
         if (this.sessionId && reconnect) this.isResuming = true;
-        this.ws.close(3000, 'arcscord : ' + reconnect ? 'resume' : 'disconnect');
+        if (this.ws && this.ws.isOpen) this.ws.close(3000, 'arcscord : ' + reconnect ? 'resume' : 'disconnect');
         this.ws = null;
         if (reconnect) {
+            this.status = 'disconnected';
             if (this.sessionId && this.resumeTentatives > 5) {
                 this.debug('too many resume tentative, set auto to restart gateway');
                 this.sessionId = undefined;
             }
             if (this.sessionId) {
-                this.debug(`trying resuming after connexion lost, tentative count : ${this.resumeTentatives}`);
+                this.debug(`trying resuming after connexion lost, tentative count : ${this.resumeTentatives} in ${(this.resumeTentatives + 1) * 500}ms`);
                 this.resumeTentatives++;
                 this.isResuming = true;
-                this.initWS();
+                this.connectTimeout = setTimeout(() => {
+                    if (this.status !== 'connected') this.initWS();
+                }, this.resumeTentatives * 500);
             } else {
                 this.debug(`tentative N° ${this.connectTentatives} of connection in ${this.reconnectTime}ms`);
                 this.isResuming = false;
                 this.connectTimeout = setTimeout(() => {
-                    this.initWS();
+                    if (this.status !== 'connected') this.initWS();
                 }, this.reconnectTime);
                 this.reconnectTime = Math.min(30000, Math.round(this.reconnectTime * (Math.random() + 1) * 2));
             }
@@ -120,13 +117,14 @@ export class Gateway {
         };
     }
     
-    private initWS() {
+    private async initWS() {
         this.connectTentatives++;
+        this.heartbeatACK = true;
         this.status = this.isResuming ? 'resuming...' : 'connecting...';
         try {
-        
+            await dns.promises.lookup(this.gatewayURL.hostname);
             this.ws = new AWebSocket(this.isResuming && this.resumeURL ? this.resumeURL : this.gatewayURL);
-        
+            
             this.ws.on('open', () => this.onWSOpen());
             this.ws.on('message', (msg) => this.onWSMessage(msg));
             this.ws.on('error', (err) => this.onWSError(err));
@@ -228,14 +226,24 @@ export class Gateway {
     private handleDispatchPacket(msg: GatewayDispatchPayload) {
         switch (msg.t) {
             case GatewayDispatchEvents.Ready:
+                if (this.connectTimeout) clearInterval(this.connectTimeout);
+                this.connectTimeout = undefined;
                 this.status = 'connected';
                 this.sessionId = msg.d.session_id;
-                this.resumeURL = msg.d.resume_gateway_url;
+                this.resumeURL = new URL(msg.d.resume_gateway_url);
+                this.connectTentatives = 0;
+                this.resumeTentatives = 0;
+                this.isResuming = false;
+                this.reconnectTime = 3000;
                 this.eventHandlers.READY.handle(msg.d);
                 break;
             case GatewayDispatchEvents.Resumed:
+                if (this.connectTimeout) clearInterval(this.connectTimeout);
+                this.connectTimeout = undefined;
                 this.status = 'connected';
                 this.isResuming = false;
+                this.connectTentatives = 0;
+                this.resumeTentatives = 0;
                 this.client.emit('resumed');
                 break;
             
@@ -262,7 +270,7 @@ export class Gateway {
     }
     
     private onWSError(err: Error) {
-    
+        this.client.emit('error', err);
     }
     
     private onWSClose(code: number, raison: string) {

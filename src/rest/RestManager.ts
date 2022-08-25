@@ -2,6 +2,8 @@ import axios from 'axios';
 import { Client } from '../Client';
 import { RequestError } from '../utils/Errors';
 import { BASE_URL } from './EndPoints';
+
+
 export type Method =
     | 'get' | 'GET'
     | 'delete' | 'DELETE'
@@ -44,7 +46,7 @@ export class RestManager {
                 timeout: 1000
             }).catch(e => {
                 console.log(e);
-                return reject(new RequestError('API ERROR', method, url, data, e.response.data.code, e.response.data.message));
+                return reject(new RequestError('API ERROR', method, url, data, e.response?.data?.code, e.response?.data?.message));
             });
             if (response) resolve(response.data);
             else reject('UNKNOWN ERROR');
