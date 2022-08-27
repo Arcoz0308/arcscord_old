@@ -1,6 +1,6 @@
 {
   "name": "arcscord",
-  "version": "0.3.0-beta",
+  "version": "0.3.1-beta",
   "description": "A library to interact with the Discord API written in typescript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -14,7 +14,7 @@
     "deno": "node script/deno"
   },
   "author": "arcoz0308",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "dependencies": {
     "@types/node": "^15.0.1",
     "@types/ws": "^7.4.2",
