@@ -3,7 +3,7 @@
     "src/**/*"
   ],
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2020",
     "module": "commonjs",
     "strict": true,
     "moduleResolution": "node",
@@ -13,6 +13,10 @@
       "src/typing",
       "node_modules/@types"
     ],
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "lib": [
+      "es2020",
+      "esnext"
+    ]
   }
 }
