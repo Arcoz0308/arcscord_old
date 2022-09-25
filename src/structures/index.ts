@@ -15,7 +15,7 @@ export * from './channels/VoiceChannel';
 export * from './ApplicationCommand';
 export * from './Base';
 export * from './ClientUser';
-export * from './CommandInteraction';
+export * from './Interaction';
 export * from './Guild';
 export * from './Member';
 export * from './Message';

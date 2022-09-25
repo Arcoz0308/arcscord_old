@@ -41,7 +41,7 @@ export class User extends Base {
     public bot!: boolean;
     
     /**
-     * if the user are a official discord system user
+     * if the user are an official discord system user
      */
     public system!: boolean;
     
@@ -164,7 +164,7 @@ export interface Presence {
      */
     status?: PresenceStatus;
     /**
-     * Whether or not the client is afk. default false
+     * Whether the client is afk. default false
      */
     afk?: boolean;
 }

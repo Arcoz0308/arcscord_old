@@ -1,10 +1,12 @@
 import { Client } from '../../Client';
 
 
-export class EventHandler {
+export abstract class EventHandler {
     public client: Client;
     
     constructor(client: Client) {
         this.client = client;
     }
+    
+    abstract handle(d: any): Promise<void>
 }

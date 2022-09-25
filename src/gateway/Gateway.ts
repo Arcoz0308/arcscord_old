@@ -8,18 +8,20 @@ import {
     GatewayResumeData
 } from 'discord-api-types/v10';
 import * as dns from 'dns';
+import { URL } from 'url';
 import { Client } from '../Client';
 import { ActivityTypes, Presence } from '../structures';
 import {
     GatewayAlreadyConnectedError,
     InvalidTokenError
 } from '../utils/Errors';
-import * as Actions from './eventHandlers';
+import * as eventHandlers from './eventHandlers';
 import { AWebSocket } from './WebSocket';
 
 
 interface EventHandlers {
-    READY: Actions.READY;
+    READY: eventHandlers.READY;
+    INTERACTION_CREATE: eventHandlers.INTERACTION_CREATED;
 }
 
 export type GatewayStatus =
@@ -89,7 +91,7 @@ export class Gateway {
                 this.sessionId = undefined;
             }
             if (this.sessionId) {
-                this.debug(`trying resuming after connexion lost, tentative count : ${this.resumeTentatives} in ${(this.resumeTentatives + 1) * 500}ms`);
+                this.debug(`trying resuming after connection lost, tentative count : ${this.resumeTentatives} in ${(this.resumeTentatives + 1) * 500}ms`);
                 this.resumeTentatives++;
                 this.isResuming = true;
                 this.connectTimeout = setTimeout(() => {
@@ -113,7 +115,8 @@ export class Gateway {
     
     private loadEventHandlers() {
         this.eventHandlers = {
-            READY: new Actions.READY(this.client)
+            READY: new eventHandlers.READY(this.client),
+            INTERACTION_CREATE: new eventHandlers.INTERACTION_CREATED(this.client)
         };
     }
     
@@ -129,14 +132,14 @@ export class Gateway {
             this.ws.on('message', (msg) => this.onWSMessage(msg));
             this.ws.on('error', (err) => this.onWSError(err));
             this.ws.on('close', (code, reason) => this.onWSClose(code, reason));
-        
+    
             this.connectTimeout = setTimeout(() => {
                 if (this.status === 'resuming...' || this.status === 'connecting...') {
                     this.disconnect(true);
                 }
-            }, this.client.connectTimeout);
+            }, this.client.gatewayOptions.connectTimeout || 1000);
         } catch (err) {
-            this.debug(`connexion failed, error : ${err}, retrying...`);
+            this.debug(`connection failed, error : ${err}, retrying...`);
             this.disconnect(true);
         }
     }
@@ -246,6 +249,7 @@ export class Gateway {
                 this.resumeTentatives = 0;
                 this.client.emit('resumed');
                 break;
+            case GatewayDispatchEvents.InteractionCreate:
             
         }
     }
@@ -296,7 +300,7 @@ export class Gateway {
                 this.debug('rate limited, restart gateway');
                 break;
             case 4009:
-                this.debug('connexion timeout, trying restart');
+                this.debug('connection timeout, trying restart');
                 break;
             case 3000:
                 connect = false;
