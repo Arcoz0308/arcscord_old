@@ -42,7 +42,7 @@ export class Guild extends Base {
     /**
      * get all applications commands of this guild
      * @param [cache=true] set the commands to cache
-     * @return a array of commands object
+     * @return a array of commands objects
      */
     public fetchApplicationCommands(cache = true): Promise<ApplicationCommand[]> {
         return this.client.fetchGuildApplicationCommands(this.id, cache);

@@ -1,3 +1,4 @@
+import { URL } from 'url';
 import * as Ws from 'ws';
 import { EventEmitter } from '../utils/EventEmitter';
 
@@ -11,6 +12,7 @@ export class AWebSocket extends EventEmitter<{
     error: (error: Error) => void;
 }> {
     private _ws: Ws;
+    
     constructor(endpoint: string | URL) {
         super();
         this._ws = new Ws(endpoint);

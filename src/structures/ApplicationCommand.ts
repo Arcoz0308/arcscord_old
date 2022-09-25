@@ -16,11 +16,11 @@ export interface ApplicationCommandBase {
     /**
      * the options of the command
      */
-    options: Array<ApplicationCommandOption | ApplicationCommandOptionWithSubCommand>;
+    options?: Array<ApplicationCommandOption | ApplicationCommandOptionWithSubCommand>;
     /**
-     * if the command are enable when the app is add to a guild
+     * if the command are enable when the app is added to a guild
      */
-    defaultPermissions: boolean;
+    defaultPermission?: boolean;
 }
 
 export interface EditApplicationCommandOptions {
@@ -37,9 +37,9 @@ export interface EditApplicationCommandOptions {
      */
     options?: Array<ApplicationCommandOption | ApplicationCommandOptionWithSubCommand>;
     /**
-     * if the command are enable when the app is add to a guild
+     * if the command are enable when the app is added to a guild
      */
-    defaultPermissions?: boolean;
+    defaultPermission?: boolean;
 }
 
 export interface ApplicationCommandOption {

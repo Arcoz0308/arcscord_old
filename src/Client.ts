@@ -70,6 +70,11 @@ export interface ClientOptions {
      */
     slashCommandByDefault?: boolean;
     
+    gatewayOptions?: GatewayOptions;
+}
+
+export interface GatewayOptions {
+    compress?: boolean;
     connectTimeout?: number;
 }
 
@@ -157,7 +162,7 @@ export class Client extends EventEmitter<{
      */
     public readonly slashCommand: boolean;
     
-    public connectTimeout: number;
+    public gatewayOptions: GatewayOptions;
     
     /**
      * @param token the token of the bot
@@ -192,11 +197,14 @@ export class Client extends EventEmitter<{
             this.intents = 0;
         }
     
+        this.gatewayOptions = Object.assign({
+            connectTimeout: 1000,
+            compress: false
+        }, options.gatewayOptions);
         this.disableEvents = options.disablesEvents;
         this.presence = options.presence ? options.presence : {};
         this.fetchAllMembers = !!options.fetchAllMembers;
         this.bot = typeof options.isABot === 'undefined' || options.isABot;
-        this.connectTimeout = typeof options.connectTimeout === 'undefined' ? 3000 : options.connectTimeout;
         
         this.gateway = new Gateway(this);
         this.requestHandler = new RestManager(this);
@@ -368,7 +376,7 @@ export class Client extends EventEmitter<{
         return new Promise(async (resolve, reject) => {
             if (!this.user)
                 return reject(new Error('client isn\'t connected'));
-            if (!(data.name && data.description && data.options && data.defaultPermissions))
+            if (!(data.name && data.description && data.options && data.defaultPermission))
                 return reject(new Error('you need to change one options or more'));
             data = resolveApplicationCommandForApi(data) as EditApplicationCommandOptions;
             const cmd = await this.requestHandler.request('PATCH', APPLICATION_GLOBAL_COMMAND(this.user.id, commandId), data);
@@ -488,7 +496,7 @@ export class Client extends EventEmitter<{
         return new Promise(async (resolve, reject) => {
             if (!this.user)
                 return reject(new Error('client isn\'t connected'));
-            if (!(data.name && data.description && data.options && data.defaultPermissions))
+            if (!(data.name && data.description && data.options && data.defaultPermission))
                 return reject(new Error('you need to change one options or more'));
             data = resolveApplicationCommandForApi(data) as EditApplicationCommandOptions;
             const cmd = await this.requestHandler.request('PATCH', APPLICATION_GUILD_COMMAND(this.user.id, guildId, commandId), data);
